@@ -14,7 +14,7 @@ export const projects: Project[] = [
         description: 'AI-first fundraising platform with Stripe payments, real-time analytics, and an intelligent campaign engine. Full-stack TypeScript with SSR on AWS ECS.',
         url: 'https://fundlyhub.org',
         role: 'Lead AI Engineer',
-        tags: ['TypeScript', 'AWS', 'Vike SSR', 'Stripe', 'MUI'],
+        tags: ['Vite', 'Express API', 'Node.js', 'AWS', 'Stripe', 'AI'],
         color: '#00d4ff',
         logo: '/logos/fundlyhub-light.svg',
     },
