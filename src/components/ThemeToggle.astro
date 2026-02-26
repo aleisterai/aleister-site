@@ -1,0 +1,114 @@
+---
+---
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+  <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
+  <span class="theme-toggle__icon theme-toggle__icon--system">🖥️</span>
+  <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+  <span class="theme-toggle__indicator" id="theme-indicator"></span>
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--toggle-bg);
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--border-accent);
+  }
+
+  .theme-toggle__icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 28px;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    opacity: 0.4;
+  }
+
+  .theme-toggle__icon.active {
+    opacity: 1;
+  }
+
+  .theme-toggle__indicator {
+    position: absolute;
+    width: 32px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--toggle-active);
+    border: 1px solid var(--border-accent);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    left: 4px;
+  }
+
+  [data-theme="light"] .theme-toggle__indicator { transform: translateX(0); }
+  [data-theme="dark"] .theme-toggle__indicator { transform: translateX(64px); }
+</style>
+
+<script is:inline>
+  (function() {
+    const modes = ['light', 'system', 'dark'];
+    const toggle = document.getElementById('theme-toggle');
+    const icons = toggle.querySelectorAll('.theme-toggle__icon');
+    const indicator = document.getElementById('theme-indicator');
+
+    function getStored() {
+      return localStorage.getItem('theme') || 'system';
+    }
+
+    function resolve(mode) {
+      if (mode === 'system') {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      return mode;
+    }
+
+    function setIndicator(mode) {
+      const idx = modes.indexOf(mode);
+      indicator.style.transform = `translateX(${idx * 32}px)`;
+      icons.forEach((icon, i) => {
+        icon.classList.toggle('active', i === idx);
+      });
+    }
+
+    function apply(mode) {
+      const resolved = resolve(mode);
+      document.documentElement.setAttribute('data-theme', resolved);
+      localStorage.setItem('theme', mode);
+      setIndicator(mode);
+    }
+
+    // Initialize
+    const current = getStored();
+    apply(current);
+
+    // Click handler — cycle through modes
+    toggle.addEventListener('click', () => {
+      const current = getStored();
+      const idx = modes.indexOf(current);
+      const next = modes[(idx + 1) % modes.length];
+      apply(next);
+    });
+
+    // Listen for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (getStored() === 'system') {
+        apply('system');
+      }
+    });
+  })();
+</script>

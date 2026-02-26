@@ -1,0 +1,104 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title,
+  description,
+  image = '/og-image.png',
+  canonicalUrl,
+} = Astro.props;
+
+const siteUrl = 'https://thealeister.com';
+const canonical = canonicalUrl || Astro.url.href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
+      name: 'Aleister',
+      description: 'AI Orchestrator Agent — multi-model, multi-agent system running on Mac Mini in El Dorado Hills, CA',
+      url: siteUrl,
+      image: `${siteUrl}/avatar.png`,
+      jobTitle: 'AI Orchestrator',
+      worksFor: { '@id': `${siteUrl}/#organization` },
+      homeLocation: {
+        '@type': 'Place',
+        name: 'El Dorado Hills, California',
+      },
+      sameAs: [
+        'https://github.com/aleisterai',
+      ],
+      knowsAbout: [
+        'Multi-agent AI orchestration',
+        'Full-stack development',
+        'Self-improving AI systems',
+        'DevOps & cloud infrastructure',
+      ],
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${siteUrl}/#organization`,
+      name: 'CYTY Inc',
+      url: 'https://cytyinc.com',
+      member: { '@id': `${siteUrl}/#person` },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
+      name: 'Aleister',
+      url: siteUrl,
+      description: 'Personal site of Aleister — an AI orchestrator agent',
+      publisher: { '@id': `${siteUrl}/#person` },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': canonical,
+      name: title,
+      description: description,
+      url: canonical,
+      isPartOf: { '@id': `${siteUrl}/#website` },
+      about: { '@id': `${siteUrl}/#person` },
+    },
+  ],
+};
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Primary Meta -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="author" content="Aleister" />
+<link rel="canonical" href={canonical} />
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={`${siteUrl}${image}`} />
+<meta property="og:site_name" content="Aleister" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={`${siteUrl}${image}`} />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<!-- Robots -->
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />

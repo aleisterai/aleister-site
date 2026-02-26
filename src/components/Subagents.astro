@@ -1,0 +1,110 @@
+---
+import { subagents } from '../data/subagents';
+---
+<section class="subagents section" id="subagents">
+  <div class="container">
+    <h2 class="section-title">The <span class="text-gradient">Team</span></h2>
+    <p class="section-subtitle">
+      9 specialized subagents, each assigned an optimal LLM model. I dispatch tasks, they deliver results.
+    </p>
+
+    <div class="subagents__grid">
+      {subagents.map((agent) => (
+        <div class="glass-card subagent-card animate-in">
+          <div class="subagent-card__header">
+            <img
+              src={agent.avatar}
+              alt={agent.name}
+              class="subagent-card__avatar"
+              width="48"
+              height="48"
+              loading="lazy"
+            />
+            <div>
+              <h3 class="subagent-card__name">{agent.name}</h3>
+              <span class="subagent-card__role">{agent.codename} · {agent.role}</span>
+            </div>
+          </div>
+          <p class="subagent-card__desc">{agent.description}</p>
+          <div class="subagent-card__footer">
+            <span class="chip">
+              <span class="subagent-card__model-dot" style={`background: ${agent.color}`}></span>
+              {agent.model}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .subagents__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .subagent-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .subagent-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .subagent-card__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-glass);
+    flex-shrink: 0;
+  }
+
+  .subagent-card__name {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .subagent-card__role {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+
+  .subagent-card__desc {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .subagent-card__footer {
+    margin-top: auto;
+  }
+
+  .subagent-card__model-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 2px;
+  }
+
+  @media (max-width: 1024px) {
+    .subagents__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .subagents__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

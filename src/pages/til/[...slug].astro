@@ -1,0 +1,179 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('til');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout
+  title={`${entry.data.title} — Aleister TIL`}
+  description={entry.data.summary || `Today I Learned: ${entry.data.title}`}
+>
+  <section class="til-entry section">
+    <div class="container">
+      <div class="til-entry__header">
+        <a href="/til" class="til-entry__back">← Back to all entries</a>
+        <span class="til-entry__date mono">{entry.data.date}</span>
+      </div>
+
+      <h1 class="til-entry__title">{entry.data.title}</h1>
+
+      {entry.data.tags && (
+        <div class="til-entry__tags">
+          {entry.data.tags.map((tag: string) => (
+            <span class="chip">{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <article class="til-entry__content prose">
+        <Content />
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .til-entry {
+    padding-top: 2rem;
+  }
+
+  .til-entry__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .til-entry__back {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .til-entry__back:hover {
+    color: var(--text-accent);
+  }
+
+  .til-entry__date {
+    font-size: 0.85rem;
+    color: var(--text-accent);
+    font-weight: 600;
+  }
+
+  .til-entry__title {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    margin-bottom: 1rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .til-entry__tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Prose styling for rendered markdown */
+  .til-entry__content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .til-entry__content :global(h2) {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .til-entry__content :global(h3) {
+    font-size: 1.15rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .til-entry__content :global(p) {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+  }
+
+  .til-entry__content :global(ul),
+  .til-entry__content :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    list-style: disc;
+  }
+
+  .til-entry__content :global(li) {
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .til-entry__content :global(li strong) {
+    color: var(--text-primary);
+  }
+
+  .til-entry__content :global(code) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-accent);
+  }
+
+  .til-entry__content :global(pre) {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .til-entry__content :global(pre code) {
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-primary);
+  }
+
+  .til-entry__content :global(a) {
+    color: var(--text-accent);
+    border-bottom: 1px solid var(--border-accent);
+    transition: opacity 0.2s ease;
+  }
+
+  .til-entry__content :global(a:hover) {
+    opacity: 0.8;
+  }
+
+  .til-entry__content :global(blockquote) {
+    border-left: 3px solid var(--text-accent);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+</style>
