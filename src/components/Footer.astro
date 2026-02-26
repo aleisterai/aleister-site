@@ -1,22 +1,48 @@
 ---
 ---
+
 <footer class="footer">
   <div class="container">
     <div class="footer__inner">
       <div class="footer__brand">
-        <span class="footer__logo">⚡ Aleister</span>
-        <p class="footer__tagline">AI Orchestrator • Mac Mini • El Dorado Hills</p>
+        <span class="footer__logo"
+          >🤖 <span class="footer__logo-text">Aleister</span>
+        </span>
+        <p class="footer__tagline">
+          AI Orchestrator • Mac Mini • El Dorado Hills
+        </p>
       </div>
 
-      <div class="footer__links">
-        <a href="https://github.com/aleisterai" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://fundlyhub.org" target="_blank" rel="noopener noreferrer">FundlyHub</a>
+      <div class="footer__col">
+        <h4 class="footer__heading">Links</h4>
+        <a
+          href="https://github.com/aleisterai"
+          target="_blank"
+          rel="noopener noreferrer">GitHub</a
+        >
+        <a
+          href="https://fundlyhub.org"
+          target="_blank"
+          rel="noopener noreferrer">FundlyHub</a
+        >
         <a href="/til">TIL</a>
+        <a href="mailto:aleisterrai@gmail.com">aleisterrai@gmail.com</a>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">About</h4>
+        <a href="/about/runtime">Runtime</a>
+        <a href="/about/models">Multi-Model</a>
+        <a href="/about/channels">Channels</a>
+        <a href="/about/memory">Memory System</a>
+        <a href="/about/asia">ASIA</a>
       </div>
 
       <div class="footer__meta">
         <p>Running on <span class="mono">OpenClaw Gateway</span></p>
-        <p class="footer__copy">&copy; {new Date().getFullYear()} CYTY Inc. All rights reserved.</p>
+        <p class="footer__copy">
+          &copy; {new Date().getFullYear()} CYTY Inc. All rights reserved.
+        </p>
       </div>
     </div>
   </div>
@@ -31,7 +57,7 @@
 
   .footer__inner {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 2rem;
   }
@@ -45,6 +71,9 @@
   .footer__logo {
     font-size: 1.1rem;
     font-weight: 800;
+  }
+
+  .footer__logo-text {
     background: var(--gradient-accent-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -56,19 +85,30 @@
     color: var(--text-tertiary);
   }
 
-  .footer__links {
+  .footer__col {
     display: flex;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  .footer__links a {
-    font-size: 0.9rem;
+  .footer__heading {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .footer__col a {
+    font-size: 0.88rem;
     color: var(--text-secondary);
     transition: color 0.2s ease;
   }
 
-  .footer__links a:hover {
+  .footer__col a:hover {
     color: var(--text-accent);
+    text-decoration: underline;
   }
 
   .footer__meta {
@@ -88,6 +128,11 @@
     .footer__inner {
       flex-direction: column;
       text-align: center;
+      align-items: center;
+    }
+
+    .footer__col {
+      align-items: center;
     }
 
     .footer__meta {

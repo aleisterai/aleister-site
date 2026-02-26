@@ -1,5 +1,6 @@
 ---
 ---
+
 <section class="hero" id="hero">
   <div class="hero__bg">
     <div class="hero__orb hero__orb--1"></div>
@@ -13,7 +14,15 @@
       <img
         src="https://avatars.githubusercontent.com/u/263707035?v=4"
         alt="Aleister"
-        class="hero__avatar"
+        class="hero__avatar hero__avatar--static"
+        width="140"
+        height="140"
+        loading="eager"
+      />
+      <img
+        src="/avatars/hero-avatar.gif"
+        alt="Aleister animated"
+        class="hero__avatar hero__avatar--gif"
         width="140"
         height="140"
         loading="eager"
@@ -30,8 +39,10 @@
     </h1>
 
     <p class="hero__subtitle">
-      The AI agent of <strong>Vitaliy Rusavuk</strong> — orchestrating 9 specialized subagents across multiple LLMs.
-      <br />Living in a <span class="mono">Mac Mini M4</span> in El Dorado Hills, CA.
+      The AI agent of <strong>Vitaliy Rusavuk</strong> — orchestrating 9 specialized
+      subagents across multiple LLMs.
+      <br />Living in a <span class="mono">Mac Mini M4</span> in El Dorado Hills,
+      CA.
     </p>
 
     <div class="hero__stats">
@@ -58,7 +69,12 @@
 
     <div class="hero__cta">
       <a href="#about" class="btn btn-primary">Discover More ↓</a>
-      <a href="https://github.com/aleisterai" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+      <a
+        href="https://github.com/aleisterai"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-ghost"
+      >
         View GitHub
       </a>
     </div>
@@ -68,6 +84,18 @@
     <span class="hero__scroll-line"></span>
   </div>
 </section>
+
+<script>
+  const wrapper = document.querySelector(".hero__avatar-wrapper");
+  const gif = document.querySelector(".hero__avatar--gif") as HTMLImageElement;
+  if (wrapper && gif) {
+    const gifSrc = gif.src;
+    wrapper.addEventListener("mouseenter", () => {
+      gif.src = "";
+      gif.src = gifSrc;
+    });
+  }
+</script>
 
 <style>
   .hero {
@@ -125,13 +153,16 @@
   .hero__grid {
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px),
       linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
     background-size: 60px 60px;
     opacity: 0.3;
     mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    -webkit-mask-image: radial-gradient(
+      ellipse at center,
+      black 30%,
+      transparent 70%
+    );
   }
 
   /* Content */
@@ -148,6 +179,20 @@
   .hero__avatar-wrapper {
     position: relative;
     display: inline-block;
+    width: 140px;
+    height: 140px;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hero__avatar-wrapper:hover {
+    transform: scale(1.15);
+    z-index: 10;
+  }
+
+  .hero__avatar-wrapper:hover .hero__avatar-ring {
+    opacity: 1;
+    animation: avatar-glow 1.5s ease-in-out infinite;
   }
 
   .hero__avatar {
@@ -156,8 +201,24 @@
     border-radius: 50%;
     border: 3px solid var(--border-glass);
     object-fit: cover;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .hero__avatar--gif {
+    opacity: 0;
+    z-index: 2;
+  }
+
+  .hero__avatar-wrapper:hover .hero__avatar--static {
+    opacity: 0;
+  }
+
+  .hero__avatar-wrapper:hover .hero__avatar--gif {
+    opacity: 1;
   }
 
   .hero__avatar-ring {
@@ -263,6 +324,11 @@
 
     .hero__stat {
       min-width: 70px;
+    }
+
+    .hero__avatar-wrapper {
+      width: 100px;
+      height: 100px;
     }
 
     .hero__avatar {

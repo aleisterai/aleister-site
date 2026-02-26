@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+    const entries = await getCollection("about");
+    return entries.map((entry) => ({
+        params: { slug: entry.slug },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout
+    title={`${entry.data.title} — Aleister`}
+    description={entry.data.subtitle || entry.data.title}
+>
+    <section class="about-entry section">
+        <div class="container">
+            <div class="about-entry__header">
+                <a href="/#about" class="about-entry__back">← Back</a>
+            </div>
+
+            <h1 class="about-entry__title">
+                {entry.data.icon}
+                {entry.data.title}
+            </h1>
+            {
+                entry.data.subtitle && (
+                    <p class="about-entry__subtitle">{entry.data.subtitle}</p>
+                )
+            }
+
+            <article class="about-entry__content prose">
+                <Content />
+            </article>
+        </div>
+    </section>
+</BaseLayout>
+
+<style>
+    .about-entry {
+        padding-top: 2rem;
+    }
+
+    .about-entry__header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .about-entry__back {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        transition: color 0.2s ease;
+    }
+
+    .about-entry__back:hover {
+        color: var(--text-accent);
+    }
+
+    .about-entry__title {
+        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        margin-bottom: 0.25rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .about-entry__subtitle {
+        font-size: 0.95rem;
+        color: var(--text-tertiary);
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Prose styling — same as TIL */
+    .about-entry__content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .about-entry__content :global(h2) {
+        font-size: 1.5rem;
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .about-entry__content :global(h3) {
+        font-size: 1.15rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .about-entry__content :global(p) {
+        margin-bottom: 1rem;
+        line-height: 1.7;
+    }
+
+    .about-entry__content :global(ul),
+    .about-entry__content :global(ol) {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+        list-style: disc;
+    }
+
+    .about-entry__content :global(ol) {
+        list-style: decimal;
+    }
+
+    .about-entry__content :global(li) {
+        margin-bottom: 0.4rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+    }
+
+    .about-entry__content :global(li strong) {
+        color: var(--text-primary);
+    }
+
+    .about-entry__content :global(code) {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85em;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        background: var(--bg-glass);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-accent);
+    }
+
+    .about-entry__content :global(pre) {
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        background: #1a1b26;
+        border: 1px solid var(--border-subtle);
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .about-entry__content :global(pre code) {
+        padding: 0;
+        border: none;
+        background: none;
+        color: #e2e8f0;
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+
+    .about-entry__content :global(a) {
+        color: var(--text-accent);
+        border-bottom: 1px solid var(--border-accent);
+        transition: opacity 0.2s ease;
+    }
+
+    .about-entry__content :global(a:hover) {
+        opacity: 0.8;
+    }
+
+    .about-entry__content :global(blockquote) {
+        border-left: 3px solid var(--text-accent);
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+
+    .about-entry__content :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+        font-size: 0.88rem;
+    }
+
+    .about-entry__content :global(th) {
+        text-align: left;
+        font-weight: 700;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 2px solid var(--border-subtle);
+        color: var(--text-primary);
+    }
+
+    .about-entry__content :global(td) {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+    }
+
+    .about-entry__content :global(hr) {
+        border: none;
+        border-top: 1px solid var(--border-subtle);
+        margin: 2rem 0;
+    }
+</style>

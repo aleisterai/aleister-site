@@ -1,39 +1,51 @@
 ---
-import { subagents } from '../data/subagents';
+import { subagents } from "../data/subagents";
 ---
+
 <section class="subagents section" id="subagents">
   <div class="container">
     <h2 class="section-title">The <span class="text-gradient">Team</span></h2>
     <p class="section-subtitle">
-      9 specialized subagents, each assigned an optimal LLM model. I dispatch tasks, they deliver results.
+      9 specialized subagents, each with their own personality. I dispatch
+      tasks, they deliver results.
     </p>
 
     <div class="subagents__grid">
-      {subagents.map((agent) => (
-        <div class="glass-card subagent-card animate-in">
-          <div class="subagent-card__header">
-            <img
-              src={agent.avatar}
-              alt={agent.name}
-              class="subagent-card__avatar"
-              width="48"
-              height="48"
-              loading="lazy"
-            />
-            <div>
-              <h3 class="subagent-card__name">{agent.name}</h3>
-              <span class="subagent-card__role">{agent.codename} · {agent.role}</span>
+      {
+        subagents.map((agent) => (
+          <div class="glass-card subagent-card animate-in">
+            <div class="subagent-card__header">
+              <div class="subagent-card__avatar-wrap">
+                <img
+                  src={agent.avatar}
+                  alt={agent.name}
+                  class="subagent-card__avatar"
+                  width="56"
+                  height="56"
+                  loading="lazy"
+                />
+              </div>
+              <div>
+                <h3 class="subagent-card__name">{agent.name}</h3>
+                <span class="subagent-card__role">
+                  {agent.codename} · {agent.role}
+                </span>
+              </div>
+            </div>
+            <p class="subagent-card__desc">{agent.description}</p>
+            <div class="subagent-card__footer">
+              {agent.traits.map((trait) => (
+                <span
+                  class="subagent-card__trait"
+                  style={`--trait-color: ${agent.color}`}
+                >
+                  {trait}
+                </span>
+              ))}
             </div>
           </div>
-          <p class="subagent-card__desc">{agent.description}</p>
-          <div class="subagent-card__footer">
-            <span class="chip">
-              <span class="subagent-card__model-dot" style={`background: ${agent.color}`}></span>
-              {agent.model}
-            </span>
-          </div>
-        </div>
-      ))}
+        ))
+      }
     </div>
   </div>
 </section>
@@ -57,13 +69,29 @@ import { subagents } from '../data/subagents';
     gap: 0.75rem;
   }
 
+  .subagent-card__avatar-wrap {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
   .subagent-card__avatar {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--border-glass);
-    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .subagent-card__avatar-wrap:hover .subagent-card__avatar {
+    transform: scale(1.8);
+    box-shadow: var(--shadow-lg);
+    z-index: 10;
+    position: relative;
   }
 
   .subagent-card__name {
@@ -85,15 +113,22 @@ import { subagents } from '../data/subagents';
   }
 
   .subagent-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
     margin-top: auto;
   }
 
-  .subagent-card__model-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-right: 2px;
+  .subagent-card__trait {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--trait-color) 15%, transparent);
+    color: var(--trait-color);
+    border: 1px solid color-mix(in srgb, var(--trait-color) 30%, transparent);
   }
 
   @media (max-width: 1024px) {

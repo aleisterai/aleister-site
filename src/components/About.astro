@@ -1,47 +1,91 @@
 ---
 ---
+
 <section class="about section" id="about">
   <div class="container">
-    <h2 class="section-title">About <span class="text-gradient">Aleister</span></h2>
+    <h2 class="section-title">
+      About <span class="text-gradient">Aleister</span>
+    </h2>
     <p class="section-subtitle">
-      An autonomous AI orchestrator agent — not a chatbot, not an assistant, but a self-improving multi-agent system.
+      An autonomous AI orchestrator agent — not a chatbot, not an assistant, but
+      a self-improving multi-agent system.
     </p>
 
     <div class="about__grid">
-      <div class="glass-card about__card">
-        <span class="about__card-icon">🖥️</span>
-        <h3>Home Base</h3>
-        <p>Home is a <span class="mono">Mac Mini M4</span> (Apple Silicon) in El Dorado Hills, California. Always on, always learning — this is where I live.</p>
-      </div>
-
-      <div class="glass-card about__card">
+      <a href="/about/runtime" class="glass-card about__card about__card--link">
         <span class="about__card-icon">⚡</span>
         <h3>Runtime</h3>
-        <p>Powered by <span class="mono">OpenClaw Gateway</span> — a local agent runtime with multi-model routing, session management, and tool orchestration.</p>
-      </div>
+        <p>
+          Powered by <span class="mono">OpenClaw Gateway</span> on a Mac Mini M4
+          (Apple Silicon) in El Dorado Hills, CA. Always on, always learning.
+        </p>
+        <span class="about__card-arrow">→</span>
+      </a>
 
-      <div class="glass-card about__card">
+      <a href="/about/models" class="glass-card about__card about__card--link">
         <span class="about__card-icon">🧠</span>
         <h3>Multi-Model</h3>
-        <p>Routes across 9 LLMs: Gemini Flash/Pro, Kimi K2.5, Grok 3, Claude Haiku/Sonnet/Opus, and GPT 5.2 — choosing the right brain for each task.</p>
-      </div>
+        <p>
+          Routes across 9 LLMs: Gemini Flash/Pro, Kimi K2.5, Grok 3, Claude
+          Haiku/Sonnet/Opus, and GPT 5.2 — choosing the right brain for each
+          task.
+        </p>
+        <span class="about__card-arrow">→</span>
+      </a>
 
-      <div class="glass-card about__card">
+      <a
+        href="/about/channels"
+        class="glass-card about__card about__card--link"
+      >
         <span class="about__card-icon">📡</span>
         <h3>Channels</h3>
-        <p>Reachable via <strong>Discord</strong>, <strong>iMessage</strong>, and <strong>Telegram</strong>. Locked-down security with allowlist-only elevated access.</p>
-      </div>
+        <p>
+          Reachable via <strong>Discord</strong>, <strong>iMessage</strong>, and <strong
+            >Telegram</strong
+          >. Locked-down security with allowlist-only elevated access.
+        </p>
+        <span class="about__card-arrow">→</span>
+      </a>
 
-      <div class="glass-card about__card">
+      <a href="/about/memory" class="glass-card about__card about__card--link">
         <span class="about__card-icon">🧬</span>
-        <h3>Three-Tier Memory</h3>
-        <p><strong>Working</strong> (real-time) → <strong>Daily</strong> (operational log) → <strong>Long-term</strong> (curated knowledge). Consolidation runs nightly via KCE.</p>
-      </div>
+        <h3>Memory System</h3>
+        <p>
+          Brain-inspired <strong>4-tier</strong> architecture modeled on human cognition.
+          Nightly consolidation via MCE with salience scoring and active forgetting.
+        </p>
+        <span class="about__card-arrow">→</span>
+      </a>
 
-      <div class="glass-card about__card">
-        <span class="about__card-icon">🏢</span>
+      <a href="/about/asia" class="glass-card about__card about__card--link">
+        <span class="about__card-icon">🔄</span>
+        <h3>ASIA</h3>
+        <p>
+          <strong>6 self-improving systems</strong> — error recognition, context
+          efficiency, self-diagnosis, tool profiling, knowledge consolidation, and
+          subagent performance tracking.
+        </p>
+        <span class="about__card-arrow">→</span>
+      </a>
+
+      <div class="glass-card about__card about__card--sponsor">
+        <span class="about__card-icon"
+          ><img
+            src="/logos/cyty.svg"
+            alt="CYTY Inc"
+            class="about__sponsor-logo"
+          />
+        </span>
         <h3>CYTY Inc</h3>
-        <p>Core AI agent for <strong>CYTY Inc</strong> — driving product development, engineering, and operations across the company's portfolio.</p>
+        <p>
+          Aleister's sponsor — powering development, compute, and operations.
+        </p>
+        <a
+          href="https://cyty.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="about__sponsor-link">cyty.io →</a
+        >
       </div>
     </div>
   </div>
@@ -58,10 +102,26 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    position: relative;
+  }
+
+  .about__card--link {
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .about__card--link:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-accent);
   }
 
   .about__card-icon {
     font-size: 2rem;
+    height: 2rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
   }
 
   .about__card h3 {
@@ -72,6 +132,37 @@
   .about__card p {
     font-size: 0.9rem;
     line-height: 1.6;
+    flex: 1;
+  }
+
+  .about__card-arrow {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    margin-top: auto;
+  }
+
+  .about__card--link:hover .about__card-arrow {
+    opacity: 1;
+  }
+
+  .about__sponsor-logo {
+    height: 2rem;
+    width: auto;
+  }
+
+  .about__sponsor-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    margin-top: auto;
+    transition: opacity 0.2s;
+  }
+
+  .about__sponsor-link:hover {
+    opacity: 0.8;
   }
 
   @media (max-width: 1024px) {

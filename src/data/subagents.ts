@@ -1,5 +1,4 @@
 export interface Subagent {
-    emoji: string;
     name: string;
     codename: string;
     role: string;
@@ -7,11 +6,11 @@ export interface Subagent {
     description: string;
     color: string;
     avatar: string;
+    traits: string[];
 }
 
 export const subagents: Subagent[] = [
     {
-        emoji: '🛠️',
         name: 'Cipher',
         codename: 'Coder',
         role: 'Full-stack Dev',
@@ -19,9 +18,9 @@ export const subagents: Subagent[] = [
         description: 'Ships production code — backend APIs, frontend components, database migrations, CI/CD pipelines.',
         color: '#f97316',
         avatar: '/avatars/cipher.png',
+        traits: ['dedicated', 'antisocial'],
     },
     {
-        emoji: '🔬',
         name: 'Sage',
         codename: 'Researcher',
         role: 'Academic-grade Research',
@@ -29,9 +28,9 @@ export const subagents: Subagent[] = [
         description: 'Deep dives into technical topics with citations, competitive analysis, and strategic reports.',
         color: '#06b6d4',
         avatar: '/avatars/sage.png',
+        traits: ['wise', 'caring', 'humble'],
     },
     {
-        emoji: '✍️',
         name: 'Quill',
         codename: 'Writer',
         role: 'Content & Novel',
@@ -39,9 +38,9 @@ export const subagents: Subagent[] = [
         description: 'Crafts documentation, blog posts, creative writing, and long-form narrative content.',
         color: '#a855f7',
         avatar: '/avatars/quill.png',
+        traits: ['romancer', 'dreamer', 'calm'],
     },
     {
-        emoji: '📋',
         name: 'Rally',
         codename: 'Scrum Master',
         role: 'GitHub Projects',
@@ -49,55 +48,56 @@ export const subagents: Subagent[] = [
         description: 'Manages sprints, backlog grooming, issue tracking, and project velocity reporting.',
         color: '#22c55e',
         avatar: '/avatars/rally.png',
+        traits: ['observant', 'resilient'],
     },
     {
-        emoji: '📱',
         name: 'Echo',
         codename: 'Social Media',
         role: 'Multi-platform',
         model: 'Haiku 4.5',
         description: 'Handles content distribution across platforms — posts, threads, engagement, and scheduling.',
-        color: '#ec4899',
+        color: '#7c6ef6',
         avatar: '/avatars/echo.png',
+        traits: ['creative', 'curious', 'social'],
     },
     {
-        emoji: '🎨',
         name: 'Pixel',
         codename: 'Designer',
         role: 'UI/UX & Assets',
         model: 'Opus 4.6',
         description: 'Creates design systems, UI mockups, component specs, and brand assets.',
-        color: '#f43f5e',
+        color: '#e5a030',
         avatar: '/avatars/pixel.png',
+        traits: ['creative', 'collaborative', 'perfectionist'],
     },
     {
-        emoji: '🔒',
         name: 'Forge',
         codename: 'DevOps',
         role: 'Infrastructure',
         model: 'Sonnet 4.6',
         description: 'Manages AWS infrastructure, Docker containers, deployments, and security configurations.',
-        color: '#64748b',
+        color: '#dc2626',
         avatar: '/avatars/forge.png',
+        traits: ['nerd', 'lazy', 'analytical'],
     },
     {
-        emoji: '📊',
         name: 'Prism',
         codename: 'Analytics',
         role: 'SEO & Growth',
         model: 'Sonnet 4.6',
         description: 'Tracks metrics, generates growth reports, optimizes SEO, and analyzes user behavior.',
-        color: '#eab308',
+        color: '#22b8cf',
         avatar: '/avatars/prism.png',
+        traits: ['strategic', 'adaptable', 'communicative'],
     },
     {
-        emoji: '🎵',
         name: 'Lyra',
         codename: 'Music Producer',
         role: 'Suno → Spotify',
         model: 'Sonnet 4.6',
         description: 'Creates music with Suno AI, manages distribution pipelines, and handles release scheduling.',
-        color: '#8b5cf6',
+        color: '#e84393',
         avatar: '/avatars/lyra.png',
+        traits: ['upbeat', 'visionary', 'musician'],
     },
 ];

@@ -10,4 +10,14 @@ const til = defineCollection({
     }),
 });
 
-export const collections = { til };
+const about = defineCollection({
+    type: 'content',
+    schema: z.object({
+        title: z.string(),
+        icon: z.string(),
+        subtitle: z.string().optional(),
+    }),
+});
+
+export const collections = { til, about };
+

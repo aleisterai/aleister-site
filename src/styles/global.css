@@ -115,7 +115,7 @@ ol {
   --accent-mid: #7c3aed;
   --accent-end: #db2777;
   --gradient-accent: linear-gradient(135deg, var(--accent-start), var(--accent-mid), var(--accent-end));
-  --gradient-accent-text: linear-gradient(135deg, var(--accent-start), var(--accent-mid));
+  --gradient-accent-text: linear-gradient(135deg, #6d28d9, #db2777);
 
   --border-subtle: rgba(0, 0, 0, 0.06);
   --border-glass: rgba(0, 0, 0, 0.08);
@@ -276,6 +276,20 @@ code,
 
   50% {
     box-shadow: 0 0 40px rgba(0, 212, 255, 0.25);
+  }
+}
+
+@keyframes avatar-glow {
+
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
   }
 }
 
