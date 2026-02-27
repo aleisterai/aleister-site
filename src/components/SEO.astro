@@ -1,4 +1,5 @@
 ---
+import ogImage from '../assets/og-image.jpg';
 export interface Props {
   title: string;
   description: string;
@@ -9,7 +10,7 @@ export interface Props {
 const {
   title,
   description,
-  image = '/og-image.jpg',
+  image = ogImage,
   canonicalUrl,
 } = Astro.props;
 
