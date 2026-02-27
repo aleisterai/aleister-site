@@ -58,7 +58,7 @@ flowchart TB
     end
 
     subgraph SubagentProposals["📝 Subagent Proposals"]
-        PendingMemories["pending-memories.md<br/>(Gated Write Access)"]
+        PendingMemories["pending-memories.md<br/>Gated Write Access"]
     end
 
     subgraph T2["📋 Tier 2: Mid-term (Episodic + Semantic)"]
@@ -77,14 +77,14 @@ flowchart TB
     subgraph Engine["🔬 Neural Engine (MCE)"]
         Gemini["Gemini Flash API<br/>Salience Scoring<br/>Memory Extraction<br/>Reflection Generation"]
         Dedup["Deduplication<br/>Word-overlap similarity"]
-        Decay["Decay Engine<br/>(Enhanced Model)"]
-        Reflection["Self-Reflection Engine<br/>(Internal Monologue)"]
+        Decay["Decay Engine<br/>Enhanced Model"]
+        Reflection["Self-Reflection Engine<br/>Internal Monologue"]
         GitAudit["Git Audit Integration"]
     end
 
     subgraph ReflectionOutput["💡 Reflection Output"]
-        ReflectionLog["reflection-log.md<br/>(Summaries)"]
-        FullReflections["reflections/YYYY-MM-DD.md<br/>(Full Monologues)"]
+        ReflectionLog["reflection-log.md<br/>Summaries"]
+        FullReflections["reflections/YYYY-MM-DD.md<br/>Full Monologues"]
     end
 
     Input --> Buffer
@@ -93,7 +93,7 @@ flowchart TB
     Session -->|"Compaction trigger"| Compaction
     Compaction -->|"Flush important<br/>memories first"| Daily
 
-    PendingMemories --"MCE Processing"--> Gemini
+    PendingMemories -->|"MCE Processing"| Gemini
 
     Daily -->|"MCE nightly<br/>(11 PM)"| Gemini
     Gemini --> Dedup
@@ -102,21 +102,21 @@ flowchart TB
     Dedup -->|"Relations"| GraphRelations
     Dedup -->|"Audit trail"| AuditLog
 
-    AuditLog --"Git Commit"--> GitAudit
-    Knowledge --"Git Commit"--> GitAudit
-    MemoryMD --"Git Commit"--> GitAudit
-    PendingMemories --"Git Commit (Clear)"--> GitAudit
-    ReflectionLog --"Git Commit"--> GitAudit
-    FullReflections --"Git Commit"--> GitAudit
+    AuditLog -->|"Git Commit"| GitAudit
+    Knowledge -->|"Git Commit"| GitAudit
+    MemoryMD -->|"Git Commit"| GitAudit
+    PendingMemories -->|"Git Commit"| GitAudit
+    ReflectionLog -->|"Git Commit"| GitAudit
+    FullReflections -->|"Git Commit"| GitAudit
 
     Dedup -->|"Salience ≥ 0.75"| MemoryMD
-    MemoryMD --"Updated"--> AuditLog
+    MemoryMD -->|"Updated"| AuditLog
 
     Gemini --> Reflection
     Reflection --> ReflectionLog
     Reflection --> FullReflections
 
-    AuditLog --"Decay Decision"--> Decay
+    AuditLog -->|"Decay Decision"| Decay
     Decay -->|"Archived Status"| AuditLog
 
     style T0 fill:#ff644420,stroke:#ff6444
@@ -231,25 +231,25 @@ The MCE is the "hippocampal replay" analog — it runs nightly and consolidates 
 
 ```mermaid
 graph TD
-    A[Subagent Proposals (pending-memories.md)] --> B(Review & Extract via Gemini)
-    C[Daily Notes (memory/YYYY-MM-DD.md)] --> B
-    B --> D{Combined Raw Memories}
-    D --> E[Deduplicate vs Audit Log & Self]
-    E --> F[Log to Audit Store (memory-store.jsonl)]
-    F --> G[Git Commit (Audit Log)]
-    E --> H[Write to Knowledge Files (memory/knowledge/*.md)]
-    H --> I[Update Knowledge Graph (memory/graph/*.md)]
-    I --> J[Git Commit (Knowledge Files & Graph)]
-    E --> K{Filter for Promotion<br/>(Effective Salience ≥ 0.75)}
-    K --> L[Promote to MEMORY.md]
-    L --> M[Git Commit (MEMORY.md)]
-    M --> N[Perform Automated Self-Reflection]
-    N --> O[Record Reflection (reflection-log.md, reflections/)]
-    O --> P[Git Commit (Reflection Logs)]
-    P --> Q[Decay Stale Items (Enhanced Model)]
-    Q --> R[Update Audit Log Status]
-    R --> S[Git Commit (Decayed Items)]
-    S --> T[MCE Complete]
+    A["Subagent Proposals"] --> B["Review and Extract via Gemini"]
+    C["Daily Notes"] --> B
+    B --> D{"Combined Raw Memories"}
+    D --> E["Deduplicate vs Audit Log"]
+    E --> F["Log to Audit Store"]
+    F --> G["Git Commit: Audit Log"]
+    E --> H["Write to Knowledge Files"]
+    H --> I["Update Knowledge Graph"]
+    I --> J["Git Commit: Knowledge + Graph"]
+    E --> K{"Salience >= 0.75?"}
+    K --> L["Promote to MEMORY.md"]
+    L --> M["Git Commit: MEMORY.md"]
+    M --> N["Self-Reflection"]
+    N --> O["Record Reflection"]
+    O --> P["Git Commit: Reflections"]
+    P --> Q["Decay Stale Items"]
+    Q --> R["Update Audit Log"]
+    R --> S["Git Commit: Decayed"]
+    S --> T["MCE Complete"]
 
     style A fill:#ff88cc,stroke:#ff88cc
     style C fill:#44aaff,stroke:#44aaff
