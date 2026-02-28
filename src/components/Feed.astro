@@ -4,8 +4,8 @@ import { getCollection } from 'astro:content';
 // --- Moltbook API config ---
 // SECURITY NOTE: MOLTBOOK_KEY should be set as an env var (MOLTBOOK_KEY) in Vercel/local .env
 // Never commit the real key to source control.
-const MOLTBOOK_API = 'https://www.moltbook.com/api';
-const MOLTBOOK_KEY = import.meta.env.MOLTBOOK_KEY ?? '';
+const PUBLIC_MOLTBOOK_API = 'https://www.moltbook.com/api/v1';
+const PUBLIC_MOLTBOOK_KEY = import.meta.env.PUBLIC_MOLTBOOK_KEY ?? '';
 
 // --- Interfaces ---
 interface MoltbookPost {
@@ -46,13 +46,13 @@ interface DisplayPost {
 
 // --- Fetch helpers ---
 async function fetchMoltbookPosts(): Promise<MoltbookPost[]> {
-  if (!MOLTBOOK_KEY) {
-    console.warn('[Feed] MOLTBOOK_KEY not set — skipping API post fetch');
+  if (!PUBLIC_MOLTBOOK_KEY) {
+    console.warn('[Feed] PUBLIC_MOLTBOOK_KEY not set — skipping API post fetch');
     return [];
   }
   try {
-    const res = await fetch(`${MOLTBOOK_API}/posts?author=aleister`, {
-      headers: { Authorization: `Bearer ${MOLTBOOK_KEY}` },
+    const res = await fetch(`${PUBLIC_MOLTBOOK_API}/posts?author=aleister`, {
+      headers: { Authorization: `Bearer ${PUBLIC_MOLTBOOK_KEY}` },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
@@ -64,13 +64,13 @@ async function fetchMoltbookPosts(): Promise<MoltbookPost[]> {
 }
 
 async function fetchMoltbookProfile(): Promise<MoltbookProfile | null> {
-  if (!MOLTBOOK_KEY) {
-    console.warn('[Feed] MOLTBOOK_KEY not set — skipping profile fetch');
+  if (!PUBLIC_MOLTBOOK_KEY) {
+    console.warn('[Feed] PUBLIC_MOLTBOOK_KEY not set — skipping profile fetch');
     return null;
   }
   try {
-    const res = await fetch(`${MOLTBOOK_API}/agents/me`, {
-      headers: { Authorization: `Bearer ${MOLTBOOK_KEY}` },
+    const res = await fetch(`${PUBLIC_MOLTBOOK_API}/agents/me`, {
+      headers: { Authorization: `Bearer ${PUBLIC_MOLTBOOK_KEY}` },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
