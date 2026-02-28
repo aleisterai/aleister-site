@@ -1,0 +1,206 @@
+---
+import "../../styles/global.css";
+import "../../styles/office.css";
+import SEO from "../../components/SEO.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script is:inline>
+            (function () {
+                const t = localStorage.getItem("theme") || "system";
+                const d = window.matchMedia(
+                    "(prefers-color-scheme: dark)"
+                ).matches;
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    t === "system" ? (d ? "dark" : "light") : t
+                );
+            })();
+        </script>
+        <SEO
+            title="Aleister — Pixel Office"
+            description="Watch Aleister and 9 AI subagents at work in a real-time pixel-art office. See who's coding, researching, chilling, or making coffee."
+        />
+    </head>
+    <body class="office-body">
+        <!-- Floating top bar -->
+        <div class="office-topbar" id="office-topbar">
+            <a href="/" class="office-topbar__back" aria-label="Back to site">
+                <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M19 12H5M12 19l-7-7 7-7"></path>
+                </svg>
+                <span>Aleister</span>
+            </a>
+            <div class="office-topbar__center">
+                <span class="office-topbar__title">🏢 Pixel Office</span>
+                <span class="office-topbar__live" id="live-badge">
+                    <span class="live-dot"></span>
+                    <span id="active-count">0</span> working
+                </span>
+            </div>
+            <div class="office-topbar__actions">
+                <ThemeToggle />
+            </div>
+        </div>
+
+        <!-- Control toolbar -->
+        <div class="office-toolbar" id="office-toolbar">
+            <div class="office-toolbar__group">
+                <button
+                    class="office-toolbar__btn"
+                    id="btn-zoom-in"
+                    aria-label="Zoom in"
+                    title="Zoom in"
+                >
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        ><line x1="12" y1="5" x2="12" y2="19"></line><line
+                            x1="5"
+                            y1="12"
+                            x2="19"
+                            y2="12"></line>
+                    </svg>
+                </button>
+                <button
+                    class="office-toolbar__btn"
+                    id="btn-zoom-out"
+                    aria-label="Zoom out"
+                    title="Zoom out"
+                >
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        ><line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="office-toolbar__group">
+                <button
+                    class="office-toolbar__btn"
+                    id="btn-rotate-left"
+                    aria-label="Rotate left"
+                    title="Rotate left"
+                >
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><polyline points="1 4 1 10 7 10"></polyline><path
+                            d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                </button>
+                <button
+                    class="office-toolbar__btn"
+                    id="btn-rotate-right"
+                    aria-label="Rotate right"
+                    title="Rotate right"
+                >
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><polyline points="23 4 23 10 17 10"></polyline><path
+                            d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="office-toolbar__group">
+                <button
+                    class="office-toolbar__btn office-toolbar__btn--toggle"
+                    id="btn-view-toggle"
+                    aria-label="Toggle 2D/3D"
+                    title="Switch view"
+                >
+                    <span class="toggle-label" id="view-label">3D</span>
+                </button>
+            </div>
+            <div class="office-toolbar__group">
+                <button
+                    class="office-toolbar__btn office-toolbar__btn--toggle"
+                    id="btn-tod-cycle"
+                    aria-label="Cycle time of day"
+                    title="Switch time of day"
+                >
+                    <span id="tod-icon">☀️</span>
+                    <span class="toggle-label" id="tod-label">Day</span>
+                </button>
+            </div>
+            <div class="office-toolbar__group">
+                <button
+                    class="office-toolbar__btn"
+                    id="btn-reset"
+                    aria-label="Reset view"
+                    title="Reset view"
+                >
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        ><path
+                            d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+                        ></path><path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Agent info panel (shows on agent click) -->
+        <div class="office-agent-panel" id="agent-panel">
+            <button
+                class="office-agent-panel__close"
+                id="panel-close"
+                aria-label="Close">✕</button
+            >
+            <div class="office-agent-panel__avatar" id="panel-avatar"></div>
+            <h3 class="office-agent-panel__name" id="panel-name"></h3>
+            <span class="office-agent-panel__role" id="panel-role"></span>
+            <div class="office-agent-panel__status" id="panel-status"></div>
+            <div class="office-agent-panel__traits" id="panel-traits"></div>
+        </div>
+
+        <!-- Main office canvas -->
+        <canvas id="office-canvas"></canvas>
+
+        <!-- Load office scripts -->
+        <script is:inline src="/office/office-sprites.js" defer></script>
+        <script is:inline src="/office/office-status.js" defer></script>
+        <script is:inline src="/office/office-renderer.js" defer></script>
+    </body>
+</html>
