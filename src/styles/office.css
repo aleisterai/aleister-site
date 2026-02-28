@@ -1,0 +1,350 @@
+/* ============================================
+   PIXEL OFFICE — Styles
+   Full-screen immersive office visualization
+   ============================================ */
+
+/* ---------- Full-screen layout ---------- */
+.office-body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-primary);
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.office-body:active {
+    cursor: grabbing;
+}
+
+#office-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ---------- Top bar ---------- */
+.office-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1.25rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid var(--glass-border);
+    gap: 1rem;
+}
+
+.office-topbar__back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.35rem 0.7rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.office-topbar__back:hover {
+    background: var(--bg-glass-hover);
+}
+
+.office-topbar__center {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.office-topbar__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.office-topbar__live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(74, 222, 128, 0.08);
+    color: var(--status-active);
+    border: 1px solid rgba(74, 222, 128, 0.15);
+}
+
+.live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--status-active);
+    box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+    animation: dot-pulse 2s ease-in-out infinite;
+}
+
+.office-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ---------- Control toolbar ---------- */
+.office-toolbar {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+}
+
+.office-toolbar__group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0 0.125rem;
+}
+
+.office-toolbar__group+.office-toolbar__group {
+    border-left: 1px solid var(--border-subtle);
+    padding-left: 0.375rem;
+}
+
+.office-toolbar__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.office-toolbar__btn:hover {
+    background: var(--bg-glass-hover);
+    color: var(--text-primary);
+}
+
+.office-toolbar__btn:active {
+    transform: scale(0.92);
+}
+
+.office-toolbar__btn--toggle {
+    min-width: 44px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+}
+
+.office-toolbar__btn--toggle.active {
+    background: var(--toggle-active);
+    color: var(--text-accent);
+}
+
+.toggle-label {
+    pointer-events: none;
+}
+
+/* ---------- Agent info panel ---------- */
+.office-agent-panel {
+    position: fixed;
+    top: 4.5rem;
+    right: 1.25rem;
+    z-index: 99;
+    width: 260px;
+    padding: 1.25rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+    pointer-events: none;
+}
+
+.office-agent-panel.visible {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.office-agent-panel__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.office-agent-panel__close:hover {
+    background: var(--bg-glass-hover);
+    color: var(--text-primary);
+}
+
+.office-agent-panel__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-bottom: 0.75rem;
+    border: 2px solid var(--border-glass);
+    overflow: hidden;
+}
+
+.office-agent-panel__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.office-agent-panel__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    color: var(--text-primary);
+}
+
+.office-agent-panel__role {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.office-agent-panel__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.office-agent-panel__status.working {
+    background: rgba(74, 222, 128, 0.1);
+    color: var(--status-active);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.office-agent-panel__status.idle {
+    background: rgba(250, 204, 21, 0.1);
+    color: var(--status-warning);
+    border: 1px solid rgba(250, 204, 21, 0.2);
+}
+
+.office-agent-panel__status.break {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.office-agent-panel__traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.office-agent-panel__trait {
+    display: inline-flex;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .office-topbar {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .office-topbar__title {
+        font-size: 0.85rem;
+    }
+
+    .office-topbar__back span {
+        display: none;
+    }
+
+    .office-toolbar {
+        bottom: 1rem;
+        padding: 0.375rem;
+        border-radius: 14px;
+    }
+
+    .office-toolbar__btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .office-agent-panel {
+        top: auto;
+        bottom: 5rem;
+        right: 0.75rem;
+        left: 0.75rem;
+        width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .office-topbar__live {
+        display: none;
+    }
+
+    .office-toolbar {
+        bottom: 0.75rem;
+        gap: 0.25rem;
+        padding: 0.3rem;
+    }
+
+    .office-toolbar__btn {
+        width: 32px;
+        height: 32px;
+    }
+}
