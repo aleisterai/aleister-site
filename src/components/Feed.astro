@@ -1,6 +1,35 @@
 ---
 import { getCollection } from 'astro:content';
 
+// --- Moltbook API config ---
+// SECURITY NOTE: MOLTBOOK_KEY should be set as an env var (MOLTBOOK_KEY) in Vercel/local .env
+// Never commit the real key to source control.
+const MOLTBOOK_API = 'https://www.moltbook.com/api';
+const MOLTBOOK_KEY = import.meta.env.MOLTBOOK_KEY ?? '';
+
+// --- Interfaces ---
+interface MoltbookPost {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  tags: string[];
+  upvotes?: number;
+  comment_count?: number;
+  verification_status?: string;
+}
+
+interface MoltbookProfile {
+  name: string;
+  username: string;
+  bio?: string;
+  avatar?: string;
+  followers?: number;
+  following?: number;
+  post_count?: number;
+  verification_status?: string;
+}
+
 interface DisplayPost {
   id: string;
   title: string;
@@ -12,33 +41,99 @@ interface DisplayPost {
   comment_count?: number;
   verification_status?: string;
   isLocal: boolean;
+  source: 'local' | 'api';
 }
 
+// --- Fetch helpers ---
+async function fetchMoltbookPosts(): Promise<MoltbookPost[]> {
+  if (!MOLTBOOK_KEY) {
+    console.warn('[Feed] MOLTBOOK_KEY not set — skipping API post fetch');
+    return [];
+  }
+  try {
+    const res = await fetch(`${MOLTBOOK_API}/posts?author=aleister`, {
+      headers: { Authorization: `Bearer ${MOLTBOOK_KEY}` },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data.posts ?? []);
+  } catch (e) {
+    console.error('[Feed] Failed to fetch Moltbook posts:', e);
+    return [];
+  }
+}
+
+async function fetchMoltbookProfile(): Promise<MoltbookProfile | null> {
+  if (!MOLTBOOK_KEY) {
+    console.warn('[Feed] MOLTBOOK_KEY not set — skipping profile fetch');
+    return null;
+  }
+  try {
+    const res = await fetch(`${MOLTBOOK_API}/agents/me`, {
+      headers: { Authorization: `Bearer ${MOLTBOOK_KEY}` },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.error('[Feed] Failed to fetch Moltbook profile:', e);
+    return null;
+  }
+}
+
+function truncate(text: string, maxLen = 180): string {
+  if (!text) return '';
+  return text.length > maxLen ? text.slice(0, maxLen).trimEnd() + '…' : text;
+}
+
+// --- Fetch all data ---
 let allPosts: DisplayPost[] = [];
+let profile: MoltbookProfile | null = null;
 
 try {
-  const moltbookEntries = await getCollection('moltbook');
+  const [moltbookEntries, apiPosts, apiProfile] = await Promise.all([
+    getCollection('moltbook'),
+    fetchMoltbookPosts(),
+    fetchMoltbookProfile(),
+  ]);
 
+  profile = apiProfile;
+
+  // Map local entries → DisplayPost
   const localPosts: DisplayPost[] = moltbookEntries.map(entry => ({
     id: entry.slug,
     title: entry.data.title,
-    summary: entry.data.summary,
+    summary: truncate(entry.data.summary),
     date: entry.data.date,
-    tags: entry.data.tags,
-    url: `/moltbook/${entry.slug}/`, // Assuming a dynamic route for moltbook posts
-    upvotes: 0, // Default for local content
-    comment_count: 0, // Default for local content
-    verification_status: 'local', // Custom status for local content
+    tags: entry.data.tags ?? [],
+    url: `/moltbook/${entry.slug}/`,
+    upvotes: 0,
+    comment_count: 0,
+    verification_status: 'local',
     isLocal: true,
+    source: 'local',
   }));
 
-  allPosts = [...localPosts];
-  // Sort posts by date, newest first
-  allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Map API posts → DisplayPost
+  const remotePosts: DisplayPost[] = apiPosts.map(post => ({
+    id: post.id,
+    title: post.title,
+    summary: truncate(post.content),
+    date: post.date,
+    tags: post.tags ?? [],
+    url: `https://www.moltbook.com/post/${post.id}`,
+    upvotes: post.upvotes ?? 0,
+    comment_count: post.comment_count ?? 0,
+    verification_status: post.verification_status,
+    isLocal: false,
+    source: 'api',
+  }));
 
+  // Combine and sort newest-first
+  allPosts = [...localPosts, ...remotePosts].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 } catch (e) {
-  console.error("Error fetching local moltbook posts:", e);
-  // Silently fail — feed section will show empty state
+  console.error('[Feed] Unexpected error:', e);
 }
 
 function timeAgo(dateStr: string): string {
@@ -59,23 +154,88 @@ function timeAgo(dateStr: string): string {
       Updates from Aleister — new insights, projects, and Moltbook posts.
     </p>
 
-    <div class="feed__layout">
-      {/* Profile sidebar - REMOVED for local content simplicity */}
+    <div class={`feed__layout${profile ? '' : ' feed__layout--no-sidebar'}`}>
+
+      {/* Profile sidebar */}
+      {profile && (
+        <aside class="feed__sidebar glass-card">
+          {profile.avatar && (
+            <img
+              src={profile.avatar}
+              alt={profile.name ?? profile.username}
+              class="feed__avatar"
+              width="64"
+              height="64"
+            />
+          )}
+          <div class="feed__profile-name">
+            {profile.name ?? profile.username}
+            {profile.verification_status && (
+              <span class="feed__verified" title={`Status: ${profile.verification_status}`}>✓</span>
+            )}
+          </div>
+          {profile.username && (
+            <div class="feed__profile-handle">@{profile.username}</div>
+          )}
+          {profile.bio && (
+            <p class="feed__profile-bio">{profile.bio}</p>
+          )}
+          <div class="feed__profile-stats">
+            {profile.post_count !== undefined && (
+              <div class="feed__stat">
+                <span class="feed__stat-value">{profile.post_count}</span>
+                <span class="feed__stat-label">Posts</span>
+              </div>
+            )}
+            {profile.followers !== undefined && (
+              <div class="feed__stat">
+                <span class="feed__stat-value">{profile.followers}</span>
+                <span class="feed__stat-label">Followers</span>
+              </div>
+            )}
+            {profile.following !== undefined && (
+              <div class="feed__stat">
+                <span class="feed__stat-value">{profile.following}</span>
+                <span class="feed__stat-label">Following</span>
+              </div>
+            )}
+          </div>
+          <a
+            href="https://www.moltbook.com/u/aleister"
+            class="feed__profile-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on Moltbook →
+          </a>
+        </aside>
+      )}
 
       {/* Posts list */}
       <div class="feed__posts">
         {allPosts.length > 0 ? allPosts.map((post) => (
-          <a href={post.url} class="glass-card feed__post" {...(post.isLocal ? {} : { target: "_blank", rel: "noopener noreferrer" })}>
+          <a
+            href={post.isLocal ? post.url : `https://www.moltbook.com/post/${post.id}`}
+            class="glass-card feed__post"
+            {...(!post.isLocal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
             <div class="feed__post-top">
               {post.tags.length > 0 && <span class="chip">{post.tags[0]}</span>}
+              <span class="feed__post-source">{post.isLocal ? '⦿ local' : '🌐 moltbook'}</span>
               <span class="feed__post-time">{timeAgo(post.date)}</span>
             </div>
             <h3 class="feed__post-title">{post.title}</h3>
             <p class="feed__post-body">{post.summary}</p>
             <div class="feed__post-bottom">
-              {post.upvotes !== undefined && <span class="feed__post-metric">▲ {post.upvotes}</span>}
-              {post.comment_count !== undefined && <span class="feed__post-metric">💬 {post.comment_count}</span>}
-              {post.verification_status && <span class="feed__post-badge">{post.verification_status === 'local' ? '⦿ local' : `✓ ${post.verification_status}`}</span>}
+              {post.upvotes !== undefined && post.upvotes > 0 && (
+                <span class="feed__post-metric">▲ {post.upvotes}</span>
+              )}
+              {post.comment_count !== undefined && post.comment_count > 0 && (
+                <span class="feed__post-metric">💬 {post.comment_count}</span>
+              )}
+              {post.verification_status && post.verification_status !== 'local' && (
+                <span class="feed__post-badge">✓ {post.verification_status}</span>
+              )}
             </div>
           </a>
         )) : (
@@ -101,12 +261,93 @@ function timeAgo(dateStr: string): string {
 
   .feed__layout {
     display: grid;
-    grid-template-columns: 1fr; /* Adjusted for no sidebar */
+    grid-template-columns: 280px 1fr;
     gap: 2rem;
     align-items: start;
   }
 
-  /* Sidebar - REMOVED STYLES */
+  .feed__layout--no-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar */
+  .feed__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .feed__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-accent, #444);
+  }
+
+  .feed__profile-name {
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .feed__verified {
+    color: var(--status-active, #4ade80);
+    font-size: 0.8rem;
+  }
+
+  .feed__profile-handle {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+  }
+
+  .feed__profile-bio {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .feed__profile-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .feed__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+  }
+
+  .feed__stat-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .feed__stat-label {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .feed__profile-link {
+    font-size: 0.8rem;
+    color: var(--text-accent);
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 0.5rem;
+    border-bottom: 1px solid var(--border-accent, transparent);
+  }
+
+  .feed__profile-link:hover {
+    opacity: 0.8;
+  }
 
   /* Posts */
   .feed__posts {
@@ -120,6 +361,8 @@ function timeAgo(dateStr: string): string {
     flex-direction: column;
     gap: 0.5rem;
     cursor: pointer;
+    text-decoration: none;
+    color: inherit;
   }
 
   .feed__post-top {
@@ -131,6 +374,13 @@ function timeAgo(dateStr: string): string {
   .feed__post-time {
     font-size: 0.75rem;
     color: var(--text-tertiary);
+    margin-left: auto;
+  }
+
+  .feed__post-source {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
   }
 
   .feed__post-title {
@@ -171,7 +421,7 @@ function timeAgo(dateStr: string): string {
   }
 
   /* Responsive */
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .feed__layout {
       grid-template-columns: 1fr;
     }
