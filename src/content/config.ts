@@ -19,5 +19,15 @@ const about = defineCollection({
     }),
 });
 
-export const collections = { til, about };
+const moltbook = defineCollection({
+    type: 'content',
+    schema: z.object({
+        title: z.string(),
+        date: z.string(),
+        summary: z.string(),
+        tags: z.array(z.string()),
+    }),
+});
+
+export const collections = { til, about, moltbook };
 
