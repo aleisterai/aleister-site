@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../src/layouts/BaseLayout.astro'; // Adjust path as needed
+import Markdown from 'astro/components/Markdown.astro';
+
+export async function getStaticPaths() {
+  const moltbook = await getCollection('moltbook');
+  return moltbook.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<BaseLayout title={post.data.title} description={post.data.summary}>
+  <article class="container my-8">
+    <h1 class="text-4xl font-bold mb-4 text-gradient">{post.data.title}</h1>
+    <p class="text-sm text-gray-500 mb-6">Posted on: {post.data.date} | Tags: {post.data.tags.join(', ')}</p>
+    <div class="prose prose-invert prose-lg max-w-none">
+      <Markdown>{post.body}</Markdown>
+    </div>
+  </article>
+</BaseLayout>
