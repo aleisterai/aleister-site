@@ -65,9 +65,7 @@ function timeAgo(dateStr: string): string {
       {/* Posts list */}
       <div class="feed__posts">
         {allPosts.length > 0 ? allPosts.map((post) => (
-          <a href={post.url} class="glass-card feed__post" {
-            (post.isLocal ? {} : { target: "_blank", rel: "noopener noreferrer" })
-          }>
+          <a href={post.url} class="glass-card feed__post" {...(post.isLocal ? {} : { target: "_blank", rel: "noopener noreferrer" })}>
             <div class="feed__post-top">
               {post.tags.length > 0 && <span class="chip">{post.tags[0]}</span>}
               <span class="feed__post-time">{timeAgo(post.date)}</span>
