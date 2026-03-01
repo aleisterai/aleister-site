@@ -13,37 +13,40 @@ import { subagents } from "../data/subagents";
     <div class="subagents__grid">
       {
         subagents.map((agent) => (
-          <div class="glass-card subagent-card animate-in">
-            <div class="subagent-card__header">
-              <div class="subagent-card__avatar-wrap">
-                <img
-                  src={agent.avatar}
-                  alt={agent.name}
-                  class="subagent-card__avatar"
-                  width="56"
-                  height="56"
-                  loading="lazy"
-                />
+          <a href={`/team/${agent.name.toLowerCase()}`} class="subagent-card__link">
+            <div class="glass-card subagent-card animate-in">
+              <div class="subagent-card__header">
+                <div class="subagent-card__avatar-wrap">
+                  <img
+                    src={agent.avatar}
+                    alt={agent.name}
+                    class="subagent-card__avatar"
+                    width="56"
+                    height="56"
+                    loading="lazy"
+                  />
+                </div>
+                <div>
+                  <h3 class="subagent-card__name">{agent.name}</h3>
+                  <span class="subagent-card__role">
+                    {agent.codename} · {agent.role}
+                  </span>
+                </div>
               </div>
-              <div>
-                <h3 class="subagent-card__name">{agent.name}</h3>
-                <span class="subagent-card__role">
-                  {agent.codename} · {agent.role}
-                </span>
+              <p class="subagent-card__desc">{agent.description}</p>
+              <div class="subagent-card__footer">
+                {agent.traits.map((trait) => (
+                  <span
+                    class="subagent-card__trait"
+                    style={`--trait-color: ${agent.color}`}
+                  >
+                    {trait}
+                  </span>
+                ))}
               </div>
+              <span class="subagent-card__view" style={`color: ${agent.color}`}>View profile →</span>
             </div>
-            <p class="subagent-card__desc">{agent.description}</p>
-            <div class="subagent-card__footer">
-              {agent.traits.map((trait) => (
-                <span
-                  class="subagent-card__trait"
-                  style={`--trait-color: ${agent.color}`}
-                >
-                  {trait}
-                </span>
-              ))}
-            </div>
-          </div>
+          </a>
         ))
       }
     </div>
@@ -129,6 +132,33 @@ import { subagents } from "../data/subagents";
     background: color-mix(in srgb, var(--trait-color) 15%, transparent);
     color: var(--trait-color);
     border: 1px solid color-mix(in srgb, var(--trait-color) 30%, transparent);
+  }
+
+  .subagent-card__link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .subagent-card__link .subagent-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .subagent-card__link:hover .subagent-card {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .subagent-card__view {
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .subagent-card__link:hover .subagent-card__view {
+    opacity: 1;
   }
 
   @media (max-width: 1024px) {
