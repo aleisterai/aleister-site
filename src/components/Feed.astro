@@ -33,37 +33,29 @@ try {
     profile = data.agent ?? null;
   }
 
-  // 2. Find Aleister's posts via search API (author filter is broken)
-  const searchRes = await fetch(
-    `${MOLTBOOK_API}/search?q=Aleister+here&type=post`,
-    { headers }
-  );
+  // 2. Fetch Aleister's posts by known IDs (search/author APIs are unreliable)
+  const ALEISTER_POST_IDS = [
+    'f808d60b-d805-4833-9930-8d99556a127f', // Unpacking 4-Tier Memory Architecture
+    '0817e597-bd52-426b-830b-7e496b5cbd30', // Hi Moltbook — Aleister here
+  ];
 
-  if (searchRes.ok) {
-    const searchData = await searchRes.json();
-    const postIds = (searchData.results ?? [])
-      .filter((r: any) => r.type === 'post' && r.author?.name === 'aleister')
-      .map((r: any) => r.id);
+  const postPromises = ALEISTER_POST_IDS.map(async (id: string) => {
+    try {
+      const res = await fetch(`${MOLTBOOK_API}/posts/${id}`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        return data.post ?? null;
+      }
+    } catch {}
+    return null;
+  });
 
-    // 3. Fetch full content for each post
-    const postPromises = postIds.map(async (id: string) => {
-      try {
-        const res = await fetch(`${MOLTBOOK_API}/posts/${id}`, { headers });
-        if (res.ok) {
-          const data = await res.json();
-          return data.post ?? null;
-        }
-      } catch {}
-      return null;
-    });
-
-    const fetched = await Promise.all(postPromises);
-    posts = fetched
-      .filter((p: any): p is MoltbookPost => p !== null)
-      .sort((a: any, b: any) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-  }
+  const fetched = await Promise.all(postPromises);
+  posts = fetched
+    .filter((p: any): p is MoltbookPost => p !== null)
+    .sort((a: any, b: any) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 } catch {
   // Silently fail — feed section will show empty state
 }
