@@ -99,7 +99,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <th class="compare-feature">Feature</th>
               <th class="compare-aleister">
                 <div class="compare-header compare-header--aleister">
-                  <img src="/avatars/hero-avatar.gif" alt="Aleister" width="32" height="32" style="border-radius:50%" />
+                  <span class="compare-avatar-icon">🤖</span>
                   <span>Aleister v2</span>
                   <span class="compare-badge">Recommended</span>
                 </div>
@@ -406,6 +406,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
+  }
+
+  .compare-avatar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #db2777);
+    font-size: 1rem;
+    flex-shrink: 0;
   }
 
   .compare-header img {
