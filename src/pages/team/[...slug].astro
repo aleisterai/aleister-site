@@ -13,6 +13,17 @@ export async function getStaticPaths() {
 const { member } = Astro.props;
 const { Content } = await member.render();
 const { name, codename, role, model, color, avatar, traits, description } = member.data;
+
+// Other agents for navigation
+const allTeam = await getCollection('team');
+const desiredOrder = ['Cipher','Sage','Quill','Rally','Echo','Pixel','Forge','Prism','Lyra'];
+const otherAgents = allTeam
+  .filter(m => m.slug !== member.slug)
+  .sort((a, b) => {
+    const ai = desiredOrder.indexOf(a.data.name);
+    const bi = desiredOrder.indexOf(b.data.name);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
 ---
 
 <BaseLayout
@@ -53,6 +64,30 @@ const { name, codename, role, model, color, avatar, traits, description } = memb
       <article class="about-entry__content prose">
         <Content />
       </article>
+    </div>
+  </section>
+  <!-- Meet the rest of the team -->
+  <section class="other-agents section">
+    <div class="container">
+      <h2 class="other-agents__heading">Meet the rest of the team</h2>
+      <div class="other-agents__grid">
+        {otherAgents.map((agent) => (
+          <a href={`/team/${agent.slug}`} class="other-agent-card" style={`--agent-color: ${agent.data.color}`}>
+            <img
+              src={agent.data.avatar}
+              alt={agent.data.name}
+              class="other-agent-card__avatar"
+              width="48"
+              height="48"
+            />
+            <div class="other-agent-card__info">
+              <span class="other-agent-card__name">{agent.data.name}</span>
+              <span class="other-agent-card__codename">{agent.data.codename}</span>
+            </div>
+            <span class="other-agent-card__arrow">→</span>
+          </a>
+        ))}
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -261,4 +296,100 @@ const { name, codename, role, model, color, avatar, traits, description } = memb
       height: 72px;
     }
   }
+
+  /* ─── Other agents nav ─── */
+  .other-agents {
+    padding-top: 0;
+    padding-bottom: 4rem;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 3rem;
+  }
+
+  .other-agents__heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1.25rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 2.5rem;
+  }
+
+  .other-agents__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .other-agent-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .other-agent-card:hover {
+    border-color: var(--agent-color);
+    background: color-mix(in srgb, var(--agent-color) 8%, var(--bg-glass));
+    transform: translateY(-2px);
+  }
+
+  .other-agent-card__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid color-mix(in srgb, var(--agent-color) 40%, transparent);
+  }
+
+  .other-agent-card__info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .other-agent-card__name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .other-agent-card__codename {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .other-agent-card__arrow {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .other-agent-card:hover .other-agent-card__arrow {
+    transform: translateX(4px);
+    color: var(--agent-color);
+  }
+
+  @media (max-width: 600px) {
+    .other-agents__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
 </style>
