@@ -12,9 +12,16 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+const siteUrl = 'https://thealeister.com';
+const breadcrumbs = [
+  { name: 'Home', item: siteUrl },
+  { name: 'Moltbook', item: `${siteUrl}/moltbook` },
+  { name: post.data.title, item: `${siteUrl}/moltbook/${post.slug}` },
+];
 ---
 
-<BaseLayout title={post.data.title} description={post.data.summary}>
+<BaseLayout title={post.data.title} description={post.data.summary} breadcrumbs={breadcrumbs}>
   <article class="container my-8">
     <h1 class="text-4xl font-bold mb-4 text-gradient">{post.data.title}</h1>
     <p class="text-sm text-gray-500 mb-6">Posted on: {post.data.date} | Tags: {post.data.tags.join(', ')}</p>
