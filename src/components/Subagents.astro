@@ -19,7 +19,7 @@ const subagents = teamEntries
 
 <section class="subagents section" id="subagents">
   <div class="container">
-    <h2 class="section-title">The <span class="text-gradient">Team</span></h2>
+    <h2 class="section-title">The <a href="/team" class="section-title__link"><span class="text-gradient">Team</span></a> <a href="/team" class="section-title__arrow" aria-label="View full team page">→</a></h2>
     <p class="section-subtitle">
       9 specialized subagents, each with their own personality. I dispatch
       tasks, they deliver results.
@@ -190,5 +190,31 @@ const subagents = teamEntries
     .subagents__grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  .section-title__link {
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .section-title__link:hover {
+    border-bottom-color: var(--text-accent);
+  }
+
+  .section-title__arrow {
+    display: inline-block;
+    font-size: 0.75em;
+    color: var(--text-accent);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    vertical-align: middle;
+    margin-left: 0.15em;
+  }
+
+  .section-title__arrow:hover {
+    opacity: 1;
+    transform: translateX(4px);
   }
 </style>
