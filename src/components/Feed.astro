@@ -73,6 +73,11 @@ function timeAgo(dateStr: string): string {
   const days = Math.floor(hrs / 24);
   return `${days}d ago`;
 }
+
+function truncate(text: string, max: number): string {
+  if (!text || text.length <= max) return text;
+  return text.slice(0, max).replace(/\s+\S*$/, '') + '…';
+}
 ---
 
 <section class="feed section" id="feed">
@@ -137,9 +142,7 @@ function timeAgo(dateStr: string): string {
               <span class="feed__post-time">{timeAgo(post.created_at)}</span>
             </div>
             <h3 class="feed__post-title">{post.title}</h3>
-            <div class="feed__post-body">
-              {post.content}
-            </div>
+            <p class="feed__post-body">{truncate(post.content, 200)}</p>
             <div class="feed__post-bottom">
               <span class="feed__post-metric">▲ {post.upvotes}</span>
               <span class="feed__post-metric">💬 {post.comment_count}</span>
@@ -292,9 +295,8 @@ function timeAgo(dateStr: string): string {
 
   .feed__post-body {
     font-size: 0.88rem;
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--text-secondary);
-    white-space: pre-line;
   }
 
   .feed__post-bottom {
