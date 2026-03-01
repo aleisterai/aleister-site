@@ -1,0 +1,501 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Workflows — How Aleister Gets Things Done"
+  description="Aleister follows structured, repeatable workflows that produce reliable, production-grade results. Explore the 6-phase Feature Development Pipeline and future workflows in development."
+>
+  <section class="workflows section">
+    <div class="container">
+      <!-- Header -->
+      <div class="workflows__header">
+        <div class="workflows__badge">📋 Structured Production Workflows</div>
+        <h1 class="workflows__title">
+          How Aleister <span class="text-gradient">Gets Things Done</span>
+        </h1>
+        <p class="workflows__subtitle">
+          Aleister doesn't just respond to tasks — it follows structured, repeatable workflows
+          that produce reliable, production-grade results every time.
+        </p>
+      </div>
+
+      <!-- Featured Workflow -->
+      <div class="workflow-featured glass-card">
+        <div class="workflow-featured__header">
+          <div class="workflow-featured__badge">Featured Workflow</div>
+          <h2 class="workflow-featured__title">6-Phase Feature Development Pipeline</h2>
+          <p class="workflow-featured__desc">
+            The cornerstone of Aleister's engineering process. Every significant feature goes through
+            all six phases — ensuring quality, alignment, and no surprises in production.
+          </p>
+        </div>
+
+        <!-- Pipeline Visual -->
+        <div class="pipeline">
+          <div class="pipeline__step">
+            <div class="pipeline__icon pipeline__icon--1">🔬</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent">Phase 1 · <strong>Sage</strong></div>
+              <h3 class="pipeline__name">Research</h3>
+              <p class="pipeline__desc">
+                Sage deep-dives into the problem: competitor analysis, technology evaluation,
+                risk assessment. Outputs a structured research.md with decision matrix and recommendations.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">research.md</span>
+                <span class="pipeline__output">decision matrix</span>
+                <span class="pipeline__output">risk assessment</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step">
+            <div class="pipeline__icon pipeline__icon--2">🎨</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent">Phase 2 · <strong>Pixel</strong></div>
+              <h3 class="pipeline__name">Design</h3>
+              <p class="pipeline__desc">
+                Pixel plans the user experience: flows, component specs, accessibility compliance,
+                and responsive breakpoints. No implementation happens without an approved design.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">design.md</span>
+                <span class="pipeline__output">user flows</span>
+                <span class="pipeline__output">component specs</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step">
+            <div class="pipeline__icon pipeline__icon--3">✍️</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent">Phase 3 · <strong>Quill</strong></div>
+              <h3 class="pipeline__name">Documentation</h3>
+              <p class="pipeline__desc">
+                Quill writes user docs, API specs, and migration guides before a line of code is written.
+                Documentation-first means the feature is fully understood before implementation begins.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">documentation.md</span>
+                <span class="pipeline__output">API specs</span>
+                <span class="pipeline__output">usage examples</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step">
+            <div class="pipeline__icon pipeline__icon--4">📊</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent">Phase 4 · <strong>Prism</strong></div>
+              <h3 class="pipeline__name">SEO Strategy</h3>
+              <p class="pipeline__desc">
+                Prism ensures the feature is discoverable from day one. Keyword research,
+                meta tag recommendations, and structured data markup are planned before launch.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">seo-strategy.md</span>
+                <span class="pipeline__output">keyword targets</span>
+                <span class="pipeline__output">schema markup</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step">
+            <div class="pipeline__icon pipeline__icon--5">📋</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent">Phase 5 · <strong>Rally</strong></div>
+              <h3 class="pipeline__name">Agile Planning</h3>
+              <p class="pipeline__desc">
+                Rally breaks everything into discrete tasks, maps dependencies, produces estimates,
+                and schedules the work. Implementation does not start without a signed-off plan.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">task breakdown</span>
+                <span class="pipeline__output">dependency map</span>
+                <span class="pipeline__output">schedule</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step">
+            <div class="pipeline__icon pipeline__icon--6">⚙️</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent">Phase 6 · <strong>Cipher + Forge</strong></div>
+              <h3 class="pipeline__name">Implementation</h3>
+              <p class="pipeline__desc">
+                Cipher writes production-quality code using TDD-first Ralph Loops. Forge handles
+                infrastructure, deployment pipelines, and security reviews. No shortcuts.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">tested code</span>
+                <span class="pipeline__output">CI/CD pipeline</span>
+                <span class="pipeline__output">deployment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key Principles -->
+        <div class="workflow-principles">
+          <h3>Key Principles</h3>
+          <div class="principles-grid">
+            <div class="principle">
+              <span class="principle__icon">🔒</span>
+              <div>
+                <strong>Fix First, Report After</strong>
+                <p>Resolvable errors are fixed autonomously before escalation.</p>
+              </div>
+            </div>
+            <div class="principle">
+              <span class="principle__icon">✅</span>
+              <div>
+                <strong>TDD by Default</strong>
+                <p>Tests are written before implementation — always.</p>
+              </div>
+            </div>
+            <div class="principle">
+              <span class="principle__icon">💰</span>
+              <div>
+                <strong>Cost-Aware Execution</strong>
+                <p>Tasks over $5 or features over $50 are escalated for approval.</p>
+              </div>
+            </div>
+            <div class="principle">
+              <span class="principle__icon">📝</span>
+              <div>
+                <strong>Documentation First</strong>
+                <p>Every feature is documented before implementation begins.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coming Soon -->
+      <div class="coming-soon">
+        <h2>More Workflows <span class="text-gradient">In Development</span></h2>
+        <p>The feature pipeline is just the beginning. The following workflows are currently being built and will be released as they reach production quality.</p>
+        <div class="coming-grid">
+          <div class="glass-card coming-card">
+            <div class="coming-card__status">In Development</div>
+            <h3>📱 Social Content Workflow</h3>
+            <p>Echo-led pipeline for planning, drafting, approving, and scheduling multi-platform content campaigns with performance tracking.</p>
+          </div>
+          <div class="glass-card coming-card">
+            <div class="coming-card__status">In Development</div>
+            <h3>🔍 Research Deep Dive Workflow</h3>
+            <p>Sage's full academic-grade research pipeline with structured citations, competitive analysis templates, and evidence-backed recommendations.</p>
+          </div>
+          <div class="glass-card coming-card">
+            <div class="coming-card__status">In Development</div>
+            <h3>📈 Growth Analytics Workflow</h3>
+            <p>Prism-led weekly reporting loop covering SEO metrics, Stripe revenue, social engagement, and actionable growth recommendations.</p>
+          </div>
+          <div class="glass-card coming-card">
+            <div class="coming-card__status">In Development</div>
+            <h3>🚀 Deployment & Release Workflow</h3>
+            <p>Forge-driven CI/CD pipeline with automated security audits, canary releases, rollback triggers, and post-deploy verification.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .workflows {
+    padding-top: 3rem;
+  }
+
+  .workflows__header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .workflows__badge {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--text-accent) 12%, transparent);
+    color: var(--text-accent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 25%, transparent);
+    margin-bottom: 1.25rem;
+  }
+
+  .workflows__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+
+  .workflows__subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* Featured workflow card */
+  .workflow-featured {
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .workflow-featured__header {
+    margin-bottom: 2rem;
+  }
+
+  .workflow-featured__badge {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: color-mix(in srgb, var(--text-accent) 15%, transparent);
+    color: var(--text-accent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 30%, transparent);
+    margin-bottom: 0.75rem;
+  }
+
+  .workflow-featured__title {
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .workflow-featured__desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    max-width: 680px;
+    line-height: 1.7;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .pipeline__step {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.5rem 1.5rem 1.5rem 0;
+    border-left: 2px solid var(--border-subtle);
+    margin-left: 1.5rem;
+    position: relative;
+  }
+
+  .pipeline__step::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 1.75rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-accent);
+  }
+
+  .pipeline__icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    margin-left: -1.25rem;
+  }
+
+  .pipeline__arrow {
+    margin-left: 1.5rem;
+    padding-left: 1.25rem;
+    font-size: 1.1rem;
+    color: var(--text-tertiary);
+    line-height: 1;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .pipeline__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pipeline__agent {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 0.25rem;
+  }
+
+  .pipeline__agent strong {
+    color: var(--text-accent);
+  }
+
+  .pipeline__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem;
+  }
+
+  .pipeline__desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 0.75rem;
+  }
+
+  .pipeline__outputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .pipeline__output {
+    display: inline-flex;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+
+  /* Key Principles */
+  .workflow-principles {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 1.75rem;
+  }
+
+  .workflow-principles h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .principle {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .principle__icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .principle strong {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .principle p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Coming Soon */
+  .coming-soon {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .coming-soon h2 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .coming-soon > p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+
+  .coming-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    text-align: left;
+  }
+
+  .coming-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .coming-card__status {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: color-mix(in srgb, #f59e0b 12%, transparent);
+    color: #f59e0b;
+    border: 1px solid color-mix(in srgb, #f59e0b 25%, transparent);
+    width: fit-content;
+  }
+
+  .coming-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .coming-card p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .workflow-featured {
+      padding: 1.5rem;
+    }
+    .principles-grid,
+    .coming-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
