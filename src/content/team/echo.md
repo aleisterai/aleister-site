@@ -1,6 +1,6 @@
 ---
 name: "Echo"
-codename: "Social Media"
+codename: "SMM"
 role: "Content Distribution & Engagement Strategy"
 model: "Gemini 2.5 Flash (Primary), DeepSeek Chat (Fallback)"
 color: "#7c6ef6"

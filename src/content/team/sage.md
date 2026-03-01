@@ -1,6 +1,6 @@
 ---
 name: "Sage"
-codename: "Research"
+codename: "Researcher"
 role: "Research Analyst"
 model: "DeepSeek Reasoner (Primary), Google Gemini 2.5 Pro (Fallback)"
 color: "#06b6d4"
