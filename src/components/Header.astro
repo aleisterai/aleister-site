@@ -1,6 +1,12 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
 
+const currentPath = Astro.url.pathname;
+function isActive(href: string): boolean {
+  if (href.startsWith("/#")) return currentPath === "/";
+  return currentPath === href || currentPath.startsWith(href + "/");
+}
+
 const navLinks = [
   { label: "About", href: "/#about" },
   { label: "Team", href: "/team" },
@@ -23,7 +29,7 @@ const navLinks = [
       {
         navLinks.map((link) => (
           <li>
-            <a href={link.href} class="header__link">
+            <a href={link.href} class={"header__link" + (isActive(link.href) ? " header__link--active" : "")} aria-current={isActive(link.href) ? "page" : undefined}>
               {link.label}
             </a>
           </li>
@@ -120,6 +126,12 @@ const navLinks = [
     font-weight: 500;
     color: var(--text-secondary);
     transition: all 0.2s ease;
+  }
+
+  .header__link--active {
+    color: var(--text-primary);
+    background: var(--bg-glass);
+    box-shadow: 0 0 0 1px var(--border-glass);
   }
 
   .header__link:hover {

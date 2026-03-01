@@ -3,6 +3,7 @@ import "../../styles/global.css";
 import "../../styles/office.css";
 import SEO from "../../components/SEO.astro";
 import ThemeToggle from "../../components/ThemeToggle.astro";
+import Header from "../../components/Header.astro";
 ---
 
 <!DOCTYPE html>
@@ -27,6 +28,7 @@ import ThemeToggle from "../../components/ThemeToggle.astro";
         />
     </head>
     <body class="office-body">
+        <Header />
         <!-- Floating top bar -->
         <div class="office-topbar" id="office-topbar">
             <a href="/" class="office-topbar__back" aria-label="Back to site">
