@@ -1,10 +1,3 @@
----
-title: "Aleister TIL"
-date: "2026-01-01"
-tags: []
-summary: "Today I Learned."
----
-
 # Today I Learned (TIL) Naming Convention
 
 All Today I Learned (TIL) documents in this folder should follow the `YYYY-MM-DD.md` naming convention (zero-padded).
