@@ -1,0 +1,322 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const teamEntries = await getCollection('team');
+
+const desiredOrder = ['Cipher', 'Sage', 'Quill', 'Rally', 'Echo', 'Pixel', 'Forge', 'Prism', 'Lyra'];
+
+const subagents = teamEntries
+  .map(entry => entry.data)
+  .sort((a, b) => {
+    let indexA = desiredOrder.indexOf(a.name);
+    let indexB = desiredOrder.indexOf(b.name);
+    if (indexA === -1) indexA = 99;
+    if (indexB === -1) indexB = 99;
+    return indexA - indexB;
+  });
+---
+
+<BaseLayout
+  title="The Team — Aleister's 9 Sub-Agents"
+  description="Meet Cipher, Sage, Quill, Rally, Echo, Pixel, Forge, Prism, and Lyra — 9 specialist sub-agents each with their own role, personality, and expertise."
+>
+  <section class="team-page section">
+    <div class="container">
+      <!-- Header -->
+      <div class="team-page__header">
+        <h1 class="team-page__title">The <span class="text-gradient">Team</span></h1>
+        <p class="team-page__subtitle">
+          9 specialist sub-agents, each with their own personality, model stack, and area of expertise.
+          Aleister orchestrates. They deliver.
+        </p>
+        <div class="team-page__actions">
+          <a href="/office" class="btn btn-primary">
+            🏢 Visit the Office →
+          </a>
+          <a href="/workflows" class="btn btn-ghost">
+            📋 View Workflows
+          </a>
+        </div>
+      </div>
+
+      <!-- Agent Grid -->
+      <div class="team-grid">
+        {subagents.map((agent) => (
+          <a href={`/team/${agent.name.toLowerCase()}`} class="team-card__link">
+            <div class="glass-card team-card animate-in">
+              <!-- Card Header -->
+              <div class="team-card__header">
+                <div class="team-card__avatar-wrap" style={`--agent-color: ${agent.color}`}>
+                  <img
+                    src={agent.avatar}
+                    alt={agent.name}
+                    class="team-card__avatar"
+                    width="72"
+                    height="72"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="team-card__meta">
+                  <h2 class="team-card__name">{agent.name}</h2>
+                  <span class="team-card__role" style={`color: ${agent.color}`}>{agent.codename}</span>
+                  <span class="team-card__subrole">{agent.role}</span>
+                </div>
+              </div>
+
+              <!-- Description (full) -->
+              <p class="team-card__desc">{agent.description}</p>
+
+              <!-- Trait Badges -->
+              <div class="team-card__traits">
+                {agent.traits.map((trait: string) => (
+                  <span
+                    class="team-card__trait"
+                    style={`--trait-color: ${agent.color}`}
+                  >
+                    {trait}
+                  </span>
+                ))}
+              </div>
+
+              <!-- Model -->
+              <div class="team-card__model">{agent.model}</div>
+
+              <!-- CTA -->
+              <span class="team-card__view" style={`color: ${agent.color}`}>
+                View full profile →
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Office CTA Banner -->
+      <div class="glass-card office-banner">
+        <div class="office-banner__content">
+          <div class="office-banner__icon">🏢</div>
+          <div>
+            <h3>See them in action</h3>
+            <p>Visit the interactive Office to watch the team at their desks in real time.</p>
+          </div>
+        </div>
+        <a href="/office" class="btn btn-primary">Open Office →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .team-page {
+    padding-top: 3rem;
+  }
+
+  .team-page__header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .team-page__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+
+  .team-page__subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 580px;
+    margin: 0 auto 1.75rem;
+    line-height: 1.7;
+  }
+
+  .team-page__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Grid */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Card */
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+  }
+
+  .team-card__link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .team-card__link .team-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .team-card__link:hover .team-card {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .team-card__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .team-card__avatar-wrap {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .team-card__avatar-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--agent-color);
+    opacity: 0.5;
+  }
+
+  .team-card__avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-glass);
+  }
+
+  .team-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .team-card__name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .team-card__role {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .team-card__subrole {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+  }
+
+  .team-card__desc {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .team-card__traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .team-card__trait {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.18rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--trait-color) 14%, transparent);
+    color: var(--trait-color);
+    border: 1px solid color-mix(in srgb, var(--trait-color) 28%, transparent);
+  }
+
+  .team-card__model {
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-tertiary);
+    margin-top: 0.25rem;
+  }
+
+  .team-card__view {
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: auto;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .team-card__link:hover .team-card__view {
+    opacity: 1;
+  }
+
+  /* Office Banner */
+  .office-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding: 1.75rem 2rem;
+    margin-top: 1rem;
+  }
+
+  .office-banner__content {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .office-banner__icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .office-banner__content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.2rem;
+  }
+
+  .office-banner__content p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .team-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+    .office-banner {
+      flex-direction: column;
+      text-align: center;
+    }
+    .office-banner__content {
+      flex-direction: column;
+    }
+  }
+</style>
