@@ -19,86 +19,83 @@ const { name, codename, role, model, color, avatar, traits, description } = memb
   title={`${name} — Aleister's Team`}
   description={description}
 >
-  <section class="profile-page section">
+  <section class="about-entry section">
     <div class="container">
-      <a href="/#subagents" class="profile-back">← Back to Team</a>
+      <div class="about-entry__header">
+        <a href="/#subagents" class="about-entry__back">← Back to Team</a>
+      </div>
 
-      <div class="profile-hero glass-card">
-        <div class="profile-hero__left">
-          <div class="profile-avatar-wrap" style={`--agent-color: ${color}`}>
-            <img
-              src={avatar}
-              alt={name}
-              class="profile-avatar"
-              width="120"
-              height="120"
-            />
-          </div>
-          <div class="profile-meta">
-            <h1 class="profile-name">{name}</h1>
-            <span class="profile-role">{codename} · {role}</span>
-            <span class="profile-model">Powered by {model}</span>
-          </div>
+      <!-- Agent hero -->
+      <div class="agent-hero">
+        <div class="agent-hero__avatar-wrap" style={`--agent-color: ${color}`}>
+          <img
+            src={avatar}
+            alt={name}
+            class="agent-hero__avatar"
+            width="100"
+            height="100"
+          />
         </div>
-        <div class="profile-traits">
-          {traits.map((trait: string) => (
-            <span class="profile-trait" style={`--trait-color: ${color}`}>{trait}</span>
-          ))}
+        <div class="agent-hero__meta">
+          <h1 class="about-entry__title">{name}</h1>
+          <span class="agent-hero__role">{codename} · {role}</span>
+          <span class="agent-hero__model">Powered by {model}</span>
+          <div class="agent-hero__traits">
+            {traits.map((trait: string) => (
+              <span class="agent-hero__trait" style={`--trait-color: ${color}`}>{trait}</span>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div class="profile-description glass-card">
-        <h2 class="profile-section-title">About</h2>
-        <p>{description}</p>
-      </div>
+      <p class="about-entry__subtitle">{description}</p>
 
-      <div class="profile-content glass-card">
+      <article class="about-entry__content prose">
         <Content />
-      </div>
+      </article>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .profile-page {
+  .about-entry {
     padding-top: 2rem;
   }
 
-  .profile-back {
-    display: inline-flex;
+  .about-entry__header {
+    display: flex;
     align-items: center;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-entry__back {
     font-size: 0.9rem;
-    font-weight: 500;
     color: var(--text-secondary);
-    margin-bottom: 1.5rem;
     transition: color 0.2s ease;
   }
 
-  .profile-back:hover {
+  .about-entry__back:hover {
     color: var(--text-accent);
   }
 
-  /* Hero Card */
-  .profile-hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .profile-hero__left {
+  /* Agent Hero */
+  .agent-hero {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto 0.5rem;
   }
 
-  .profile-avatar-wrap {
+  .agent-hero__avatar-wrap {
     flex-shrink: 0;
     position: relative;
   }
 
-  .profile-avatar-wrap::after {
+  .agent-hero__avatar-wrap::after {
     content: '';
     position: absolute;
     inset: -4px;
@@ -107,141 +104,164 @@ const { name, codename, role, model, color, avatar, traits, description } = memb
     opacity: 0.4;
   }
 
-  .profile-avatar {
-    width: 120px;
-    height: 120px;
+  .agent-hero__avatar {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--border-glass);
-    transition: transform 0.3s ease;
   }
 
-  .profile-avatar:hover {
-    transform: scale(1.05);
-  }
-
-  .profile-meta {
+  .agent-hero__meta {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
 
-  .profile-name {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    background: var(--gradient-accent-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .about-entry__title {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    margin-bottom: 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .profile-role {
-    font-size: 1rem;
+  .agent-hero__role {
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-secondary);
   }
 
-  .profile-model {
+  .agent-hero__model {
     font-size: 0.8rem;
     font-family: 'JetBrains Mono', monospace;
     color: var(--text-tertiary);
   }
 
-  .profile-traits {
+  .agent-hero__traits {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    align-self: flex-start;
-    margin-top: 0.5rem;
+    gap: 0.4rem;
+    margin-top: 0.35rem;
   }
 
-  .profile-trait {
+  .agent-hero__trait {
     display: inline-flex;
     align-items: center;
-    padding: 0.3rem 0.75rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
     font-weight: 600;
     background: color-mix(in srgb, var(--trait-color) 15%, transparent);
     color: var(--trait-color);
     border: 1px solid color-mix(in srgb, var(--trait-color) 30%, transparent);
   }
 
-  /* Description */
-  .profile-description {
-    margin-bottom: 1.5rem;
-  }
-
-  .profile-section-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--text-accent);
-  }
-
-  .profile-description p {
+  .about-entry__subtitle {
     font-size: 0.95rem;
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
     line-height: 1.7;
-    color: var(--text-secondary);
   }
 
-  /* Content (Personality + Skills from markdown) */
-  .profile-content {
-    line-height: 1.7;
+  /* Prose — identical to about pages */
+  .about-entry__content {
+    max-width: 800px;
+    margin: 0 auto;
   }
 
-  .profile-content :global(h2) {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-accent);
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
+  .about-entry__content :global(h2) {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
   }
 
-  .profile-content :global(h2:first-child) {
+  .about-entry__content :global(h2:first-child) {
     margin-top: 0;
   }
 
-  .profile-content :global(p) {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
+  .about-entry__content :global(h3) {
+    font-size: 1.15rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .about-entry__content :global(p) {
     margin-bottom: 1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
   }
 
-  .profile-content :global(h3) {
-    font-size: 0.95rem;
-    font-weight: 700;
+  .about-entry__content :global(ul),
+  .about-entry__content :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    list-style: disc;
+  }
+
+  .about-entry__content :global(ol) {
+    list-style: decimal;
+  }
+
+  .about-entry__content :global(li) {
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .about-entry__content :global(li strong) {
     color: var(--text-primary);
-    margin-top: 1.25rem;
-    margin-bottom: 0.25rem;
-    padding-left: 0.75rem;
-    border-left: 3px solid var(--text-accent);
   }
 
-  .profile-content :global(h3:first-of-type) {
-    margin-top: 0.5rem;
+  .about-entry__content :global(code) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-accent);
+  }
+
+  .about-entry__content :global(a) {
+    color: var(--text-accent);
+    border-bottom: 1px solid var(--border-accent);
+    transition: opacity 0.2s ease;
+  }
+
+  .about-entry__content :global(a:hover) {
+    opacity: 0.8;
+  }
+
+  .about-entry__content :global(blockquote) {
+    border-left: 3px solid var(--text-accent);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .about-entry__content :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 2rem 0;
   }
 
   /* Responsive */
   @media (max-width: 768px) {
-    .profile-hero {
+    .agent-hero {
       flex-direction: column;
       align-items: flex-start;
     }
 
-    .profile-hero__left {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .profile-avatar {
-      width: 80px;
-      height: 80px;
-    }
-
-    .profile-name {
-      font-size: 1.5rem;
+    .agent-hero__avatar {
+      width: 72px;
+      height: 72px;
     }
   }
 </style>
