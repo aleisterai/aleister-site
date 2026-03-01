@@ -29,6 +29,10 @@ import Header from "../../components/Header.astro";
     </head>
     <body class="office-body">
         <Header />
+        <script is:inline>
+          // Office page cannot scroll — force the glass header immediately
+          document.getElementById("header").classList.add("scrolled");
+        </script>
         <div class="office-topbar__actions">
                 <ThemeToggle />
             </div>
