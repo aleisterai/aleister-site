@@ -1,5 +1,20 @@
 ---
-import { subagents } from "../data/subagents";
+import { getCollection } from "astro:content";
+
+const teamEntries = await getCollection("team");
+
+// Sort subagents in a logical order
+const desiredOrder = ["Cipher", "Sage", "Quill", "Rally", "Echo", "Pixel", "Forge", "Prism", "Lyra"];
+
+const subagents = teamEntries
+  .map(entry => entry.data)
+  .sort((a, b) => {
+    let indexA = desiredOrder.indexOf(a.name);
+    let indexB = desiredOrder.indexOf(b.name);
+    if (indexA === -1) indexA = 99;
+    if (indexB === -1) indexB = 99;
+    return indexA - indexB;
+  });
 ---
 
 <section class="subagents section" id="subagents">
