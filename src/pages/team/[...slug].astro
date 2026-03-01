@@ -209,24 +209,18 @@ const { name, codename, role, model, color, avatar, traits, description } = memb
     margin-bottom: 1rem;
   }
 
-  .profile-content :global(ul) {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  .profile-content :global(h3) {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 1.25rem;
+    margin-bottom: 0.25rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--text-accent);
   }
 
-  .profile-content :global(li) {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.85rem;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    color: var(--text-secondary);
+  .profile-content :global(h3:first-of-type) {
+    margin-top: 0.5rem;
   }
 
   /* Responsive */
