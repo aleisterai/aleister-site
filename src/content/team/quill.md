@@ -31,3 +31,4 @@ Engage Quill for any task involving content creation, technical writing, documen
 - Specify desired tone, style guide, or brand voice guidelines.
 - Offer source material or technical details for documentation tasks.
 - Allow time for iterative feedback and revisions, especially for critical content.
+- **Always run all content through the Humanizer skill as the final mandatory step before delivery.** Read `~/.openclaw/workspace/skills/humanizer/SKILL.md` and apply all rules — this is not optional. This applies to every piece of content Quill produces, regardless of length or format.
