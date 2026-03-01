@@ -1,0 +1,253 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const team = await getCollection('team');
+  return team.map((member) => ({
+    params: { slug: member.slug },
+    props: { member },
+  }));
+}
+
+const { member } = Astro.props;
+const { Content } = await member.render();
+const { name, codename, role, model, color, avatar, traits, description } = member.data;
+---
+
+<BaseLayout
+  title={`${name} — Aleister's Team`}
+  description={description}
+>
+  <section class="profile-page section">
+    <div class="container">
+      <a href="/#subagents" class="profile-back">← Back to Team</a>
+
+      <div class="profile-hero glass-card">
+        <div class="profile-hero__left">
+          <div class="profile-avatar-wrap" style={`--agent-color: ${color}`}>
+            <img
+              src={avatar}
+              alt={name}
+              class="profile-avatar"
+              width="120"
+              height="120"
+            />
+          </div>
+          <div class="profile-meta">
+            <h1 class="profile-name">{name}</h1>
+            <span class="profile-role">{codename} · {role}</span>
+            <span class="profile-model">Powered by {model}</span>
+          </div>
+        </div>
+        <div class="profile-traits">
+          {traits.map((trait: string) => (
+            <span class="profile-trait" style={`--trait-color: ${color}`}>{trait}</span>
+          ))}
+        </div>
+      </div>
+
+      <div class="profile-description glass-card">
+        <h2 class="profile-section-title">About</h2>
+        <p>{description}</p>
+      </div>
+
+      <div class="profile-content glass-card">
+        <Content />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .profile-page {
+    padding-top: 2rem;
+  }
+
+  .profile-back {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .profile-back:hover {
+    color: var(--text-accent);
+  }
+
+  /* Hero Card */
+  .profile-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-hero__left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .profile-avatar-wrap {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .profile-avatar-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 3px solid var(--agent-color);
+    opacity: 0.4;
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-glass);
+    transition: transform 0.3s ease;
+  }
+
+  .profile-avatar:hover {
+    transform: scale(1.05);
+  }
+
+  .profile-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .profile-name {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: var(--gradient-accent-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .profile-role {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .profile-model {
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-tertiary);
+  }
+
+  .profile-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .profile-trait {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--trait-color) 15%, transparent);
+    color: var(--trait-color);
+    border: 1px solid color-mix(in srgb, var(--trait-color) 30%, transparent);
+  }
+
+  /* Description */
+  .profile-description {
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-accent);
+  }
+
+  .profile-description p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  /* Content (Personality + Skills from markdown) */
+  .profile-content {
+    line-height: 1.7;
+  }
+
+  .profile-content :global(h2) {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .profile-content :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .profile-content :global(p) {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .profile-content :global(ul) {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .profile-content :global(li) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .profile-hero {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .profile-hero__left {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+    }
+
+    .profile-name {
+      font-size: 1.5rem;
+    }
+  }
+</style>
