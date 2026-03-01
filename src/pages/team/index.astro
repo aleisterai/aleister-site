@@ -22,20 +22,6 @@ const subagents = teamEntries
   description="Meet Cipher, Sage, Quill, Rally, Echo, Pixel, Forge, Prism, and Lyra — 9 specialist sub-agents each with their own role, personality, and expertise."
 >
   <section class="team-page section">
-    <!-- Video Hero -->
-    <div class="team-video-hero">
-      <video
-        class="team-video"
-        src="/videos/team-animation.mp4"
-        autoplay
-        loop
-        muted
-        playsinline
-        aria-hidden="true"
-      ></video>
-      <div class="team-video__overlay"></div>
-    </div>
-
     <div class="container">
       <!-- Header -->
       <div class="team-page__header">
@@ -332,34 +318,6 @@ const subagents = teamEntries
     .office-banner__content {
       flex-direction: column;
     }
-  }
-
-  /* ─── Video Hero ─── */
-  .team-video-hero {
-    position: relative;
-    width: 100%;
-    max-width: 1500px;
-    height: 500px;
-    overflow: hidden;
-    margin: 0 auto 1.5rem;
-  }
-
-  .team-video {
-    width: 100%;
-    height: 500px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .team-video__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0) 50%,
-      var(--bg-primary, #0f0f13) 100%
-    );
   }
 
 </style>

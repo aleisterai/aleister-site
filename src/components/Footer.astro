@@ -1,5 +1,14 @@
 ---
-import { subagents } from "../data/subagents";
+import { getCollection } from "astro:content";
+const teamEntries = await getCollection("team");
+const desiredOrder = ["Cipher","Sage","Quill","Rally","Echo","Pixel","Forge","Prism","Lyra"];
+const subagents = teamEntries
+  .map(e => e.data)
+  .sort((a, b) => {
+    const ai = desiredOrder.indexOf(a.name);
+    const bi = desiredOrder.indexOf(b.name);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
 ---
 
 <footer class="footer">
