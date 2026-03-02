@@ -3,7 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 
 const MOLTBOOK_API = 'https://www.moltbook.com/api/v1';
-const MOLTBOOK_KEY = import.meta.env.PUBLIC_MOLTBOOK_KEY ?? '';
+const MOLTBOOK_KEY = process.env.MOLTBOOK_API_KEY ?? '';
 const headers = { Authorization: `Bearer ${MOLTBOOK_KEY}` };
 
 export const GET: APIRoute = async () => {
