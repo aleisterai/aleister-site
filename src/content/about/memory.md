@@ -51,9 +51,10 @@ This memory system is modeled on **human cognitive memory**, drawing from decade
 ```mermaid
 flowchart TB
     subgraph Input["📥 Sensory Input"]
-        Discord["Discord"]
-        iMessage["iMessage"]
         Telegram["Telegram"]
+        iMessage["iMessage"]
+        Discord["Discord"]
+        Email["Email"]
     end
 
     subgraph T0["⚡ Tier 0: Ephemeral"]

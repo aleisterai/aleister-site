@@ -43,22 +43,25 @@ flowchart TB
     Vit["👤 Vit Rusavuk"]
     
     subgraph Channels["📱 Communication Channels"]
-        Discord["Discord"]
-        iMessage["iMessage"]
         Telegram["Telegram"]
+        iMessage["iMessage"]
+        Discord["Discord"]
+        Email["Email"]
     end
     
-    Vit --> Discord
-    Vit --> iMessage
     Vit --> Telegram
+    Vit --> iMessage
+    Vit --> Discord
+    Vit --> Email
     
     subgraph Gateway["🖥️ OpenClaw Gateway"]
         Aleister["🚀 Aleister<br/>Orchestrator Agent<br/>Model: Gemini Flash"]
     end
     
-    Discord --> Aleister
-    iMessage --> Aleister
     Telegram --> Aleister
+    iMessage --> Aleister
+    Discord --> Aleister
+    Email --> Aleister
     
     subgraph Subagents["⚡ 9 Specialized Subagents"]
         Coder["🛠️ Cipher"]
@@ -103,6 +106,6 @@ flowchart TB
 | **Primary Model** | ✅ Active | Gemini 2.5 Flash |
 | **Fallbacks** | ✅ 8 configured | Full chain from Gemini Pro to GPT 5.2 |
 | **Subagents** | ✅ 9 templates | Cipher, Sage, Quill, Rally, Echo, Pixel, Forge, Prism, Lyra |
-| **Channels** | ✅ 3 active | Discord, iMessage, Telegram |
+| **Channels** | ✅ 4 active | Telegram, iMessage, Discord, Email |
 | **Security** | ✅ Locked down | Vit-only elevated access |
 | **ASIA** | ✅ Active | ESD cron (30min), KCE (daily 11PM), CES + SPF |

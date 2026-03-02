@@ -39,7 +39,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <div class="pipeline__agent"><strong>Human</strong></div>
               <h3 class="pipeline__name">Task Intake</h3>
               <p class="pipeline__desc">
-                Vit describes the task via Telegram or GitHub. Aleister reads the request,
+                Human describes the task via Telegram, iMessage, Discord, or email. Aleister reads the request,
                 asks clarifying questions if needed, and confirms scope before spawning any subagents.
               </p>
               <div class="pipeline__outputs">
@@ -115,22 +115,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 </div>
               </div>
             </div>
-
-          <div class="pipeline__arrow">↓</div>
-
-          <div class="pipeline__step">
-            <div class="pipeline__icon pipeline__icon--4"><img src="/avatars/prism.png" alt="Prism" width="32" height="32" /></div>
-            <div class="pipeline__body">
-              <div class="pipeline__agent">Phase 4 · <strong>Prism</strong></div>
-              <h3 class="pipeline__name">SEO Strategy</h3>
-              <p class="pipeline__desc">
-                Prism ensures the feature is discoverable from day one. Keyword research,
-                meta tag recommendations, and structured data markup are planned before launch.
-              </p>
-              <div class="pipeline__outputs">
-                <span class="pipeline__output">seo-strategy.md</span>
-                <span class="pipeline__output">keyword targets</span>
-                <span class="pipeline__output">schema markup</span>
+            <div class="pipeline__step pipeline__step--parallel">
+              <div class="pipeline__icon pipeline__icon--4"><img src="/avatars/prism.png" alt="Prism" width="32" height="32" /></div>
+              <div class="pipeline__body">
+                <div class="pipeline__agent">Phase 4 · <strong>Prism</strong></div>
+                <h3 class="pipeline__name">QA Planning</h3>
+                <p class="pipeline__desc">Test plans, edge case matrices, and risk assessments written before Cipher touches a keyboard.</p>
+                <div class="pipeline__outputs">
+                  <span class="pipeline__output">test plan</span>
+                  <span class="pipeline__output">edge cases</span>
+                </div>
               </div>
             </div>
           </div>
