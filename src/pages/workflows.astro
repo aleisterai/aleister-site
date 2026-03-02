@@ -34,12 +34,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- Pipeline Visual -->
         <div class="pipeline">
           <div class="pipeline__step pipeline__step--human">
-            <div class="pipeline__icon pipeline__icon--human"><span class="pipeline__icon-letter">H</span></div>
+            <div class="pipeline__icon pipeline__icon--human"><span class="pipeline__icon-letter">F&amp;B</span></div>
             <div class="pipeline__body">
-              <div class="pipeline__agent"><strong>Human</strong></div>
+              <div class="pipeline__agent"><strong>Flesh &amp; Blood</strong></div>
               <h3 class="pipeline__name">Task Intake</h3>
               <p class="pipeline__desc">
-                Human describes the task via Telegram, iMessage, Discord, or email. Aleister reads the request,
+                The flesh-and-blood friend describes the task via Telegram, iMessage, Discord, or email. Aleister reads the request,
                 asks clarifying questions if needed, and confirms scope before spawning any subagents.
               </p>
               <div class="pipeline__outputs">
@@ -195,13 +195,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="pipeline__arrow">↓</div>
 
           <div class="pipeline__step pipeline__step--human">
-            <div class="pipeline__icon pipeline__icon--human"><span class="pipeline__icon-letter">H</span></div>
+            <div class="pipeline__icon pipeline__icon--human"><span class="pipeline__icon-letter">F&amp;B</span></div>
             <div class="pipeline__body">
-              <div class="pipeline__agent"><strong>Human</strong></div>
+              <div class="pipeline__agent"><strong>Flesh &amp; Blood</strong></div>
               <h3 class="pipeline__name">Review & Approval</h3>
               <p class="pipeline__desc">
-                Vit reviews the walkthrough, tests the output, and either approves or requests
-                changes. No changes reach production without human sign-off.
+                The flesh-and-blood friend reviews the walkthrough, tests the output, and either approves or requests
+                changes. No changes reach production without their sign-off.
               </p>
               <div class="pipeline__outputs">
                 <span class="pipeline__output">approved ✓</span>
@@ -449,10 +449,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* H letter avatar for Human */
   .pipeline__icon-letter {
-    font-size: 1rem;
+    font-size: 0.6rem;
     font-weight: 900;
     color: var(--text-accent);
     font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+    text-align: center;
   }
 
   /* Pipeline */
