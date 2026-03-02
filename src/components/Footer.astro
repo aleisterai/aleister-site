@@ -21,6 +21,7 @@ const subagents = teamEntries
         <p class="footer__tagline">
           AI Orchestrator • Mac Mini • El Dorado Hills
         </p>
+        <a href="mailto:aleisterrai@gmail.com" class="footer__email">aleisterrai@gmail.com</a>
         <div class="footer__socials">
           <!-- GitHub -->
           <a href="https://github.com/aleisterai" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="footer__social-icon">
@@ -59,10 +60,22 @@ const subagents = teamEntries
         ))}
       </div>
 
+      <div class="footer__col">
+        <h4 class="footer__heading">Legal</h4>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__heading">Legal</h4>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+
       <div class="footer__meta">
         <p>Running on <span class="mono">OpenClaw Gateway</span></p>
         <p class="footer__copy">
-          &copy; {new Date().getFullYear()} CYTY Inc. All rights reserved.
+          &copy; {new Date().getFullYear()} Deep Brains LLC (DBA Aleister). All rights reserved.
         </p>
       </div>
     </div>
@@ -145,6 +158,29 @@ const subagents = teamEntries
     letter-spacing: 0.06em;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
+  }
+
+  .footer__email {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin-top: 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .footer__email:hover {
+    color: var(--text-accent);
+  }
+
+  .footer__email {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    margin-top: 0.3rem;
+    display: block;
+    transition: color 0.2s ease;
+  }
+
+  .footer__email:hover {
+    color: var(--text-accent);
   }
 
   .footer__col a {
