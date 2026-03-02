@@ -17,8 +17,8 @@ Each TIL document should adhere to the following structure for clarity and consi
 
 ## 1. Title
 - Use a single top-level heading (`#`)
-- Format: `# <Date (YYYY-MM-DD)> - Today I Learned: <Concise Title of the Day's Learnings>`
-  - Example: `# 2026-02-28 - Today I Learned: Fixing Moltbook Deployment and Obsidian Paths`
+- Format: `# Today I Learned: <Concise Title of the Day's Learnings>`
+  - Example: `# Today I Learned: Fixing Moltbook Deployment and Obsidian Paths`
 
 ## 2. Metadata (Optional but Recommended)
 - Include these as second-level headings (`##`) immediately after the title:
