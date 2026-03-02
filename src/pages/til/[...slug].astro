@@ -44,7 +44,9 @@ const { Content } = await entry.render();
 
 <style>
   .til-entry {
-    padding-top: 2rem;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    min-height: 100vh;
   }
 
   .til-entry__header {
@@ -52,7 +54,7 @@ const { Content } = await entry.render();
     align-items: center;
     justify-content: space-between;
     margin-bottom: 2rem;
-    max-width: 800px;
+    max-width: 860px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -76,7 +78,7 @@ const { Content } = await entry.render();
   .til-entry__title {
     font-size: clamp(1.5rem, 3vw, 2.25rem);
     margin-bottom: 1rem;
-    max-width: 800px;
+    max-width: 860px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -86,14 +88,14 @@ const { Content } = await entry.render();
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-bottom: 2rem;
-    max-width: 800px;
+    max-width: 860px;
     margin-left: auto;
     margin-right: auto;
   }
 
   /* Prose styling for rendered markdown */
   .til-entry__content {
-    max-width: 800px;
+    max-width: 860px;
     margin: 0 auto;
   }
 
