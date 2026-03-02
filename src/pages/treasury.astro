@@ -21,6 +21,7 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
       <div class="tr-hero">
         <div class="tr-hero__text">
           <p class="tr-chain">Base Mainnet · Chain ID 8453</p>
+        <p class="tr-mcap" id="tr-mcap" aria-live="polite"></p>
           <h1 class="tr-title">$ALEISTER</h1>
           <p class="tr-desc">One canonical source of truth. All addresses verifiable on-chain.</p>
         </div>
@@ -453,6 +454,21 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
   }
 
   /* ──── Responsive ──── */
+  /* ── Live MCap ── */
+  .tr-mcap {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-tertiary);
+    margin-bottom: 0.4rem;
+    min-height: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tr-mcap__change--up   { color: #10b981; }
+  .tr-mcap__change--down { color: #ef4444; }
+
   @media (max-width: 700px) {
     .tr-hero {
       flex-direction: column;
@@ -505,4 +521,30 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
       }
     });
   });
+<script>
+  (async () => {
+    const el = document.getElementById('tr-mcap');
+    if (!el) return;
+    try {
+      const TOKEN = '0xacb4543f479ea44e6df4fa01e483bb5b78361ba3';
+      const url = `https://api.geckoterminal.com/api/v2/networks/base/tokens/${TOKEN}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) return;
+      const { data } = await res.json();
+      const attrs = data?.attributes ?? {};
+      const mcapRaw = parseFloat(attrs.market_cap_usd ?? attrs.fdv_usd ?? '0');
+      const change24 = parseFloat(attrs.price_change_percentage?.h24 ?? '0');
+      if (!mcapRaw) return;
+
+      const fmt = (n) => n >= 1e6
+        ? `$${(n / 1e6).toFixed(2)}M`
+        : n >= 1e3
+        ? `$${(n / 1e3).toFixed(1)}K`
+        : `$${n.toFixed(2)}`;
+
+      const changeClass = change24 >= 0 ? 'tr-mcap__change--up' : 'tr-mcap__change--down';
+      const changeStr = `${change24 >= 0 ? '+' : ''}${change24.toFixed(1)}%`;
+      el.innerHTML = `MCap: ${fmt(mcapRaw)} &nbsp;<span class="${changeClass}">${changeStr} 24h</span>`;
+    } catch {}
+  })();
 </script>
