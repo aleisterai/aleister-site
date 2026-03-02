@@ -38,11 +38,11 @@ const { title, description, image } = Astro.props;
   <script is:inline>
     (function () {
       // ── Grid heartbeat: mouse parallax + idle breath + scroll ripple ──
-      const MAX_DRIFT = 6;       // px — max mouse parallax shift
-      const LERP_SPEED = 0.06;  // smoothing factor (lower = smoother)
-      const IDLE_MIN = 0.15;
-      const IDLE_MAX = 0.22;
-      const IDLE_PERIOD = 4000; // ms for one full breath cycle
+      const MAX_DRIFT = 18;      // px — max mouse parallax shift
+      const LERP_SPEED = 0.08;  // smoothing factor (lower = smoother)
+      const IDLE_MIN = 0.10;
+      const IDLE_MAX = 0.32;
+      const IDLE_PERIOD = 3000; // ms for one full breath cycle
 
       let targetX = 0, targetY = 0;
       let currentX = 0, currentY = 0;
@@ -65,7 +65,7 @@ const { title, description, image } = Astro.props;
         currentY += (targetY - currentY) * LERP_SPEED;
 
         // Idle breathing: only when mouse hasn't moved recently
-        const idle = now - lastMouseMove > 1500;
+        const idle = now - lastMouseMove > 800;
         if (idle) {
           const t = (Math.sin((now / IDLE_PERIOD) * Math.PI * 2) + 1) / 2;
           baseOpacity = IDLE_MIN + (IDLE_MAX - IDLE_MIN) * t;
@@ -74,7 +74,7 @@ const { title, description, image } = Astro.props;
         }
 
         // Decay scroll boost
-        opacityBoost *= 0.93;
+        opacityBoost *= 0.90;
 
         setProps();
         raf = requestAnimationFrame(tick);
@@ -91,7 +91,7 @@ const { title, description, image } = Astro.props;
 
       // Scroll ripple
       window.addEventListener('scroll', function () {
-        opacityBoost = Math.min(0.12, opacityBoost + 0.04);
+        opacityBoost = Math.min(0.20, opacityBoost + 0.08);
       }, { passive: true });
 
       raf = requestAnimationFrame(tick);
