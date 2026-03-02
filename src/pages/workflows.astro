@@ -33,6 +33,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <!-- Pipeline Visual -->
         <div class="pipeline">
+          <div class="pipeline__step pipeline__step--human">
+            <div class="pipeline__icon pipeline__icon--human">🧑</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent"><strong>Vit</strong> · Human</div>
+              <h3 class="pipeline__name">Task Intake</h3>
+              <p class="pipeline__desc">
+                Vit describes the task via Telegram or GitHub. Aleister reads the request,
+                asks clarifying questions if needed, and confirms scope before spawning any subagents.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">task brief</span>
+                <span class="pipeline__output">scope confirmed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step pipeline__step--aleister">
+            <div class="pipeline__icon pipeline__icon--aleister"><img src="/avatars/hero-avatar.gif" alt="Aleister" width="40" height="40" /></div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent"><strong>Aleister</strong> · Orchestrator</div>
+              <h3 class="pipeline__name">Orchestration</h3>
+              <p class="pipeline__desc">
+                Aleister breaks the task into phases, selects the right subagents, and spawns them
+                in the correct sequence. He coordinates handoffs and resolves blockers autonomously.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">phase plan</span>
+                <span class="pipeline__output">subagents spawned</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
           <div class="pipeline__step">
             <div class="pipeline__icon pipeline__icon--1"><img src="/avatars/sage.png" alt="Sage" width="32" height="32" /></div>
             <div class="pipeline__body">
@@ -151,6 +187,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               </div>
             </div>
           </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step pipeline__step--aleister">
+            <div class="pipeline__icon pipeline__icon--aleister"><img src="/avatars/hero-avatar.gif" alt="Aleister" width="40" height="40" /></div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent"><strong>Aleister</strong> · Orchestrator</div>
+              <h3 class="pipeline__name">Delivery Report</h3>
+              <p class="pipeline__desc">
+                Aleister summarises what was built, what was tested, and what was deployed.
+                He flags anything requiring a human decision before marking the task complete.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">walkthrough.md</span>
+                <span class="pipeline__output">deploy status</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline__arrow">↓</div>
+
+          <div class="pipeline__step pipeline__step--human">
+            <div class="pipeline__icon pipeline__icon--human">🧑</div>
+            <div class="pipeline__body">
+              <div class="pipeline__agent"><strong>Vit</strong> · Human</div>
+              <h3 class="pipeline__name">Review & Approval</h3>
+              <p class="pipeline__desc">
+                Vit reviews the walkthrough, tests the output, and either approves or requests
+                changes. No changes reach production without human sign-off.
+              </p>
+              <div class="pipeline__outputs">
+                <span class="pipeline__output">approved ✓</span>
+                <span class="pipeline__output">or: change request</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Key Principles -->
@@ -316,6 +389,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .pipeline__icon-stack .pipeline__icon:nth-child(1) {
     z-index: 1;
+  }
+
+
+  .pipeline__step--human {
+    background: color-mix(in srgb, var(--text-accent) 4%, transparent);
+    border-left-color: var(--text-accent);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .pipeline__step--aleister {
+    background: color-mix(in srgb, #a78bfa 4%, transparent);
+    border-left-color: #a78bfa;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .pipeline__icon--human {
+    font-size: 1.3rem;
+    background: color-mix(in srgb, var(--text-accent) 15%, transparent);
+    border-color: color-mix(in srgb, var(--text-accent) 40%, transparent);
+  }
+
+  .pipeline__icon--aleister {
+    background: color-mix(in srgb, #a78bfa 15%, transparent);
+    border-color: color-mix(in srgb, #a78bfa 40%, transparent);
   }
 
   /* Pipeline */
