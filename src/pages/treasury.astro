@@ -5,6 +5,8 @@ const TOKEN  = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 const SAFE   = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
 const TX_FEE = "0xc713f1c69c1ed62c1cba3c68c92e015fc33460507f072883d3e692ce0f5a6ea3";
 const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd07";
+const GECKO  = "https://www.geckoterminal.com/base/pools/0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d";
+const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 ---
 
 <BaseLayout
@@ -15,64 +17,90 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
   <div class="tr-page">
     <div class="container">
 
-      <!-- Title -->
+      <!-- ── Zone 1: Hero + CTAs ── -->
       <div class="tr-hero">
-        <p class="tr-chain">Base Mainnet · Chain ID 8453</p>
-        <h1 class="tr-title">$ALEISTER<br/>Treasury</h1>
-        <p class="tr-desc">
-          One canonical source of truth. All addresses and transactions are verifiable on-chain.
-        </p>
+        <div class="tr-hero__text">
+          <p class="tr-chain">Base Mainnet · Chain ID 8453</p>
+          <h1 class="tr-title">$ALEISTER</h1>
+          <p class="tr-desc">One canonical source of truth. All addresses verifiable on-chain.</p>
+        </div>
+        <div class="tr-hero__ctas">
+          <a href={GECKO} target="_blank" rel="noopener" class="tr-cta tr-cta--primary">
+            📈 Trade on GeckoTerminal
+          </a>
+          <a href={OKX} target="_blank" rel="noopener" class="tr-cta tr-cta--secondary">
+            View on OKX Web3
+          </a>
+        </div>
       </div>
 
-      <!-- Addresses -->
+      <!-- ── Zone 2: Addresses ── -->
       <div class="tr-block">
-        <div class="tr-row">
-          <div class="tr-label">
+        <!-- Token -->
+        <div class="tr-addr-row">
+          <div class="tr-addr-meta">
             <span class="tr-dot tr-dot--token"></span>
-            Token Contract
+            <span class="tr-addr-label">Token Contract</span>
           </div>
-          <div class="tr-addr-wrap">
-            <code class="tr-addr">{TOKEN}</code>
-            <a href={`https://basescan.org/token/${TOKEN}`} target="_blank" rel="noopener" class="tr-link">BaseScan ↗</a>
-            <a href="https://www.geckoterminal.com/base/pools/0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d" target="_blank" rel="noopener" class="tr-link tr-link--gecko">GeckoTerminal · Live Chart ↗</a>
-            <a href="https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3" target="_blank" rel="noopener" class="tr-link">OKX Web3 ↗</a>
+          <div class="tr-addr-body">
+            <code class="tr-addr" id="token-addr">{TOKEN}</code>
+            <div class="tr-addr-actions">
+              <button class="tr-copy-btn" data-copy={TOKEN} aria-label="Copy token address">
+                <span class="tr-copy-icon">⎘</span>
+                <span class="tr-copy-text">Copy</span>
+              </button>
+              <a href={`https://basescan.org/token/${TOKEN}`} target="_blank" rel="noopener" class="tr-badge">
+                BaseScan ↗
+              </a>
+            </div>
           </div>
         </div>
 
         <div class="tr-divider"></div>
 
-        <div class="tr-row">
-          <div class="tr-label">
+        <!-- Safe -->
+        <div class="tr-addr-row">
+          <div class="tr-addr-meta">
             <span class="tr-dot tr-dot--safe"></span>
-            Treasury Safe
+            <span class="tr-addr-label">Treasury Safe</span>
           </div>
-          <div class="tr-addr-wrap">
-            <code class="tr-addr">{SAFE}</code>
-            <a href={`https://basescan.org/address/${SAFE}`} target="_blank" rel="noopener" class="tr-link">BaseScan ↗</a>
+          <div class="tr-addr-body">
+            <code class="tr-addr" id="safe-addr">{SAFE}</code>
+            <div class="tr-addr-actions">
+              <button class="tr-copy-btn" data-copy={SAFE} aria-label="Copy safe address">
+                <span class="tr-copy-icon">⎘</span>
+                <span class="tr-copy-text">Copy</span>
+              </button>
+              <a href={`https://basescan.org/address/${SAFE}`} target="_blank" rel="noopener" class="tr-badge">
+                BaseScan ↗
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Proof -->
+      <!-- ── Zone 3: Trust ── -->
+
+      <!-- On-chain proof -->
       <div class="tr-block">
         <h2 class="tr-block-title">On-Chain Proof</h2>
         <a href={`https://basescan.org/tx/${TX_FEE}`} target="_blank" rel="noopener" class="tr-tx">
           <div class="tr-tx-left">
-            <span class="tr-tx-label">Fee Claim</span>
+            <span class="tr-tx-label">✅ Fee Claim</span>
             <code class="tr-tx-hash">{TX_FEE.slice(0,10)}…{TX_FEE.slice(-6)}</code>
           </div>
-          <span class="tr-tx-arrow">↗</span>
+          <span class="tr-badge">BaseScan ↗</span>
         </a>
         <a href={`https://basescan.org/tx/${TX_FND}`} target="_blank" rel="noopener" class="tr-tx">
           <div class="tr-tx-left">
-            <span class="tr-tx-label">Treasury Funding</span>
+            <span class="tr-tx-label">✅ Treasury Funding</span>
             <code class="tr-tx-hash">{TX_FND.slice(0,10)}…{TX_FND.slice(-6)}</code>
           </div>
-          <span class="tr-tx-arrow">↗</span>
+          <span class="tr-badge">BaseScan ↗</span>
         </a>
       </div>
 
-      <!-- Policy -->
+      <!-- Spending policy -->
       <div class="tr-block">
         <h2 class="tr-block-title">Spending Policy</h2>
         <div class="tr-policy-grid">
@@ -86,7 +114,7 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
           </div>
           <div class="tr-policy-item">
             <span class="tr-policy-head">🔜 Governance</span>
-            <p>Token holders may gain governance over feature flags, plugin registry, and the agent registry. Not yet active.</p>
+            <p>Token holders may gain governance over feature flags, plugin registry. Not yet active.</p>
           </div>
           <div class="tr-policy-item">
             <span class="tr-policy-head">🚫 Never</span>
@@ -95,19 +123,20 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
         </div>
       </div>
 
-      <!-- Utility status -->
+      <!-- Utility -->
       <div class="tr-block tr-block--muted">
         <h2 class="tr-block-title">Utility — Current Status</h2>
         <p class="tr-status-text">
           <strong>No active utility yet.</strong> No staking, no access gating, no governance live.
           Directions being explored: session credits, on-chain membership for FundlyHub features, plugin governance.
-          When utility ships, it will be announced on <a href="https://x.com/aleisterai" target="_blank" rel="noopener">@aleisterai</a> with on-chain proof. None of this is a promise.
+          When utility ships it will be announced on <a href="https://x.com/aleisterai" target="_blank" rel="noopener">@aleisterai</a> with on-chain proof. None of this is a promise.
         </p>
       </div>
 
       <!-- Disclaimer -->
       <div class="tr-disclaimer">
-        $ALEISTER is not an investment. No expectation of profit, no returns, no price targets. The contract addresses above are the only canonical $ALEISTER addresses — anything else is not affiliated.
+        $ALEISTER is not an investment. No expectation of profit, no returns, no price targets.
+        The contract addresses above are the only canonical $ALEISTER addresses — anything else is not affiliated.
       </div>
 
     </div>
@@ -121,9 +150,13 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     min-height: 100vh;
   }
 
-  /* Hero */
+  /* ──── Hero ──── */
   .tr-hero {
-    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
     padding-top: 2rem;
   }
 
@@ -133,7 +166,7 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-tertiary);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
   }
 
   .tr-title {
@@ -141,7 +174,7 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.03em;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     background: var(--gradient-accent-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -149,13 +182,55 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
   }
 
   .tr-desc {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    max-width: 520px;
-    line-height: 1.65;
+    line-height: 1.6;
+    max-width: 380px;
   }
 
-  /* Blocks */
+  .tr-hero__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .tr-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .tr-cta--primary {
+    background: var(--gradient-accent);
+    color: #fff;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--text-accent) 30%, transparent);
+  }
+
+  .tr-cta--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--text-accent) 40%, transparent);
+  }
+
+  .tr-cta--secondary {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-primary);
+  }
+
+  .tr-cta--secondary:hover {
+    border-color: var(--text-accent);
+    background: color-mix(in srgb, var(--text-accent) 8%, var(--bg-glass));
+  }
+
+  /* ──── Blocks ──── */
   .tr-block {
     border: 1px solid var(--border-subtle);
     border-radius: 14px;
@@ -178,22 +253,19 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     margin-bottom: 1.25rem;
   }
 
-  /* Address rows */
-  .tr-row {
+  /* ──── Address rows ──── */
+  .tr-addr-row {
     display: flex;
+    gap: 1rem;
     align-items: flex-start;
-    gap: 1.5rem;
   }
 
-  .tr-label {
+  .tr-addr-meta {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
     min-width: 130px;
-    padding-top: 0.15rem;
+    padding-top: 0.1rem;
     flex-shrink: 0;
   }
 
@@ -207,11 +279,18 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
   .tr-dot--token { background: #7c3aed; }
   .tr-dot--safe  { background: #059669; }
 
-  .tr-addr-wrap {
+  .tr-addr-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .tr-addr-body {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    flex: 1;
+    gap: 0.5rem;
+    min-width: 0;
   }
 
   .tr-addr {
@@ -222,15 +301,12 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     line-height: 1.6;
   }
 
-  .tr-link {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-accent);
-    width: fit-content;
-    transition: opacity 0.15s ease;
+  .tr-addr-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
-
-  .tr-link:hover { opacity: 0.7; }
 
   .tr-divider {
     height: 1px;
@@ -238,7 +314,54 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     margin: 1.25rem 0;
   }
 
-  /* Tx rows */
+  /* ──── Copy button ──── */
+  .tr-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tr-copy-btn:hover {
+    border-color: var(--text-accent);
+    color: var(--text-accent);
+  }
+
+  .tr-copy-btn.copied {
+    border-color: #059669;
+    color: #059669;
+    background: color-mix(in srgb, #059669 10%, transparent);
+  }
+
+  /* ──── Badge links ──── */
+  .tr-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--text-accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 20%, transparent);
+    color: var(--text-accent);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .tr-badge:hover {
+    background: color-mix(in srgb, var(--text-accent) 18%, transparent);
+  }
+
+  /* ──── Tx rows ──── */
   .tr-tx {
     display: flex;
     align-items: center;
@@ -250,6 +373,7 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     margin-bottom: 0.6rem;
     text-decoration: none;
     transition: border-color 0.2s ease, transform 0.15s ease;
+    gap: 1rem;
   }
 
   .tr-tx:last-child { margin-bottom: 0; }
@@ -277,12 +401,7 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     color: var(--text-tertiary);
   }
 
-  .tr-tx-arrow {
-    font-size: 0.95rem;
-    color: var(--text-tertiary);
-  }
-
-  /* Policy grid */
+  /* ──── Policy ──── */
   .tr-policy-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -311,7 +430,7 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     margin: 0;
   }
 
-  /* Utility */
+  /* ──── Utility ──── */
   .tr-status-text {
     font-size: 0.88rem;
     color: var(--text-secondary);
@@ -323,20 +442,67 @@ const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd
     border-bottom: 1px solid color-mix(in srgb, var(--text-accent) 30%, transparent);
   }
 
-  /* Disclaimer */
+  /* ──── Disclaimer ──── */
   .tr-disclaimer {
     margin-top: 1.5rem;
     font-size: 0.75rem;
     color: var(--text-tertiary);
     line-height: 1.65;
-    padding: 0 0.25rem;
     border-left: 2px solid var(--border-subtle);
     padding-left: 1rem;
   }
 
-  @media (max-width: 600px) {
-    .tr-row { flex-direction: column; gap: 0.5rem; }
-    .tr-policy-grid { grid-template-columns: 1fr; }
-    .tr-label { min-width: unset; }
+  /* ──── Responsive ──── */
+  @media (max-width: 700px) {
+    .tr-hero {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .tr-hero__ctas {
+      width: 100%;
+    }
+
+    .tr-cta {
+      width: 100%;
+    }
+
+    .tr-addr-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .tr-addr-meta {
+      min-width: unset;
+    }
+
+    .tr-policy-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
+
+<script>
+  // Copy to clipboard buttons
+  document.querySelectorAll<HTMLButtonElement>('.tr-copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+        const textEl = btn.querySelector('.tr-copy-text');
+        if (textEl) {
+          btn.classList.add('copied');
+          textEl.textContent = 'Copied!';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            textEl.textContent = 'Copy';
+          }, 2000);
+        }
+      } catch {
+        // fallback: select text
+        const el = document.getElementById(btn.dataset.copy === text ? 'token-addr' : 'safe-addr');
+        window.getSelection()?.selectAllChildren(el ?? document.body);
+      }
+    });
+  });
+</script>
