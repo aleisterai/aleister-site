@@ -34,9 +34,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- Pipeline Visual -->
         <div class="pipeline">
           <div class="pipeline__step pipeline__step--human">
-            <div class="pipeline__icon pipeline__icon--human">🧑</div>
+            <div class="pipeline__icon pipeline__icon--human"><span class="pipeline__icon-letter">H</span></div>
             <div class="pipeline__body">
-              <div class="pipeline__agent"><strong>Vit</strong> · Human</div>
+              <div class="pipeline__agent"><strong>Human</strong></div>
               <h3 class="pipeline__name">Task Intake</h3>
               <p class="pipeline__desc">
                 Vit describes the task via Telegram or GitHub. Aleister reads the request,
@@ -88,41 +88,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
           <div class="pipeline__arrow">↓</div>
 
-          <div class="pipeline__step">
-            <div class="pipeline__icon pipeline__icon--2"><img src="/avatars/pixel.png" alt="Pixel" width="32" height="32" /></div>
-            <div class="pipeline__body">
-              <div class="pipeline__agent">Phase 2 · <strong>Pixel</strong></div>
-              <h3 class="pipeline__name">Design</h3>
-              <p class="pipeline__desc">
-                Pixel plans the user experience: flows, component specs, accessibility compliance,
-                and responsive breakpoints. No implementation happens without an approved design.
-              </p>
-              <div class="pipeline__outputs">
-                <span class="pipeline__output">design.md</span>
-                <span class="pipeline__output">user flows</span>
-                <span class="pipeline__output">component specs</span>
+          <div class="pipeline__parallel-label">Phases 2–4 · Parallel</div>
+
+          <div class="pipeline__parallel">
+            <div class="pipeline__step pipeline__step--parallel">
+              <div class="pipeline__icon pipeline__icon--2"><img src="/avatars/pixel.png" alt="Pixel" width="32" height="32" /></div>
+              <div class="pipeline__body">
+                <div class="pipeline__agent">Phase 2 · <strong>Pixel</strong></div>
+                <h3 class="pipeline__name">Design</h3>
+                <p class="pipeline__desc">UX flows, component specs, responsive breakpoints. No implementation without approved design.</p>
+                <div class="pipeline__outputs">
+                  <span class="pipeline__output">design.md</span>
+                  <span class="pipeline__output">component specs</span>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div class="pipeline__arrow">↓</div>
-
-          <div class="pipeline__step">
-            <div class="pipeline__icon pipeline__icon--3"><img src="/avatars/quill.png" alt="Quill" width="32" height="32" /></div>
-            <div class="pipeline__body">
-              <div class="pipeline__agent">Phase 3 · <strong>Quill</strong></div>
-              <h3 class="pipeline__name">Documentation</h3>
-              <p class="pipeline__desc">
-                Quill writes user docs, API specs, and migration guides before a line of code is written.
-                Documentation-first means the feature is fully understood before implementation begins.
-              </p>
-              <div class="pipeline__outputs">
-                <span class="pipeline__output">documentation.md</span>
-                <span class="pipeline__output">API specs</span>
-                <span class="pipeline__output">usage examples</span>
+            <div class="pipeline__step pipeline__step--parallel">
+              <div class="pipeline__icon pipeline__icon--3"><img src="/avatars/quill.png" alt="Quill" width="32" height="32" /></div>
+              <div class="pipeline__body">
+                <div class="pipeline__agent">Phase 3 · <strong>Quill</strong></div>
+                <h3 class="pipeline__name">Documentation</h3>
+                <p class="pipeline__desc">User docs, API specs, and migration guides written before a line of code. Documentation-first.</p>
+                <div class="pipeline__outputs">
+                  <span class="pipeline__output">documentation.md</span>
+                  <span class="pipeline__output">API specs</span>
+                </div>
               </div>
             </div>
-          </div>
 
           <div class="pipeline__arrow">↓</div>
 
@@ -209,9 +201,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="pipeline__arrow">↓</div>
 
           <div class="pipeline__step pipeline__step--human">
-            <div class="pipeline__icon pipeline__icon--human">🧑</div>
+            <div class="pipeline__icon pipeline__icon--human"><span class="pipeline__icon-letter">H</span></div>
             <div class="pipeline__body">
-              <div class="pipeline__agent"><strong>Vit</strong> · Human</div>
+              <div class="pipeline__agent"><strong>Human</strong></div>
               <h3 class="pipeline__name">Review & Approval</h3>
               <p class="pipeline__desc">
                 Vit reviews the walkthrough, tests the output, and either approves or requests
@@ -413,6 +405,60 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .pipeline__icon--aleister {
     background: color-mix(in srgb, #a78bfa 15%, transparent);
     border-color: color-mix(in srgb, #a78bfa 40%, transparent);
+  }
+
+
+  /* Parallel phases */
+  .pipeline__parallel-label {
+    margin-left: 1.5rem;
+    padding-left: 1.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-accent);
+    margin-bottom: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .pipeline__parallel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-left: 1.5rem;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .pipeline__parallel::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-subtle);
+  }
+
+  .pipeline__step--parallel {
+    border-left: none;
+    margin-left: 0;
+    padding: 1rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 8px;
+  }
+
+  .pipeline__step--parallel::before {
+    display: none;
+  }
+
+  /* H letter avatar for Human */
+  .pipeline__icon-letter {
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--text-accent);
+    font-family: 'JetBrains Mono', monospace;
   }
 
   /* Pipeline */
