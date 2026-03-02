@@ -1,10 +1,10 @@
 ---
 title: "Communication Channels"
 icon: "📡"
-subtitle: "3 Active Channels · 2-Layer Security"
+subtitle: "4 Active Channels · 2-Layer Security"
 ---
 
-Aleister is reachable via **Discord**, **iMessage**, and **Telegram** — three channels, two security layers.
+Aleister is reachable via **Telegram**, **iMessage**, **Discord**, and **Email** — four channels, two security layers.
 
 ---
 
@@ -16,7 +16,7 @@ Anyone in an authorized group can see Aleister's messages and read responses. Th
 
 ### Layer 2: Authenticated Command
 
-Only **Vitaliy Rusavuk** (Vit) can execute prompts that trigger actions — code changes, deployments, file operations, system commands. This layer is cryptographically locked to Vit's identity across all three channels.
+Only **Vitaliy Rusavuk** (Vit) can execute prompts that trigger actions — code changes, deployments, file operations, system commands. This layer is cryptographically locked to Vit's identity across all four channels.
 
 ---
 
@@ -32,9 +32,10 @@ The system doesn't rely on prompt-level filtering alone. Elevated tool access is
 
 ## Channels
 
-- **Discord** — Vitaliy's dedicated server
 - **Telegram** — CYTY Inc. group chat, DMs
 - **iMessage** — Direct line to Vit
+- **Discord** — Vitaliy's dedicated server
+- **Email** — aleisterrai@gmail.com
 
 ---
 
