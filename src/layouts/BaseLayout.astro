@@ -34,7 +34,70 @@ const { title, description, image } = Astro.props;
       <slot />
     </main>
     <Footer />
-  </body>
+  
+  <script is:inline>
+    (function () {
+      // ── Grid heartbeat: mouse parallax + idle breath + scroll ripple ──
+      const MAX_DRIFT = 6;       // px — max mouse parallax shift
+      const LERP_SPEED = 0.06;  // smoothing factor (lower = smoother)
+      const IDLE_MIN = 0.15;
+      const IDLE_MAX = 0.22;
+      const IDLE_PERIOD = 4000; // ms for one full breath cycle
+
+      let targetX = 0, targetY = 0;
+      let currentX = 0, currentY = 0;
+      let baseOpacity = 0.18;
+      let opacityBoost = 0;
+      let lastMouseMove = 0;
+      let raf;
+
+      const body = document.documentElement;
+
+      function setProps() {
+        body.style.setProperty('--grid-x', currentX.toFixed(2) + 'px');
+        body.style.setProperty('--grid-y', currentY.toFixed(2) + 'px');
+        body.style.setProperty('--grid-opacity', Math.min(0.35, baseOpacity + opacityBoost).toFixed(3));
+      }
+
+      function tick(now) {
+        // Lerp position toward target
+        currentX += (targetX - currentX) * LERP_SPEED;
+        currentY += (targetY - currentY) * LERP_SPEED;
+
+        // Idle breathing: only when mouse hasn't moved recently
+        const idle = now - lastMouseMove > 1500;
+        if (idle) {
+          const t = (Math.sin((now / IDLE_PERIOD) * Math.PI * 2) + 1) / 2;
+          baseOpacity = IDLE_MIN + (IDLE_MAX - IDLE_MIN) * t;
+        } else {
+          baseOpacity += (0.18 - baseOpacity) * 0.04;
+        }
+
+        // Decay scroll boost
+        opacityBoost *= 0.93;
+
+        setProps();
+        raf = requestAnimationFrame(tick);
+      }
+
+      // Mouse parallax
+      window.addEventListener('mousemove', function (e) {
+        lastMouseMove = performance.now();
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        targetX = ((e.clientX - cx) / cx) * MAX_DRIFT;
+        targetY = ((e.clientY - cy) / cy) * MAX_DRIFT;
+      }, { passive: true });
+
+      // Scroll ripple
+      window.addEventListener('scroll', function () {
+        opacityBoost = Math.min(0.12, opacityBoost + 0.04);
+      }, { passive: true });
+
+      raf = requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
 </html>
 
 <style is:global>

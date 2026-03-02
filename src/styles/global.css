@@ -547,7 +547,9 @@ body::before {
     linear-gradient(var(--border-subtle) 1px, transparent 1px),
     linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
   background-size: 60px 60px;
-  opacity: 0.18;
+  background-position: var(--grid-x, 0px) var(--grid-y, 0px);
+  opacity: var(--grid-opacity, 0.18);
+  will-change: background-position, opacity;
 }
 
 /* ensure page content sits above the grid */
