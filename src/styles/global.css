@@ -535,3 +535,24 @@ code,
 [data-theme="light"] ::selection {
   background: rgba(109, 40, 217, 0.2);
 }
+
+/* ── Full-page grid lines (extends hero aesthetic) ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.18;
+}
+
+/* ensure page content sits above the grid */
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
