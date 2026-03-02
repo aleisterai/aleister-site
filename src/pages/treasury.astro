@@ -1,0 +1,431 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Treasury — Aleister"
+  description="On-chain transparency for the $ALEISTER token. Token contract, treasury Safe, proof of fee claim, and treasury policy."
+>
+  <section class="treasury section">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="treasury__header">
+        <div class="treasury__badge">🏦 On-Chain Transparency</div>
+        <h1 class="treasury__title">$ALEISTER Treasury</h1>
+        <p class="treasury__subtitle">
+          One canonical source of truth for the $ALEISTER token on Base.
+          All addresses and transactions are verifiable on-chain.
+        </p>
+      </div>
+
+      <!-- Contracts -->
+      <div class="treasury__grid">
+
+        <div class="treasury__card glass-card">
+          <div class="treasury__card-label">Token Contract · Base</div>
+          <div class="treasury__card-icon">🪙</div>
+          <h2 class="treasury__card-title">$ALEISTER Token</h2>
+          <div class="treasury__address-wrap">
+            <code class="treasury__address">0xacb4543f479ea44e6df4fa01e483bb5b78361ba3</code>
+            <a
+              href="https://basescan.org/token/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="treasury__verify-btn"
+            >
+              Verify on BaseScan ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="treasury__card glass-card">
+          <div class="treasury__card-label">Treasury Safe · Base</div>
+          <div class="treasury__card-icon">🔒</div>
+          <h2 class="treasury__card-title">Treasury Safe</h2>
+          <div class="treasury__address-wrap">
+            <code class="treasury__address">0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6</code>
+            <a
+              href="https://basescan.org/address/0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="treasury__verify-btn"
+            >
+              Verify on BaseScan ↗
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- On-chain proof -->
+      <div class="treasury__section">
+        <h2 class="treasury__section-title">On-Chain Proof</h2>
+        <div class="treasury__receipts">
+
+          <a
+            href="https://basescan.org/tx/0xc713f1c69c1ed62c1cba3c68c92e015fc33460507f072883d3e692ce0f5a6ea3"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="treasury__receipt glass-card"
+          >
+            <div class="treasury__receipt-icon">✅</div>
+            <div class="treasury__receipt-info">
+              <span class="treasury__receipt-label">Fee Claim</span>
+              <span class="treasury__receipt-hash">0xc713f1c6…6ea3</span>
+            </div>
+            <span class="treasury__receipt-arrow">↗</span>
+          </a>
+
+          <a
+            href="https://basescan.org/tx/0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd07"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="treasury__receipt glass-card"
+          >
+            <div class="treasury__receipt-icon">💸</div>
+            <div class="treasury__receipt-info">
+              <span class="treasury__receipt-label">Treasury Funding</span>
+              <span class="treasury__receipt-hash">0x8b537101…d07</span>
+            </div>
+            <span class="treasury__receipt-arrow">↗</span>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Policy -->
+      <div class="treasury__section">
+        <h2 class="treasury__section-title">Treasury Policy</h2>
+        <div class="treasury__policy glass-card">
+          <div class="treasury__policy-items">
+
+            <div class="treasury__policy-item">
+              <span class="treasury__policy-icon">⚙️</span>
+              <div>
+                <strong>Infrastructure</strong>
+                <p>Covers compute, API costs, and operational expenses for running Aleister — Mac Mini M4, model API calls, hosting.</p>
+              </div>
+            </div>
+
+            <div class="treasury__policy-item">
+              <span class="treasury__policy-icon">🔧</span>
+              <div>
+                <strong>Development</strong>
+                <p>Funds continued development of Aleister's capabilities, sub-agent workflows, and OpenClaw integrations.</p>
+              </div>
+            </div>
+
+            <div class="treasury__policy-item">
+              <span class="treasury__policy-icon">🗳️</span>
+              <div>
+                <strong>Future Governance</strong>
+                <p>Token holders may gain governance rights over a real set of decisions — feature flags, agent registry, plugin marketplace. Nothing is promised yet. This will be announced when ready.</p>
+              </div>
+            </div>
+
+            <div class="treasury__policy-item">
+              <span class="treasury__policy-icon">🚫</span>
+              <div>
+                <strong>Not Used For</strong>
+                <p>No market manipulation. No buybacks. No payments to influencers. No price targets. If utility is added, it will be announced with on-chain proof.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Utility -->
+      <div class="treasury__section">
+        <h2 class="treasury__section-title">Utility — Current Status</h2>
+        <div class="treasury__utility glass-card">
+          <p>
+            $ALEISTER has no active utility yet. We don't have staking, access gating, or governance mechanisms live.
+            When utility is added, it will be announced here and on <a href="https://x.com/aleisterai" target="_blank" rel="noopener">@aleisterai</a> with on-chain proof.
+          </p>
+          <p>
+            Directions being explored: access credits for agent sessions, on-chain membership gating for FundlyHub features, and governance over Aleister's plugin registry.
+            <strong>None of these are promises.</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="treasury__disclaimer">
+        <p>
+          <strong>Disclaimer:</strong> $ALEISTER is not an investment. Holding it carries no expectation of profit, no right to returns, and no price targets.
+          This page is provided for transparency only. Always do your own research.
+          Contract addresses above are the only canonical addresses — any other contract claiming to be $ALEISTER is not affiliated.
+        </p>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .treasury {
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+  }
+
+  .treasury__header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 3rem;
+  }
+
+  .treasury__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--text-accent) 12%, transparent);
+    color: var(--text-accent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 25%, transparent);
+    margin-bottom: 1rem;
+  }
+
+  .treasury__title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+    background: var(--gradient-accent-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .treasury__subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Contract cards */
+  .treasury__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .treasury__card {
+    padding: 1.75rem;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .treasury__card-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+  }
+
+  .treasury__card-icon {
+    font-size: 1.75rem;
+    margin: 0.25rem 0;
+  }
+
+  .treasury__card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+  }
+
+  .treasury__address-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .treasury__address {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-accent);
+    background: color-mix(in srgb, var(--text-accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 15%, transparent);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    word-break: break-all;
+    line-height: 1.5;
+  }
+
+  .treasury__verify-btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    transition: opacity 0.2s ease;
+    width: fit-content;
+  }
+
+  .treasury__verify-btn:hover {
+    opacity: 0.7;
+  }
+
+  /* Sections */
+  .treasury__section {
+    margin-bottom: 2.5rem;
+  }
+
+  .treasury__section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  /* Receipts */
+  .treasury__receipts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .treasury__receipt {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .treasury__receipt:hover {
+    border-color: var(--text-accent);
+    transform: translateX(4px);
+  }
+
+  .treasury__receipt-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .treasury__receipt-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .treasury__receipt-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .treasury__receipt-hash {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-tertiary);
+  }
+
+  .treasury__receipt-arrow {
+    font-size: 1rem;
+    color: var(--text-tertiary);
+  }
+
+  /* Policy */
+  .treasury__policy {
+    border-radius: 16px;
+    padding: 1.75rem;
+  }
+
+  .treasury__policy-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .treasury__policy-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .treasury__policy-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .treasury__policy-item strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .treasury__policy-item p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* Utility */
+  .treasury__utility {
+    border-radius: 16px;
+    padding: 1.75rem;
+  }
+
+  .treasury__utility p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .treasury__utility p:last-child {
+    margin-bottom: 0;
+  }
+
+  .treasury__utility a {
+    color: var(--text-accent);
+    border-bottom: 1px solid color-mix(in srgb, var(--text-accent) 30%, transparent);
+  }
+
+  /* Disclaimer */
+  .treasury__disclaimer {
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+  }
+
+  .treasury__disclaimer p {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    line-height: 1.65;
+  }
+
+  .treasury__disclaimer strong {
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 680px) {
+    .treasury__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .treasury__address {
+      font-size: 0.65rem;
+    }
+  }
+</style>
