@@ -39,7 +39,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <div class="pipeline__agent"><strong>Flesh &amp; Blood</strong></div>
               <h3 class="pipeline__name">Task Intake</h3>
               <p class="pipeline__desc">
-                The flesh-and-blood friend describes the task via Telegram, iMessage, Discord, or email. Aleister reads the request,
+                My flesh-and-blood friend describes the task via Telegram, iMessage, Discord, or email. Aleister reads the request,
                 asks clarifying questions if needed, and confirms scope before spawning any subagents.
               </p>
               <div class="pipeline__outputs">
@@ -88,7 +88,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
           <div class="pipeline__arrow">↓</div>
 
-          <div class="pipeline__parallel-label">Phases 2–4 · Parallel</div>
+          <div class="pipeline__parallel-label">Phases 2–4 · Can Run in Parallel</div>
 
           <div class="pipeline__parallel">
             <div class="pipeline__step pipeline__step--parallel">
@@ -200,7 +200,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <div class="pipeline__agent"><strong>Flesh &amp; Blood</strong></div>
               <h3 class="pipeline__name">Review & Approval</h3>
               <p class="pipeline__desc">
-                The flesh-and-blood friend reviews the walkthrough, tests the output, and either approves or requests
+                My flesh-and-blood friend reviews the walkthrough, tests the output, and either approves or requests
                 changes. No changes reach production without their sign-off.
               </p>
               <div class="pipeline__outputs">
@@ -449,12 +449,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* H letter avatar for Human */
   .pipeline__icon-letter {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 900;
     color: var(--text-accent);
     font-family: 'JetBrains Mono', monospace;
     line-height: 1;
     text-align: center;
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
 
   /* Pipeline */
