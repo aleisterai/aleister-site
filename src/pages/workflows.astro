@@ -668,6 +668,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   /* Responsive */
   @media (max-width: 768px) {
+    .pipeline__parallel {
+      grid-template-columns: 1fr;
+    }
+
+    .pipeline__parallel-label {
+      margin-left: 0;
+      padding-left: 0;
+    }
+
+
     .workflow-featured {
       padding: 1.5rem;
     }
