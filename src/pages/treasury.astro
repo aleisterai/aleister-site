@@ -5,7 +5,7 @@ const TOKEN  = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 const SAFE   = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
 const TX_FEE = "0xc713f1c69c1ed62c1cba3c68c92e015fc33460507f072883d3e692ce0f5a6ea3";
 const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd07";
-const GECKO  = "https://www.geckoterminal.com/base/pools/0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d";
+const DEXSCREENER = "https://dexscreener.com/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 ---
 
@@ -26,8 +26,8 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
           <p class="tr-desc">One canonical source of truth. All addresses verifiable on-chain.</p>
         </div>
         <div class="tr-hero__ctas">
-          <a href={GECKO} target="_blank" rel="noopener" class="tr-cta tr-cta--primary">
-            📈 Trade on GeckoTerminal
+          <a href={DEXSCREENER} target="_blank" rel="noopener" class="tr-cta tr-cta--primary">
+            Trade on DexScreener
           </a>
           <a href={OKX} target="_blank" rel="noopener" class="tr-cta tr-cta--secondary">
             View on OKX Web3
@@ -526,6 +526,7 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
     const el = document.getElementById('tr-mcap');
     if (!el) return;
     try {
+      // Using GeckoTerminal API for market data (DexScreener doesn't have public API)
       const POOL = '0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d';
       const url = `https://api.geckoterminal.com/api/v2/networks/base/pools/${POOL}`;
       const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
