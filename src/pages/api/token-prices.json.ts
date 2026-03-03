@@ -21,6 +21,21 @@ export const GET: APIRoute = async ({ request }) => {
     
     const data = await response.json();
     
+    // If ALEISTER is not in CoinGecko, use market data from our other endpoint
+    if (!data.aleister) {
+      // Fetch ALEISTER price from our market data endpoint
+      const marketResponse = await fetch(new URL('/api/market-data.json', request.url).toString());
+      if (marketResponse.ok) {
+        const marketData = await marketResponse.json();
+        data.aleister = {
+          usd: marketData.price || 0,
+          usd_24h_change: marketData.change24h || 0
+        };
+      } else {
+        data.aleister = { usd: 0, usd_24h_change: 0 };
+      }
+    }
+    
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
