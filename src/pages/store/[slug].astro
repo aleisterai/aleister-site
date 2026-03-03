@@ -260,6 +260,46 @@ const longDescriptionHtml = marked(item.longDescription);
               }
             </ul>
           </div>
+
+          {/* Good for workflows — only on personas and sub-agents */}
+          {(item.type === "persona" || item.category === "Sub-Agent") && (
+            <div class="product__divider"></div>
+            <div class="product__workflows">
+              <h2 class="product__section-title">Good for workflows</h2>
+              <a href="/workflows" class="workflow-card">
+                <div class="workflow-card__header">
+                  <span class="workflow-card__icon">⚙️</span>
+                  <div>
+                    <span class="workflow-card__name">Feature Development Pipeline</span>
+                    <span class="workflow-card__phases">6 phases</span>
+                  </div>
+                  <span class="workflow-card__arrow">→</span>
+                </div>
+                <p class="workflow-card__desc">
+                  End-to-end workflow for shipping features: Research → Design → Approval → Agile Setup → Implementation → Production Deploy.
+                  Uses Sage, Pixel, Rally, Cipher, Forge, Quill, and Prism in a structured handoff pipeline.
+                </p>
+                <div class="workflow-card__steps">
+                  {[
+                    { emoji: "🎓", label: "Research", agent: "Sage" },
+                    { emoji: "🎨", label: "Design & Planning", agent: "Pixel · Quill · Prism" },
+                    { emoji: "🚦", label: "Approval Gate", agent: "You" },
+                    { emoji: "🏁", label: "Agile Setup", agent: "Rally" },
+                    { emoji: "⚡", label: "Implementation", agent: "Cipher · Forge" },
+                    { emoji: "🚀", label: "Production Deploy", agent: "Forge" },
+                  ].map((step) => (
+                    <div class="workflow-step">
+                      <span class="workflow-step__emoji">{step.emoji}</span>
+                      <div class="workflow-step__info">
+                        <span class="workflow-step__label">{step.label}</span>
+                        <span class="workflow-step__agent">{step.agent}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </a>
+            </div>
+          )}
         </div>
 
         <!-- Right: buy panel -->
@@ -1086,6 +1126,132 @@ const longDescriptionHtml = marked(item.longDescription);
     font-size: 0.78rem;
     color: var(--text-tertiary);
     margin: 0;
+  }
+
+  /* ─── Workflow card ─── */
+  .product__workflows {
+    margin-top: 0.25rem;
+  }
+
+  .workflow-card {
+    display: block;
+    text-decoration: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    background: color-mix(in srgb, var(--bg-secondary, #111118) 60%, transparent);
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    margin-top: 1rem;
+  }
+
+  .workflow-card:hover {
+    border-color: var(--accent-primary, #6c47ff);
+    background: color-mix(in srgb, var(--accent-primary, #6c47ff) 6%, var(--bg-secondary, #111118));
+    transform: translateY(-1px);
+  }
+
+  .workflow-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .workflow-card__icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .workflow-card__name {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .workflow-card__phases {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    margin-top: 0.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .workflow-card__arrow {
+    margin-left: auto;
+    font-size: 1rem;
+    color: var(--text-tertiary);
+    transition: transform 0.15s;
+  }
+
+  .workflow-card:hover .workflow-card__arrow {
+    transform: translateX(3px);
+    color: var(--accent-primary, #6c47ff);
+  }
+
+  .workflow-card__desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0 0 1rem;
+  }
+
+  .workflow-card__steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .workflow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--bg-primary, #0d0d12) 70%, transparent);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .workflow-step__emoji {
+    font-size: 1rem;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  .workflow-step__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .workflow-step__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .workflow-step__agent {
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 700px) {
+    .workflow-card__steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .workflow-card__steps {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 
