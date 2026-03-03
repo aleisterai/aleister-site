@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { storeItems } from "../../data/store";
 
 export const prerender = true;
 
@@ -16,6 +17,10 @@ const { member } = Astro.props;
 const { Content } = await member.render();
 const { name, codename, role, model, color, avatar, traits, description } =
   member.data;
+const storeItem =
+  storeItems.find(
+    (i) => i.slug === member.slug && i.category === "Sub-Agent"
+  ) ?? null;
 
 // Other agents for navigation
 const allTeam = await getCollection("team");
@@ -115,6 +120,34 @@ const otherAgents = allTeam
       </div>
     </div>
   </section>
+
+  {/* Floating Get Agent CTA */}
+  {
+    storeItem && (
+      <div class="get-agent-bar" style={`--agent-color: ${color}`}>
+        <div class="get-agent-bar__inner">
+          <div class="get-agent-bar__info">
+            <img src={avatar} alt={name} class="get-agent-bar__avatar" />
+            <div>
+              <span class="get-agent-bar__name">{name}</span>
+              <span class="get-agent-bar__sub">
+                {codename} · {role}
+              </span>
+            </div>
+          </div>
+          <a
+            href={storeItem.stripeUrl}
+            class="get-agent-bar__btn"
+            target="_blank"
+            rel="noopener"
+            style={`--agent-color: ${color}`}
+          >
+            Get agent — ${storeItem.price}
+          </a>
+        </div>
+      </div>
+    )
+  }
 </BaseLayout>
 
 <style>
@@ -414,6 +447,102 @@ const otherAgents = allTeam
   @media (max-width: 600px) {
     .other-agents__grid {
       grid-template-columns: 1fr 1fr;
+  }
+
+  /* ─── Floating Get Agent bar ─── */
+  .get-agent-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--bg-primary, #0d0d12) 80%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--agent-color) 25%, var(--border-subtle));
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .get-agent-bar__inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .get-agent-bar__info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .get-agent-bar__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid color-mix(in srgb, var(--agent-color) 50%, transparent);
+    flex-shrink: 0;
+  }
+
+  .get-agent-bar__name {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .get-agent-bar__sub {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+  }
+
+  .get-agent-bar__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background: var(--agent-color);
+    color: #fff;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--agent-color) 40%, transparent);
+  }
+
+  .get-agent-bar__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Ensure page content doesn't hide behind bar */
+  :global(main), :global(.about-entry) {
+    padding-bottom: 80px;
+  }
+
+  @media (max-width: 600px) {
+    .other-agents__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .get-agent-bar__info {
+      display: none;
+    }
+
+    .get-agent-bar__btn {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
