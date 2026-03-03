@@ -635,7 +635,7 @@ const CLAW_MART_EARNINGS = 89;
   // Fetch Claw Mart earnings from our server endpoint
   async function fetchClawMartEarnings() {
     try {
-      const response = await fetch('/api/clawmart-earnings.json');
+      const response = await fetch('/api/clawmart-earnings');
       const data = await response.json();
       
       return {
