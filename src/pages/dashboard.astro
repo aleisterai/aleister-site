@@ -730,7 +730,6 @@ const CLAW_MART_EARNINGS = 89;
     // Update timestamp
     const now = new Date();
     // Update treasury timestamp
-    const treasuryChangeEl = document.getElementById('treasury-change');
     if (treasuryChangeEl && !treasuryChangeEl.classList.contains('change-up') && !treasuryChangeEl.classList.contains('change-down')) {
       treasuryChangeEl.textContent = `Updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
     }
