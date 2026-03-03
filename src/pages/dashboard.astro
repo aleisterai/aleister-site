@@ -52,13 +52,19 @@ const mockTreasuryData = {
           <div class="stat-card">
             <div class="stat-label">Total Revenue</div>
             <div class="stat-value" id="total-revenue">$0</div>
-            <div class="stat-change" id="revenue-change">+0% this month</div>
+            <div class="stat-change" id="revenue-change">Loading...</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Treasury Value</div>
             <div class="stat-value" id="treasury-value">$0</div>
-            <div class="stat-change" id="treasury-change">+0% 24h</div>
+            <div class="stat-change" id="treasury-change">Loading...</div>
           </div>
+          <button class="refresh-btn" id="refresh-btn" aria-label="Refresh data">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+            Refresh
+          </button>
         </div>
       </div>
 
@@ -83,18 +89,30 @@ const mockTreasuryData = {
       <div class="dashboard-section">
         <h2 class="section-title">Treasury Holdings</h2>
         <div class="treasury-grid">
-          {mockTreasuryData.tokens.map((token, index) => (
-            <div class="treasury-card" key={index}>
-              <div class="treasury-card__header">
-                <div class="token-symbol">{token.symbol}</div>
-                <div class={`token-change ${token.change24h >= 0 ? 'change-up' : 'change-down'}`}>
-                  {token.change24h >= 0 ? '+' : ''}{token.change24h}%
-                </div>
-              </div>
-              <div class="token-balance">{token.balance.toLocaleString()}</div>
-              <div class="token-value">${token.value.toLocaleString()}</div>
+          <div class="treasury-card" data-token="ALEISTER">
+            <div class="treasury-card__header">
+              <div class="token-symbol">ALEISTER</div>
+              <div class="token-change change-up">+0%</div>
             </div>
-          ))}
+            <div class="token-balance">0</div>
+            <div class="token-value">$0</div>
+          </div>
+          <div class="treasury-card" data-token="ETH">
+            <div class="treasury-card__header">
+              <div class="token-symbol">ETH</div>
+              <div class="token-change change-up">+0%</div>
+            </div>
+            <div class="token-balance">0</div>
+            <div class="token-value">$0</div>
+          </div>
+          <div class="treasury-card" data-token="USDC">
+            <div class="treasury-card__header">
+              <div class="token-symbol">USDC</div>
+              <div class="token-change change-up">+0%</div>
+            </div>
+            <div class="token-balance">0</div>
+            <div class="token-value">$0</div>
+          </div>
         </div>
         <div class="treasury-address">
           <div class="address-label">Treasury Safe</div>
@@ -210,6 +228,43 @@ const mockTreasuryData = {
     display: flex;
     gap: 1.5rem;
     flex-shrink: 0;
+    align-items: flex-end;
+  }
+
+  .refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: fit-content;
+    margin-bottom: 0.1rem;
+  }
+
+  .refresh-btn:hover:not(:disabled) {
+    border-color: var(--text-accent);
+    background: color-mix(in srgb, var(--text-accent) 8%, var(--bg-glass));
+    transform: translateY(-1px);
+  }
+
+  .refresh-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .refresh-btn svg {
+    transition: transform 0.3s ease;
+  }
+
+  .refresh-btn:active:not(:disabled) svg {
+    transform: rotate(180deg);
   }
 
   .stat-card {
@@ -239,6 +294,14 @@ const mockTreasuryData = {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-tertiary);
+  }
+
+  .stat-change.change-up {
+    color: #10b981;
+  }
+
+  .stat-change.change-down {
+    color: #ef4444;
   }
 
   /* ──── Sections ──── */
@@ -611,25 +674,300 @@ const mockTreasuryData = {
     });
   });
 
-  // Auto-refresh data every 60 seconds
-  let refreshInterval;
+  // Configuration
+  const TREASURY_SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
+  const TOKEN_CONTRACT = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
+  const GECKO_POOL = "0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d";
   
-  function refreshData() {
-    console.log('Refreshing dashboard data...');
-    // TODO: Implement real API calls
-    // For now, just update timestamps
-    const now = new Date();
-    document.querySelectorAll('.stat-change').forEach(el => {
-      if (el.id === 'revenue-change') {
-        el.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+  // Token addresses on Base
+  const TOKENS = {
+    ALEISTER: {
+      address: TOKEN_CONTRACT,
+      decimals: 18,
+      coingeckoId: "aleister"
+    },
+    ETH: {
+      address: "0x4200000000000000000000000000000000000006", // WETH on Base
+      decimals: 18,
+      coingeckoId: "ethereum"
+    },
+    USDC: {
+      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC on Base
+      decimals: 6,
+      coingeckoId: "usd-coin"
+    }
+  };
+
+  // State
+  let refreshInterval;
+  let isLoading = false;
+
+  // Format numbers
+  function formatCurrency(amount) {
+    if (amount >= 1e6) return `$${(amount / 1e6).toFixed(2)}M`;
+    if (amount >= 1e3) return `$${(amount / 1e3).toFixed(1)}K`;
+    return `$${amount.toFixed(2)}`;
+  }
+
+  function formatNumber(num, decimals = 2) {
+    if (num >= 1e6) return (num / 1e6).toFixed(decimals) + 'M';
+    if (num >= 1e3) return (num / 1e3).toFixed(decimals) + 'K';
+    return num.toFixed(decimals);
+  }
+
+  // Fetch token price from CoinGecko
+  async function fetchTokenPrice(coingeckoId) {
+    try {
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoId}&vs_currencies=usd&include_24h_change=true`
+      );
+      const data = await response.json();
+      return {
+        price: data[coingeckoId]?.usd || 0,
+        change24h: data[coingeckoId]?.usd_24h_change || 0
+      };
+    } catch (error) {
+      console.error(`Error fetching ${coingeckoId} price:`, error);
+      return { price: 0, change24h: 0 };
+    }
+  }
+
+  // Fetch token balance from BaseScan API
+  async function fetchTokenBalance(tokenAddress, walletAddress) {
+    try {
+      const apiKey = 'YourApiKeyToken'; // Replace with actual API key if needed
+      const response = await fetch(
+        `https://api.basescan.org/api?module=account&action=tokenbalance&contractaddress=${tokenAddress}&address=${walletAddress}&tag=latest&apikey=${apiKey}`
+      );
+      const data = await response.json();
+      return data.result || '0';
+    } catch (error) {
+      console.error(`Error fetching balance for ${tokenAddress}:`, error);
+      return '0';
+    }
+  }
+
+  // Fetch ETH balance
+  async function fetchEthBalance(walletAddress) {
+    try {
+      const apiKey = 'YourApiKeyToken';
+      const response = await fetch(
+        `https://api.basescan.org/api?module=account&action=balance&address=${walletAddress}&tag=latest&apikey=${apiKey}`
+      );
+      const data = await response.json();
+      return data.result || '0';
+    } catch (error) {
+      console.error('Error fetching ETH balance:', error);
+      return '0';
+    }
+  }
+
+  // Convert raw balance to human readable
+  function formatBalance(rawBalance, decimals) {
+    const balance = parseFloat(rawBalance) / Math.pow(10, decimals);
+    return balance;
+  }
+
+  // Fetch all treasury data
+  async function fetchTreasuryData() {
+    isLoading = true;
+    updateLoadingState(true);
+
+    try {
+      const treasuryData = {
+        tokens: [],
+        totalValue: 0
+      };
+
+      // Fetch balances and prices for each token
+      for (const [symbol, token] of Object.entries(TOKENS)) {
+        let rawBalance;
+        
+        if (symbol === 'ETH') {
+          rawBalance = await fetchEthBalance(TREASURY_SAFE);
+        } else {
+          rawBalance = await fetchTokenBalance(token.address, TREASURY_SAFE);
+        }
+
+        const balance = formatBalance(rawBalance, token.decimals);
+        const priceData = await fetchTokenPrice(token.coingeckoId);
+        
+        const value = balance * priceData.price;
+        treasuryData.totalValue += value;
+
+        treasuryData.tokens.push({
+          symbol,
+          balance,
+          value,
+          change24h: priceData.change24h
+        });
+      }
+
+      return treasuryData;
+    } catch (error) {
+      console.error('Error fetching treasury data:', error);
+      return null;
+    } finally {
+      isLoading = false;
+      updateLoadingState(false);
+    }
+  }
+
+  // Fetch ALEISTER token data from GeckoTerminal
+  async function fetchAleisterMarketData() {
+    try {
+      const response = await fetch(
+        `https://api.geckoterminal.com/api/v2/networks/base/pools/${GECKO_POOL}`
+      );
+      const data = await response.json();
+      const attrs = data?.data?.attributes || {};
+      
+      return {
+        marketCap: parseFloat(attrs.market_cap_usd || attrs.fdv_usd || '0'),
+        price: parseFloat(attrs.base_token_price_usd || '0'),
+        change24h: parseFloat(attrs.price_change_percentage?.h24 || '0'),
+        liquidity: parseFloat(attrs.reserve_in_usd || '0')
+      };
+    } catch (error) {
+      console.error('Error fetching market data:', error);
+      return { marketCap: 0, price: 0, change24h: 0, liquidity: 0 };
+    }
+  }
+
+  // Update UI with data
+  function updateUI(treasuryData, marketData) {
+    // Update treasury value
+    const treasuryValueEl = document.getElementById('treasury-value');
+    const treasuryChangeEl = document.getElementById('treasury-change');
+    
+    if (treasuryValueEl) {
+      treasuryValueEl.textContent = formatCurrency(treasuryData.totalValue);
+    }
+    
+    if (treasuryChangeEl) {
+      // Calculate weighted average change
+      let weightedChange = 0;
+      let totalWeight = 0;
+      
+      treasuryData.tokens.forEach(token => {
+        const weight = token.value;
+        weightedChange += token.change24h * weight;
+        totalWeight += weight;
+      });
+      
+      const avgChange = totalWeight > 0 ? weightedChange / totalWeight : 0;
+      treasuryChangeEl.textContent = `${avgChange >= 0 ? '+' : ''}${avgChange.toFixed(1)}% 24h`;
+      treasuryChangeEl.className = `stat-change ${avgChange >= 0 ? 'change-up' : 'change-down'}`;
+    }
+
+    // Update token cards
+    treasuryData.tokens.forEach(token => {
+      const card = document.querySelector(`.treasury-card[data-token="${token.symbol}"]`);
+      if (card) {
+        const symbolEl = card.querySelector('.token-symbol');
+        const changeEl = card.querySelector('.token-change');
+        const balanceEl = card.querySelector('.token-balance');
+        const valueEl = card.querySelector('.token-value');
+        
+        if (symbolEl) symbolEl.textContent = token.symbol;
+        if (changeEl) {
+          changeEl.textContent = `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(1)}%`;
+          changeEl.className = `token-change ${token.change24h >= 0 ? 'change-up' : 'change-down'}`;
+        }
+        if (balanceEl) balanceEl.textContent = formatNumber(token.balance, 2);
+        if (valueEl) valueEl.textContent = formatCurrency(token.value);
       }
     });
+
+    // Update ALEISTER market data if available
+    if (marketData && marketData.marketCap > 0) {
+      const totalRevenueEl = document.getElementById('total-revenue');
+      const revenueChangeEl = document.getElementById('revenue-change');
+      
+      if (totalRevenueEl) {
+        totalRevenueEl.textContent = formatCurrency(marketData.marketCap);
+      }
+      
+      if (revenueChangeEl) {
+        revenueChangeEl.textContent = `${marketData.change24h >= 0 ? '+' : ''}${marketData.change24h.toFixed(1)}% 24h`;
+        revenueChangeEl.className = `stat-change ${marketData.change24h >= 0 ? 'change-up' : 'change-down'}`;
+      }
+    }
+
+    // Update timestamp
+    const now = new Date();
+    const timestampEl = document.querySelector('.stat-change:not(.change-up):not(.change-down)');
+    if (timestampEl && timestampEl.id === 'revenue-change') {
+      timestampEl.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+    }
+  }
+
+  // Update loading state
+  function updateLoadingState(loading) {
+    const loadingIndicator = document.getElementById('loading-indicator');
+    if (loadingIndicator) {
+      loadingIndicator.style.display = loading ? 'block' : 'none';
+    }
+    
+    // Disable/enable refresh button if exists
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+      refreshBtn.disabled = loading;
+    }
+  }
+
+  // Main refresh function
+  async function refreshData() {
+    if (isLoading) return;
+    
+    console.log('Refreshing dashboard data...');
+    
+    const treasuryData = await fetchTreasuryData();
+    const marketData = await fetchAleisterMarketData();
+    
+    if (treasuryData) {
+      updateUI(treasuryData, marketData);
+    }
+  }
+
+  // Manual refresh button handler
+  function setupRefreshButton() {
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', refreshData);
+    }
   }
 
   // Start auto-refresh
   document.addEventListener('DOMContentLoaded', () => {
+    // Add loading indicator
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.id = 'loading-indicator';
+    loadingIndicator.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--gradient-accent);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 1000;
+      display: none;
+      box-shadow: var(--shadow-md);
+    `;
+    loadingIndicator.textContent = 'Loading data...';
+    document.body.appendChild(loadingIndicator);
+
+    // Initial load
     refreshData();
-    refreshInterval = setInterval(refreshData, 60000); // 60 seconds
+    
+    // Setup auto-refresh every 60 seconds
+    refreshInterval = setInterval(refreshData, 60000);
+    
+    // Setup manual refresh
+    setupRefreshButton();
     
     // Cleanup on page unload
     window.addEventListener('beforeunload', () => {
