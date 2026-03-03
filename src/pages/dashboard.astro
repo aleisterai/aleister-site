@@ -89,17 +89,25 @@ const mockTreasuryData = {
       <div class="dashboard-section">
         <h2 class="section-title">Treasury Holdings</h2>
         <div class="treasury-grid">
-          <div class="treasury-card" data-token="ALEISTER">
+          <div class="treasury-card" data-token="ETH">
             <div class="treasury-card__header">
-              <div class="token-symbol">ALEISTER</div>
+              <div class="token-symbol">ETH</div>
               <div class="token-change change-up">+0%</div>
             </div>
             <div class="token-balance">0</div>
             <div class="token-value">$0</div>
           </div>
-          <div class="treasury-card" data-token="ETH">
+          <div class="treasury-card" data-token="WETH">
             <div class="treasury-card__header">
-              <div class="token-symbol">ETH</div>
+              <div class="token-symbol">WETH</div>
+              <div class="token-change change-up">+0%</div>
+            </div>
+            <div class="token-balance">0</div>
+            <div class="token-value">$0</div>
+          </div>
+          <div class="treasury-card" data-token="ALEISTER">
+            <div class="treasury-card__header">
+              <div class="token-symbol">ALEISTER</div>
               <div class="token-change change-up">+0%</div>
             </div>
             <div class="token-balance">0</div>
@@ -771,6 +779,7 @@ const mockTreasuryData = {
             priceData = pricesData.aleister;
             break;
           case 'ETH':
+          case 'WETH': // WETH uses same price as ETH
             priceData = pricesData.ethereum;
             break;
           case 'USDC':
@@ -796,8 +805,9 @@ const mockTreasuryData = {
       console.error('Error fetching treasury data:', error);
       return {
         tokens: [
-          { symbol: 'ALEISTER', balance: 0, value: 0, change24h: 0 },
           { symbol: 'ETH', balance: 0, value: 0, change24h: 0 },
+          { symbol: 'WETH', balance: 0, value: 0, change24h: 0 },
+          { symbol: 'ALEISTER', balance: 0, value: 0, change24h: 0 },
           { symbol: 'USDC', balance: 0, value: 0, change24h: 0 }
         ],
         totalValue: 0
