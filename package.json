@@ -6,7 +6,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:store": "vitest run src/tests/store-bind.test.ts src/tests/store-download.test.ts",
+    "test:stress": "vitest run src/tests/store-stress.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",

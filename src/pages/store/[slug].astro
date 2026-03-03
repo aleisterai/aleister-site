@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { storeItems } from "../../data/store";
+import { getCollection } from "astro:content";
 import { marked } from "marked";
 
 // SSR — must NOT prerender so we can read session_id from URL at request time
@@ -10,6 +11,13 @@ const item = storeItems.find((i) => i.slug === slug);
 if (!item) {
   return Astro.redirect("/store");
 }
+
+// For subagent items, pull rich data from the team collection
+const isSubagent = item.category === "Sub-Agent";
+const teamMember = isSubagent
+  ? (await getCollection("team")).find((m) => m.slug === slug)
+  : null;
+const teamData = teamMember?.data ?? null;
 
 const sessionId = Astro.url.searchParams.get("session_id");
 const purchased = !!sessionId;
@@ -132,7 +140,15 @@ const longDescriptionHtml = marked(item.longDescription);
       <nav class="breadcrumb">
         <a href="/store">Store</a>
         <span>/</span>
-        <span>{item.type === "persona" ? "Personas" : "Skills"}</span>
+        <span
+          >{
+            isSubagent
+              ? "Sub-Agents"
+              : item.type === "persona"
+              ? "Personas"
+              : "Skills"
+          }</span
+        >
         <span>/</span>
         <span>{item.name}</span>
       </nav>
@@ -141,26 +157,88 @@ const longDescriptionHtml = marked(item.longDescription);
         <!-- Left: content -->
         <div class="product__content">
           <div class="product__meta">
-            <span
-              class={`product__type-badge product__type-badge--${item.type}`}
-            >
-              {item.type === "persona" ? "Persona" : `Skill · ${item.category}`}
-            </span>
+            {
+              teamData ? (
+                <span
+                  class="product__type-badge product__type-badge--subagent"
+                  style={`--agent-color: ${teamData.color}`}
+                >
+                  Sub-Agent · {teamData.codename}
+                </span>
+              ) : (
+                <span
+                  class={`product__type-badge product__type-badge--${item.type}`}
+                >
+                  {item.type === "persona"
+                    ? "Persona"
+                    : `Skill · ${item.category}`}
+                </span>
+              )
+            }
           </div>
 
           <div class="product__title-row">
             {
               item.avatar && (
-                <img
-                  src={item.avatar}
-                  alt={item.name}
-                  class="product__avatar"
-                />
+                <div
+                  class="product__avatar-wrap"
+                  style={
+                    teamData ? `--agent-color: ${teamData.color}` : undefined
+                  }
+                >
+                  <img
+                    src={item.avatar}
+                    alt={item.name}
+                    class="product__avatar"
+                  />
+                </div>
               )
             }
-            <h1 class="product__title">{item.name}</h1>
+            <div>
+              <h1 class="product__title">{item.name}</h1>
+              {teamData && <span class="product__model">{teamData.model}</span>}
+            </div>
           </div>
+
+          {/* Team traits from collection — same as /team page */}
+          {
+            teamData && teamData.traits && (
+              <div class="product__traits">
+                {teamData.traits.map((trait: string) => (
+                  <span
+                    class="product__trait"
+                    style={`--trait-color: ${teamData.color}`}
+                  >
+                    {trait}
+                  </span>
+                ))}
+              </div>
+            )
+          }
+
           <p class="product__tagline">{item.description}</p>
+
+          {/* Link to full /team profile */}
+          {
+            teamData && (
+              <a href={`/team/${slug}`} class="product__team-link">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                View full agent profile →
+              </a>
+            )
+          }
 
           <div class="product__divider"></div>
 
@@ -650,6 +728,20 @@ const longDescriptionHtml = marked(item.longDescription);
     margin-bottom: 1rem;
   }
 
+  .product__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .product__avatar-wrap::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--agent-color, var(--border-glass));
+    opacity: 0.5;
+  }
+
   .product__avatar {
     width: 72px;
     height: 72px;
@@ -657,10 +749,74 @@ const longDescriptionHtml = marked(item.longDescription);
     object-fit: cover;
     border: 2px solid var(--border-glass);
     flex-shrink: 0;
+    display: block;
   }
 
   .product__title-row .product__title {
     margin-bottom: 0;
+  }
+
+  .product__model {
+    font-size: 0.75rem;
+    font-family: "JetBrains Mono", monospace;
+    color: var(--text-tertiary);
+    margin-top: 0.2rem;
+    display: block;
+  }
+
+  /* Team traits — same visual as /team page */
+  .product__traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .product__trait {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--trait-color) 14%, transparent);
+    color: var(--trait-color);
+    border: 1px solid color-mix(in srgb, var(--trait-color) 28%, transparent);
+  }
+
+  /* Team profile cross-link */
+  .product__team-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    text-decoration: none;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+    transition: opacity 0.15s;
+  }
+
+  .product__team-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  /* Subagent type badge uses agent color */
+  .product__type-badge--subagent {
+    background: color-mix(
+      in srgb,
+      var(--agent-color, #22c55e) 12%,
+      transparent
+    );
+    color: var(--agent-color, #22c55e);
+    border-color: color-mix(
+      in srgb,
+      var(--agent-color, #22c55e) 30%,
+      transparent
+    );
   }
 
   /* Prose styles for markdown long description */

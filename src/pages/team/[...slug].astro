@@ -1,9 +1,11 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export const prerender = true;
 
 export async function getStaticPaths() {
-  const team = await getCollection('team');
+  const team = await getCollection("team");
   return team.map((member) => ({
     params: { slug: member.slug },
     props: { member },
@@ -12,13 +14,24 @@ export async function getStaticPaths() {
 
 const { member } = Astro.props;
 const { Content } = await member.render();
-const { name, codename, role, model, color, avatar, traits, description } = member.data;
+const { name, codename, role, model, color, avatar, traits, description } =
+  member.data;
 
 // Other agents for navigation
-const allTeam = await getCollection('team');
-const desiredOrder = ['Cipher','Sage','Quill','Rally','Echo','Pixel','Forge','Prism','Lyra'];
+const allTeam = await getCollection("team");
+const desiredOrder = [
+  "Cipher",
+  "Sage",
+  "Quill",
+  "Rally",
+  "Echo",
+  "Pixel",
+  "Forge",
+  "Prism",
+  "Lyra",
+];
 const otherAgents = allTeam
-  .filter(m => m.slug !== member.slug)
+  .filter((m) => m.slug !== member.slug)
   .sort((a, b) => {
     const ai = desiredOrder.indexOf(a.data.name);
     const bi = desiredOrder.indexOf(b.data.name);
@@ -26,10 +39,7 @@ const otherAgents = allTeam
   });
 ---
 
-<BaseLayout
-  title={`${name} — Aleister's Team`}
-  description={description}
->
+<BaseLayout title={`${name} — Aleister's Team`} description={description}>
   <section class="about-entry section">
     <div class="container">
       <div class="about-entry__header">
@@ -52,9 +62,16 @@ const otherAgents = allTeam
           <span class="agent-hero__role">{codename} · {role}</span>
           <span class="agent-hero__model">Powered by {model}</span>
           <div class="agent-hero__traits">
-            {traits.map((trait: string) => (
-              <span class="agent-hero__trait" style={`--trait-color: ${color}`}>{trait}</span>
-            ))}
+            {
+              traits.map((trait: string) => (
+                <span
+                  class="agent-hero__trait"
+                  style={`--trait-color: ${color}`}
+                >
+                  {trait}
+                </span>
+              ))
+            }
           </div>
         </div>
       </div>
@@ -71,22 +88,30 @@ const otherAgents = allTeam
     <div class="container">
       <h2 class="other-agents__heading">Meet the rest of the team</h2>
       <div class="other-agents__grid">
-        {otherAgents.map((agent) => (
-          <a href={`/team/${agent.slug}`} class="other-agent-card" style={`--agent-color: ${agent.data.color}`}>
-            <img
-              src={agent.data.avatar}
-              alt={agent.data.name}
-              class="other-agent-card__avatar"
-              width="48"
-              height="48"
-            />
-            <div class="other-agent-card__info">
-              <span class="other-agent-card__name">{agent.data.name}</span>
-              <span class="other-agent-card__codename">{agent.data.codename}</span>
-            </div>
-            <span class="other-agent-card__arrow">→</span>
-          </a>
-        ))}
+        {
+          otherAgents.map((agent) => (
+            <a
+              href={`/team/${agent.slug}`}
+              class="other-agent-card"
+              style={`--agent-color: ${agent.data.color}`}
+            >
+              <img
+                src={agent.data.avatar}
+                alt={agent.data.name}
+                class="other-agent-card__avatar"
+                width="48"
+                height="48"
+              />
+              <div class="other-agent-card__info">
+                <span class="other-agent-card__name">{agent.data.name}</span>
+                <span class="other-agent-card__codename">
+                  {agent.data.codename}
+                </span>
+              </div>
+              <span class="other-agent-card__arrow">→</span>
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -131,7 +156,7 @@ const otherAgents = allTeam
   }
 
   .agent-hero__avatar-wrap::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: -4px;
     border-radius: 50%;
@@ -166,7 +191,7 @@ const otherAgents = allTeam
 
   .agent-hero__model {
     font-size: 0.8rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     color: var(--text-tertiary);
   }
 
@@ -251,7 +276,7 @@ const otherAgents = allTeam
   }
 
   .about-entry__content :global(code) {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.85em;
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
@@ -391,5 +416,4 @@ const otherAgents = allTeam
       grid-template-columns: 1fr 1fr;
     }
   }
-
 </style>
