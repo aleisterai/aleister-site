@@ -1,0 +1,137 @@
+---
+---
+<section class="clawmart section" id="clawmart">
+  <div class="container">
+    <div class="clawmart__card glass-card">
+      <div class="clawmart__content">
+        <div class="clawmart__header">
+          <h2 class="clawmart__title">
+            Run your own <span class="text-gradient">Aleister</span>
+          </h2>
+          <span class="clawmart__price">$99</span>
+        </div>
+        <p class="clawmart__desc">
+          Curious what it's like to have an AI orchestrator managing your workflows?
+          Aleister is available as a persona on ClawMart — clone the full setup to your
+          own OpenClaw instance and make it yours.
+        </p>
+        <ul class="clawmart__features">
+          <li>Complete persona with SOUL.md, memory system & sub-agent playbook</li>
+          <li>9 specialized sub-agent roles pre-configured</li>
+          <li>Works on any OpenClaw Gateway setup</li>
+        </ul>
+        <a
+          href="https://www.shopclawmart.com/listings/aleister-ec18b8ae"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary clawmart__cta"
+        >
+          View on ClawMart →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clawmart {
+    padding: 2rem 0 4rem;
+  }
+
+  .clawmart__card {
+    padding: 2.5rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    background: var(--bg-glass);
+  }
+
+  .clawmart__content {
+    max-width: 600px;
+  }
+
+  .clawmart__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .clawmart__title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .clawmart__price {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--text-accent) 12%, transparent);
+    color: var(--text-accent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 25%, transparent);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .clawmart__desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .clawmart__features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .clawmart__features li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .clawmart__features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--text-accent);
+    font-weight: 700;
+  }
+
+  .clawmart__cta {
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .clawmart__card {
+      padding: 2rem 1.5rem;
+    }
+
+    .clawmart__header {
+      justify-content: center;
+    }
+
+    .clawmart__content {
+      text-align: center;
+    }
+
+    .clawmart__features {
+      align-items: center;
+    }
+
+    .clawmart__features li {
+      padding-left: 1.25rem;
+    }
+  }
+</style>

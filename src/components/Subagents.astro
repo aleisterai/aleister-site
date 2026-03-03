@@ -1,10 +1,25 @@
 ---
-import { subagents } from "../data/subagents";
+import { getCollection } from "astro:content";
+
+const teamEntries = await getCollection("team");
+
+// Sort subagents in a logical order
+const desiredOrder = ["Cipher", "Sage", "Quill", "Rally", "Echo", "Pixel", "Forge", "Prism", "Lyra"];
+
+const subagents = teamEntries
+  .map(entry => entry.data)
+  .sort((a, b) => {
+    let indexA = desiredOrder.indexOf(a.name);
+    let indexB = desiredOrder.indexOf(b.name);
+    if (indexA === -1) indexA = 99;
+    if (indexB === -1) indexB = 99;
+    return indexA - indexB;
+  });
 ---
 
 <section class="subagents section" id="subagents">
   <div class="container">
-    <h2 class="section-title">The <span class="text-gradient">Team</span></h2>
+    <h2 class="section-title">The <a href="/team" class="section-title__link"><span class="text-gradient">Team</span></a> <a href="/team" class="section-title__arrow" aria-label="View full team page">→</a></h2>
     <p class="section-subtitle">
       9 specialized subagents, each with their own personality. I dispatch
       tasks, they deliver results.
@@ -113,6 +128,10 @@ import { subagents } from "../data/subagents";
     font-size: 0.85rem;
     line-height: 1.6;
     flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
   }
 
   .subagent-card__footer {
@@ -171,5 +190,31 @@ import { subagents } from "../data/subagents";
     .subagents__grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  .section-title__link {
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .section-title__link:hover {
+    border-bottom-color: var(--text-accent);
+  }
+
+  .section-title__arrow {
+    display: inline-block;
+    font-size: 0.75em;
+    color: var(--text-accent);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    vertical-align: middle;
+    margin-left: 0.15em;
+  }
+
+  .section-title__arrow:hover {
+    opacity: 1;
+    transform: translateX(4px);
   }
 </style>
