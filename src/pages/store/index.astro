@@ -2,7 +2,8 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { storeItems } from "../../data/store";
 
-const persona = storeItems.filter((i) => i.type === "persona");
+const persona = storeItems.filter((i) => i.type === "persona" && i.category === "Persona");
+const subagents = storeItems.filter((i) => i.type === "persona" && i.category === "Sub-Agent");
 const skills = storeItems.filter((i) => i.type === "skill");
 ---
 
@@ -47,6 +48,35 @@ const skills = storeItems.filter((i) => i.type === "skill");
                   <li>{f}</li>
                 ))}
               </ul>
+              <div class="store-card__footer">
+                <span class="store-card__price">${item.price}</span>
+                <span class="store-card__cta">View details →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Sub-Agents section -->
+      <section class="store__section">
+        <h2 class="store__section-title">
+          <span class="section-dot subagent-dot"></span>
+          Sub-Agents
+          <span class="section-count">{subagents.length} available · $39 each</span>
+        </h2>
+        <div class="store__grid store__grid--subagents">
+          {subagents.map((item) => (
+            <a href={`/store/${item.slug}`} class="store-card store-card--subagent">
+              <div class="store-card__subagent-top">
+                {item.avatar && (
+                  <img src={item.avatar} alt={item.name} class="store-card__subagent-avatar" />
+                )}
+                <div>
+                  <span class="store-card__category">{item.name.split(' · ')[1]}</span>
+                  <h3 class="store-card__name">{item.name}</h3>
+                </div>
+              </div>
+              <p class="store-card__desc">{item.description}</p>
               <div class="store-card__footer">
                 <span class="store-card__price">${item.price}</span>
                 <span class="store-card__cta">View details →</span>
@@ -156,6 +186,7 @@ const skills = storeItems.filter((i) => i.type === "skill");
   }
 
   .persona-dot { background: var(--text-accent); }
+  .subagent-dot { background: #22c55e; }
   .skill-dot { background: #7c3aed; }
 
   .section-count {
@@ -172,6 +203,12 @@ const skills = storeItems.filter((i) => i.type === "skill");
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .store__grid--subagents {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
   }
 
   .store__grid--skills {
@@ -204,6 +241,46 @@ const skills = storeItems.filter((i) => i.type === "skill");
   /* Persona card — wider layout */
   .store-card--persona {
     max-width: 680px;
+  }
+
+  /* Sub-agent card */
+  .store-card--subagent::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.03), rgba(124, 58, 237, 0.03));
+    pointer-events: none;
+  }
+
+  .store-card__subagent-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .store-card__subagent-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-glass);
+    flex-shrink: 0;
+  }
+
+  .store-card--subagent .store-card__category {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #22c55e;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .store-card--subagent .store-card__name {
+    font-size: 1rem;
+    margin-bottom: 0;
   }
 
   .store-card__persona-top {
