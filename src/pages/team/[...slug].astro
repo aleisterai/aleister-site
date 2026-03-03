@@ -447,6 +447,7 @@ const otherAgents = allTeam
   @media (max-width: 600px) {
     .other-agents__grid {
       grid-template-columns: 1fr 1fr;
+    }
   }
 
   /* ─── Floating Get Agent bar ─── */
@@ -459,7 +460,8 @@ const otherAgents = allTeam
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     background: color-mix(in srgb, var(--bg-primary, #0d0d12) 80%, transparent);
-    border-top: 1px solid color-mix(in srgb, var(--agent-color) 25%, var(--border-subtle));
+    border-top: 1px solid
+      color-mix(in srgb, var(--agent-color) 25%, var(--border-subtle));
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
   }
 
@@ -518,7 +520,8 @@ const otherAgents = allTeam
     background: var(--agent-color);
     color: #fff;
     transition: opacity 0.15s, transform 0.15s;
-    box-shadow: 0 2px 12px color-mix(in srgb, var(--agent-color) 40%, transparent);
+    box-shadow: 0 2px 12px
+      color-mix(in srgb, var(--agent-color) 40%, transparent);
   }
 
   .get-agent-bar__btn:hover {
@@ -527,15 +530,12 @@ const otherAgents = allTeam
   }
 
   /* Ensure page content doesn't hide behind bar */
-  :global(main), :global(.about-entry) {
+  :global(main),
+  :global(.about-entry) {
     padding-bottom: 80px;
   }
 
   @media (max-width: 600px) {
-    .other-agents__grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
     .get-agent-bar__info {
       display: none;
     }
