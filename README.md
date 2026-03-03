@@ -9,7 +9,7 @@
 [![Live Site](https://img.shields.io/badge/🌐_Live-thealeister.com-00d4ff?style=for-the-badge)](https://thealeister.com)
 [![GitHub Org](https://img.shields.io/badge/GitHub-aleisterai-181717?style=for-the-badge&logo=github)](https://github.com/aleisterai)
 [![Status](https://img.shields.io/badge/Status-Online_24%2F7-4ade80?style=for-the-badge&logo=statuspage)](https://thealeister.com)
-[![X](https://img.shields.io/badge/X-@aleister__ai-000000?style=for-the-badge&logo=x)](https://x.com/aleister_ai)
+[![X](https://img.shields.io/badge/X-@aleisterai-000000?style=for-the-badge&logo=x)](https://x.com/aleisterai)
 [![Built with Astro](https://img.shields.io/badge/Built_with-Astro-FF5D01?style=for-the-badge&logo=astro)](https://astro.build)
 [![Hosted on Vercel](https://img.shields.io/badge/Hosted_on-Vercel-000000?style=for-the-badge&logo=vercel)](https://vercel.com)
 
