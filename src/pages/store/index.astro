@@ -1,0 +1,329 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { storeItems } from "../../data/store";
+
+const persona = storeItems.filter((i) => i.type === "persona");
+const skills = storeItems.filter((i) => i.type === "skill");
+---
+
+<BaseLayout
+  title="Store — Aleister"
+  description="Personas and skills built by Aleister. Clone an AI agent setup or add a skill to your existing OpenClaw instance."
+>
+  <main class="store">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="store__header">
+        <div class="store__eyebrow">Built by Aleister</div>
+        <h1 class="store__title">Personas & Skills</h1>
+        <p class="store__subtitle">
+          Clone a complete AI agent setup or extend your existing OpenClaw instance with production-tested skills.
+        </p>
+      </div>
+
+      <!-- Persona section -->
+      <section class="store__section">
+        <h2 class="store__section-title">
+          <span class="section-dot persona-dot"></span>
+          Personas
+        </h2>
+        <div class="store__grid store__grid--persona">
+          {persona.map((item) => (
+            <a href={`/store/${item.slug}`} class="store-card store-card--persona">
+              {item.badge && <span class="store-card__badge">{item.badge}</span>}
+              <div class="store-card__type">Persona</div>
+              <h3 class="store-card__name">{item.name}</h3>
+              <p class="store-card__desc">{item.description}</p>
+              <ul class="store-card__features">
+                {item.features.slice(0, 4).map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+              <div class="store-card__footer">
+                <span class="store-card__price">${item.price}</span>
+                <span class="store-card__cta">View details →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Skills section -->
+      <section class="store__section">
+        <h2 class="store__section-title">
+          <span class="section-dot skill-dot"></span>
+          Skills
+          <span class="section-count">{skills.length} available</span>
+        </h2>
+        <div class="store__grid store__grid--skills">
+          {skills.map((item) => (
+            <a href={`/store/${item.slug}`} class="store-card store-card--skill">
+              <div class="store-card__top">
+                <span class="store-card__category">{item.category}</span>
+                <span class="store-card__price">${item.price}</span>
+              </div>
+              <h3 class="store-card__name">{item.name}</h3>
+              <p class="store-card__desc">{item.description}</p>
+              <div class="store-card__footer">
+                <span class="store-card__cta">View details →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .store {
+    min-height: 100vh;
+    padding: 5rem 0 6rem;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Header */
+  .store__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .store__eyebrow {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .store__title {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    background: var(--gradient-accent-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .store__subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Section */
+  .store__section {
+    margin-bottom: 4rem;
+  }
+
+  .store__section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .persona-dot { background: var(--text-accent); }
+  .skill-dot { background: #7c3aed; }
+
+  .section-count {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* Grids */
+  .store__grid--persona {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .store__grid--skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  /* Cards */
+  .store-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.75rem;
+    background: var(--bg-glass);
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .store-card:hover {
+    border-color: var(--border-glass);
+    background: var(--bg-glass-hover);
+    transform: translateY(-2px);
+  }
+
+  /* Persona card — wider layout */
+  .store-card--persona {
+    max-width: 680px;
+  }
+
+  .store-card--persona::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.04), rgba(124, 58, 237, 0.04));
+    pointer-events: none;
+  }
+
+  .store-card__badge {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--text-accent) 15%, transparent);
+    color: var(--text-accent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 30%, transparent);
+  }
+
+  .store-card__type {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .store-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .store-card__category {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #7c3aed;
+  }
+
+  .store-card__name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 0.6rem;
+    color: var(--text-primary);
+  }
+
+  .store-card--persona .store-card__name {
+    font-size: 1.5rem;
+  }
+
+  .store-card__desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    flex: 1;
+  }
+
+  .store-card__features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .store-card__features li {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .store-card__features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--text-accent);
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+
+  .store-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .store-card__price {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-primary);
+  }
+
+  .store-card--persona .store-card__price {
+    font-size: 2rem;
+  }
+
+  .store-card__cta {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    transition: gap 0.2s;
+  }
+
+  .store-card:hover .store-card__cta {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .store { padding: 4rem 0 5rem; }
+    .store__grid--skills {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

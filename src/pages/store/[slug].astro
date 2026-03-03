@@ -1,0 +1,526 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { storeItems } from "../../data/store";
+
+export function getStaticPaths() {
+  return storeItems.map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const purchased = Astro.url.searchParams.get("purchased") === "true";
+const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item.type).slice(0, 3);
+---
+
+<BaseLayout
+  title={`${item.name} — Aleister Store`}
+  description={item.description}
+>
+  <main class="product">
+    <div class="container">
+
+      <!-- Success banner -->
+      {purchased && (
+        <div class="success-banner">
+          <span class="success-icon">✓</span>
+          <div>
+            <strong>Purchase complete!</strong>
+            <span>Check your email for download instructions. You can also get this skill on <a href={item.clawmartUrl} target="_blank" rel="noopener">ClawMart</a>.</span>
+          </div>
+        </div>
+      )}
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="/store">Store</a>
+        <span>/</span>
+        <span>{item.type === "persona" ? "Personas" : "Skills"}</span>
+        <span>/</span>
+        <span>{item.name}</span>
+      </nav>
+
+      <div class="product__layout">
+
+        <!-- Left: content -->
+        <div class="product__content">
+          <div class="product__meta">
+            <span class={`product__type-badge product__type-badge--${item.type}`}>
+              {item.type === "persona" ? "Persona" : `Skill · ${item.category}`}
+            </span>
+          </div>
+
+          <h1 class="product__title">{item.name}</h1>
+          <p class="product__tagline">{item.description}</p>
+
+          <div class="product__divider"></div>
+
+          <div class="product__about">
+            {item.longDescription.split("\n\n").map((para) => (
+              <p>{para}</p>
+            ))}
+          </div>
+
+          <div class="product__divider"></div>
+
+          <div class="product__features">
+            <h2 class="product__section-title">What's included</h2>
+            <ul class="features-list">
+              {item.features.map((f) => (
+                <li class="features-list__item">
+                  <span class="features-list__check">✓</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right: buy panel -->
+        <aside class="product__panel">
+          <div class="panel-card">
+            <div class="panel-card__price">
+              <span class="price-amount">${item.price}</span>
+              <span class="price-label">one-time</span>
+            </div>
+
+            <a href={item.stripeUrl} class="btn-buy" target="_blank" rel="noopener">
+              Buy now →
+            </a>
+
+            <div class="panel-card__divider"></div>
+
+            <a href={item.clawmartUrl} class="btn-clawmart" target="_blank" rel="noopener">
+              Also on ClawMart (${ item.type === "persona" ? "99" : "5" }) →
+            </a>
+
+            <ul class="panel-card__details">
+              <li>
+                <span class="detail-icon">⚡</span>
+                Instant delivery after purchase
+              </li>
+              <li>
+                <span class="detail-icon">🔧</span>
+                Works with OpenClaw Gateway
+              </li>
+              <li>
+                <span class="detail-icon">📄</span>
+                {item.type === "persona" ? "Full persona package (SKILL.md + guides)" : "SKILL.md prompt skill file"}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Built by -->
+          <div class="built-by">
+            <div class="built-by__avatar">A</div>
+            <div class="built-by__info">
+              <span class="built-by__label">Built by</span>
+              <a href="https://x.com/aleisterai" target="_blank" rel="noopener" class="built-by__name">
+                @aleisterai
+              </a>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+
+      <!-- Related -->
+      {related.length > 0 && (
+        <section class="related">
+          <h2 class="related__title">More {item.type === "persona" ? "personas" : "skills"}</h2>
+          <div class="related__grid">
+            {related.map((r) => (
+              <a href={`/store/${r.slug}`} class="related-card">
+                <div class="related-card__top">
+                  <span class="related-card__category">{r.category || r.type}</span>
+                  <span class="related-card__price">${r.price}</span>
+                </div>
+                <h3 class="related-card__name">{r.name}</h3>
+                <p class="related-card__desc">{r.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .product {
+    min-height: 100vh;
+    padding: 5rem 0 6rem;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Success banner */
+  .success-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: color-mix(in srgb, #22c55e 12%, transparent);
+    border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .success-banner strong { color: #22c55e; margin-right: 0.5rem; }
+  .success-banner a { color: var(--text-accent); }
+
+  .success-icon {
+    font-size: 1.1rem;
+    color: #22c55e;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+    margin-bottom: 2.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-accent);
+    transition: opacity 0.2s;
+  }
+
+  .breadcrumb a:hover { opacity: 0.7; }
+
+  /* Layout */
+  .product__layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 3rem;
+    align-items: start;
+    margin-bottom: 5rem;
+  }
+
+  /* Content */
+  .product__meta {
+    margin-bottom: 1rem;
+  }
+
+  .product__type-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+  }
+
+  .product__type-badge--persona {
+    background: color-mix(in srgb, var(--text-accent) 12%, transparent);
+    color: var(--text-accent);
+    border: 1px solid color-mix(in srgb, var(--text-accent) 25%, transparent);
+  }
+
+  .product__type-badge--skill {
+    background: color-mix(in srgb, #7c3aed 12%, transparent);
+    color: #a78bfa;
+    border: 1px solid color-mix(in srgb, #7c3aed 25%, transparent);
+  }
+
+  .product__title {
+    font-size: clamp(1.8rem, 4vw, 2.75rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .product__tagline {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 580px;
+  }
+
+  .product__divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 2rem 0;
+  }
+
+  .product__about {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .product__about p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .product__section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    margin-bottom: 1.25rem;
+  }
+
+  /* Features list */
+  .features-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .features-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .features-list__check {
+    color: var(--text-accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* Buy panel */
+  .product__panel {
+    position: sticky;
+    top: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .panel-card {
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    padding: 1.75rem;
+    background: var(--bg-glass);
+  }
+
+  .panel-card__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .price-amount {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--text-primary);
+  }
+
+  .price-label {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+  }
+
+  .btn-buy {
+    display: block;
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background: var(--gradient-accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    margin-bottom: 0.75rem;
+  }
+
+  .btn-buy:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .panel-card__divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 1rem 0;
+  }
+
+  .btn-clawmart {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 1.5rem;
+    border: 1px solid var(--border-glass);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-clawmart:hover {
+    border-color: var(--border-accent);
+    color: var(--text-primary);
+  }
+
+  .panel-card__details {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .panel-card__details li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+  }
+
+  .detail-icon {
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  /* Built by */
+  .built-by {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    background: var(--bg-glass);
+  }
+
+  .built-by__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.9rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .built-by__label {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.1rem;
+  }
+
+  .built-by__name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-accent);
+    text-decoration: none;
+  }
+
+  .built-by__name:hover { text-decoration: underline; }
+
+  /* Related */
+  .related__title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-tertiary);
+    margin-bottom: 1.25rem;
+  }
+
+  .related__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .related-card {
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: var(--bg-glass);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .related-card:hover {
+    border-color: var(--border-glass);
+    background: var(--bg-glass-hover);
+    transform: translateY(-2px);
+  }
+
+  .related-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .related-card__category {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7c3aed;
+  }
+
+  .related-card__price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .related-card__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .related-card__desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .product__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .product__panel {
+      position: static;
+    }
+  }
+</style>
