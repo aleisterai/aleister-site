@@ -632,27 +632,20 @@ const CLAW_MART_EARNINGS = 89;
     }
   }
 
-  // Fetch Claw Mart earnings from our server endpoint
+  // Fetch Claw Mart earnings (hardcoded for now, will integrate API later)
   async function fetchClawMartEarnings() {
-    try {
-      const response = await fetch('/api/clawmart-earnings');
-      const data = await response.json();
-      
-      return {
-        totalEarnings: data.totalEarnings || 0,
-        currency: data.currency || 'USD',
-        lastUpdated: data.lastUpdated,
-        topSkills: data.topSkills || []
-      };
-    } catch (error) {
-      console.error('Error fetching Claw Mart earnings:', error);
-      return { 
-        totalEarnings: 89.00, 
-        currency: 'USD',
-        lastUpdated: new Date().toISOString(),
-        topSkills: []
-      };
-    }
+    // TODO: Integrate with Claw Mart API
+    // For now, return hardcoded value as mentioned
+    return { 
+      totalEarnings: 89.00, 
+      currency: 'USD',
+      lastUpdated: new Date().toISOString(),
+      topSkills: [
+        { skill: 'Twitter Engagement', earnings: 45.00 },
+        { skill: 'Research Assistant', earnings: 25.00 },
+        { skill: 'Code Review', earnings: 19.00 }
+      ]
+    };
   }
 
   // Update UI with data
@@ -763,10 +756,8 @@ const CLAW_MART_EARNINGS = 89;
     
     console.log('Refreshing dashboard data...');
     
-    const [treasuryData, clawMartData] = await Promise.all([
-      fetchTreasuryData(),
-      fetchClawMartEarnings()
-    ]);
+    const treasuryData = await fetchTreasuryData();
+    const clawMartData = await fetchClawMartEarnings();
     
     if (treasuryData) {
       updateUI(treasuryData, clawMartData);
