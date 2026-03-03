@@ -119,9 +119,11 @@ const longDescriptionHtml = marked(item.longDescription);
 
             <div class="panel-card__divider"></div>
 
-            <a href={item.clawmartUrl} class="btn-clawmart" target="_blank" rel="noopener">
-              Also on ClawMart (${ item.type === "persona" ? "99" : "5" }) →
-            </a>
+            {item.category !== "Sub-Agent" && item.clawmartUrl && (
+              <a href={item.clawmartUrl} class="btn-clawmart" target="_blank" rel="noopener">
+                Also on ClawMart ({item.type === "persona" ? "$99" : "$5"}) →
+              </a>
+            )}
 
             <ul class="panel-card__details">
               <li>
