@@ -3,6 +3,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { storeItems } from "../../data/store";
 import { marked } from "marked";
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return storeItems.map((item) => ({
     params: { slug: item.slug },
@@ -11,7 +13,8 @@ export function getStaticPaths() {
 }
 
 const { item } = Astro.props;
-const purchased = Astro.url.searchParams.get("purchased") === "true";
+const sessionId = Astro.url.searchParams.get("session_id");
+const purchased = !!sessionId;
 const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item.type).slice(0, 3);
 const longDescriptionHtml = marked(item.longDescription);
 ---
@@ -23,13 +26,35 @@ const longDescriptionHtml = marked(item.longDescription);
   <main class="product">
     <div class="container">
 
-      <!-- Success banner -->
+      <!-- Receipt + Download -->
       {purchased && (
-        <div class="success-banner">
-          <span class="success-icon">✓</span>
-          <div>
-            <strong>Purchase complete!</strong>
-            <span>Check your email for download instructions. You can also get this skill on <a href={item.clawmartUrl} target="_blank" rel="noopener">ClawMart</a>.</span>
+        <div class="receipt-box">
+          <div class="receipt-box__header">
+            <span class="receipt-icon">✓</span>
+            <div>
+              <h2 class="receipt-title">Purchase complete!</h2>
+              <p class="receipt-subtitle">Thank you. A receipt has been sent to your email address.</p>
+            </div>
+          </div>
+          <div class="receipt-box__body">
+            <div class="receipt-item">
+              <span class="receipt-item__name">{item.name}</span>
+              <span class="receipt-item__price">${item.price}.00</span>
+            </div>
+            <div class="receipt-divider"></div>
+            <a
+              href={`/api/download?slug=${item.slug}&session_id=${sessionId}`}
+              class="btn-download"
+              download={`${item.slug}.zip`}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Download {item.name}.zip
+            </a>
+            <p class="receipt-note">Your download link is unique to your purchase. Keep this page URL if you need to re-download.</p>
           </div>
         </div>
       )}
@@ -163,28 +188,105 @@ const longDescriptionHtml = marked(item.longDescription);
     padding: 0 1.5rem;
   }
 
-  /* Success banner */
-  .success-banner {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    background: color-mix(in srgb, #22c55e 12%, transparent);
-    border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+  /* Receipt box */
+  .receipt-box {
+    border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
+    border-radius: 16px;
+    background: color-mix(in srgb, #22c55e 6%, transparent);
+    margin-bottom: 2.5rem;
+    overflow: hidden;
   }
 
-  .success-banner strong { color: #22c55e; margin-right: 0.5rem; }
-  .success-banner a { color: var(--text-accent); }
+  .receipt-box__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid color-mix(in srgb, #22c55e 20%, transparent);
+  }
 
-  .success-icon {
-    font-size: 1.1rem;
-    color: #22c55e;
+  .receipt-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #22c55e;
+    color: #fff;
     font-weight: 900;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+  }
+
+  .receipt-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #22c55e;
+    margin: 0 0 0.15rem;
+  }
+
+  .receipt-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .receipt-box__body {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .receipt-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .receipt-item__name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .receipt-item__price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .receipt-divider {
+    height: 1px;
+    background: color-mix(in srgb, #22c55e 20%, transparent);
+  }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.5rem;
+    background: #22c55e;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    align-self: flex-start;
+  }
+
+  .btn-download:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .receipt-note {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    margin: 0;
+    line-height: 1.5;
   }
 
   /* Breadcrumb */

@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://thealeister.com',
-  output: 'static',
+  output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },
   }),
