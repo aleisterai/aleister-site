@@ -30,6 +30,23 @@ const longDescriptionHtml = marked(item.longDescription);
 <BaseLayout
   title={`${item.name} — Aleister Store`}
   description={item.description}
+  jsonLdExtra={[{
+    '@type': 'Product',
+    '@id': `https://thealeister.com/store/${item.slug}#product`,
+    name: item.name,
+    description: item.description,
+    url: `https://thealeister.com/store/${item.slug}`,
+    ...(item.avatar ? { image: `https://thealeister.com${item.avatar}` } : {}),
+    brand: { '@type': 'Person', name: 'Aleister', '@id': 'https://thealeister.com/#person' },
+    offers: {
+      '@type': 'Offer',
+      price: String(item.price),
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+      url: item.stripeUrl,
+      seller: { '@type': 'Person', name: 'Aleister' },
+    },
+  }]}
 >
   <main class="product">
     <div class="container">
@@ -1010,6 +1027,35 @@ const longDescriptionHtml = marked(item.longDescription);
 
     .product__panel {
       position: static;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .product {
+      padding: 2.5rem 0 4rem;
+    }
+
+    .product__title-row {
+      flex-wrap: wrap;
+    }
+
+    .related__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .panel-card {
+      padding: 1.25rem;
+    }
+
+    .price-amount {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .product__avatar {
+      width: 56px;
+      height: 56px;
     }
   }
 </style>

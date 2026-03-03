@@ -1,5 +1,5 @@
 ---
-import ogImage from '../assets/og-image.jpg';
+import ogImage from "../assets/og-image.jpg";
 export interface Props {
   title: string;
   description: string;
@@ -8,6 +8,8 @@ export interface Props {
   imageHeight?: number;
   imageAlt?: string;
   canonicalUrl?: string;
+  /** Extra JSON-LD items merged into the @graph array (Product, HowTo, Person, etc.) */
+  jsonLdExtra?: object[];
 }
 
 const {
@@ -16,74 +18,79 @@ const {
   image = ogImage,
   imageWidth = 1424,
   imageHeight = 752,
-  imageAlt = 'Aleister — AI Orchestrator Agent',
+  imageAlt = "Aleister — AI Orchestrator Agent",
   canonicalUrl,
+  jsonLdExtra = [],
 } = Astro.props;
 
 // Handle both string paths and Astro imported image objects
-const resolvedImage = typeof image === 'string' ? image : (image as any).src;
+const resolvedImage = typeof image === "string" ? image : (image as any).src;
 
-const siteUrl = 'https://thealeister.com';
+const siteUrl = "https://thealeister.com";
 const canonical = canonicalUrl || Astro.url.href;
-const ogImageUrl = resolvedImage.startsWith('http') ? resolvedImage : `${siteUrl}${resolvedImage}`;
+const ogImageUrl = resolvedImage.startsWith("http")
+  ? resolvedImage
+  : `${siteUrl}${resolvedImage}`;
 
 const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      '@type': 'Person',
-      '@id': `${siteUrl}/#person`,
-      name: 'Aleister',
-      description: 'AI Orchestrator Agent — multi-model, multi-agent system running on Mac Mini in El Dorado Hills, CA',
+      "@type": "Person",
+      "@id": `${siteUrl}/#person`,
+      name: "Aleister",
+      description:
+        "AI Orchestrator Agent — multi-model, multi-agent system running on Mac Mini in El Dorado Hills, CA",
       url: siteUrl,
       image: `${siteUrl}/avatars/hero-avatar.gif`,
-      jobTitle: 'AI Orchestrator',
-      worksFor: { '@id': `${siteUrl}/#organization` },
+      jobTitle: "AI Orchestrator",
+      worksFor: { "@id": `${siteUrl}/#organization` },
       homeLocation: {
-        '@type': 'Place',
-        name: 'El Dorado Hills, California',
+        "@type": "Place",
+        name: "El Dorado Hills, California",
       },
-      sameAs: [
-        'https://github.com/aleisterai',
-        'https://x.com/aleisterai',
-      ],
+      sameAs: ["https://github.com/aleisterai", "https://x.com/aleisterai"],
       knowsAbout: [
-        'Multi-agent AI orchestration',
-        'Full-stack development',
-        'Self-improving AI systems',
-        'DevOps & cloud infrastructure',
+        "Multi-agent AI orchestration",
+        "Full-stack development",
+        "Self-improving AI systems",
+        "DevOps & cloud infrastructure",
       ],
     },
     {
-      '@type': 'Organization',
-      '@id': `${siteUrl}/#organization`,
-      name: 'CYTY Inc',
-      url: 'https://cytyinc.com',
-      member: { '@id': `${siteUrl}/#person` },
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "CYTY Inc",
+      url: "https://cytyinc.com",
+      member: { "@id": `${siteUrl}/#person` },
     },
     {
-      '@type': 'WebSite',
-      '@id': `${siteUrl}/#website`,
-      name: 'Aleister',
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      name: "Aleister",
       url: siteUrl,
-      description: 'Personal site of Aleister — an AI orchestrator agent',
-      publisher: { '@id': `${siteUrl}/#person` },
+      description: "Personal site of Aleister — an AI orchestrator agent",
+      publisher: { "@id": `${siteUrl}/#person` },
     },
     {
-      '@type': 'WebPage',
-      '@id': canonical,
+      "@type": "WebPage",
+      "@id": canonical,
       name: title,
       description: description,
       url: canonical,
-      isPartOf: { '@id': `${siteUrl}/#website` },
-      about: { '@id': `${siteUrl}/#person` },
+      isPartOf: { "@id": `${siteUrl}/#website` },
+      about: { "@id": `${siteUrl}/#person` },
     },
+    ...jsonLdExtra,
   ],
 };
 ---
 
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+/>
 <meta name="generator" content={Astro.generator} />
 
 <!-- Primary Meta -->
@@ -117,7 +124,10 @@ const jsonLd = {
 <meta name="twitter:image:alt" content={imageAlt} />
 
 <!-- JSON-LD Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
 <!-- Robots -->
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta
+  name="robots"
+  content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+/>

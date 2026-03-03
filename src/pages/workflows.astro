@@ -300,6 +300,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   }
 
   /* Responsive */
+  @media (max-width: 1024px) {
+    .wf-card {
+      padding: 1.4rem;
+    }
+  }
+
   @media (max-width: 768px) {
     .workflows-grid {
       grid-template-columns: 1fr;
@@ -313,6 +319,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   @media (max-width: 480px) {
     .wf-card__phases {
       grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 380px) {
+    .wf-card__phases {
+      grid-template-columns: repeat(3, 1fr);
+      font-size: 0.65rem;
+    }
+
+    .wf-phase__agent {
+      display: none;
     }
   }
 </style>

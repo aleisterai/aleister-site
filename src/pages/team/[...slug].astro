@@ -44,7 +44,26 @@ const otherAgents = allTeam
   });
 ---
 
-<BaseLayout title={`${name} — Aleister's Team`} description={description}>
+<BaseLayout
+  title={`${name} — Aleister's Team`}
+  description={description}
+  jsonLdExtra={[
+    {
+      "@type": "Person",
+      name,
+      jobTitle: role,
+      description,
+      image: avatar ? `https://thealeister.com${avatar}` : undefined,
+      url: `https://thealeister.com/team/${member.slug}`,
+      worksFor: {
+        "@type": "Person",
+        "@id": "https://thealeister.com/#person",
+        name: "Aleister",
+      },
+      sameAs: [`https://x.com/aleisterai`],
+    },
+  ]}
+>
   <section class="about-entry section">
     <div class="container">
       <div class="about-entry__header">
@@ -543,6 +562,23 @@ const otherAgents = allTeam
     .get-agent-bar__btn {
       width: 100%;
       justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .get-agent-bar__inner {
+      padding: 0.65rem 1rem;
+    }
+
+    .get-agent-bar__name {
+      font-size: 0.82rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .get-agent-bar__sub {
+      display: none;
     }
   }
 </style>

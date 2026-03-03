@@ -1,10 +1,68 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const howToJsonLd = {
+    "@type": "HowTo",
+    name: "6-Phase Feature Development Pipeline",
+    description:
+        "End-to-end workflow for shipping software features: Research, Design, Documentation, QA Planning, Agile Setup, Implementation, Delivery, and Approval.",
+    step: [
+        {
+            "@type": "HowToStep",
+            position: 1,
+            name: "Task Intake",
+            text: "Flesh-and-blood operator describes the task and confirms scope.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 2,
+            name: "Orchestration",
+            text: "Aleister breaks the task into phases and spawns the right sub-agents.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 3,
+            name: "Research",
+            text: "Sage deep-dives into the problem with competitive analysis and risk assessment.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 4,
+            name: "Design, Documentation & QA Planning",
+            text: "Pixel, Quill, and Prism work in parallel on design specs, docs, and test plans.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 5,
+            name: "Agile Planning",
+            text: "Rally creates GitHub issues, maps dependencies, and produces a signed-off schedule.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 6,
+            name: "Implementation",
+            text: "Cipher writes TDD-first code; Forge handles infrastructure and deployment pipelines.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 7,
+            name: "Delivery Report",
+            text: "Aleister summarises what was built, tested, and deployed and flags any human decisions.",
+        },
+        {
+            "@type": "HowToStep",
+            position: 8,
+            name: "Review & Approval",
+            text: "Operator reviews the walkthrough and approves or requests changes.",
+        },
+    ],
+};
 ---
 
 <BaseLayout
     title="6-Phase Feature Development Pipeline — Aleister Workflows"
     description="The cornerstone of Aleister's engineering process. Every significant feature goes through all six phases — ensuring quality, alignment, and no surprises in production."
+    jsonLdExtra={[howToJsonLd]}
 >
     <div class="pipeline-page">
         <div class="container">
@@ -751,6 +809,12 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     }
 
     /* Responsive */
+    @media (max-width: 1024px) {
+        .pipeline {
+            padding: 1.5rem;
+        }
+    }
+
     @media (max-width: 768px) {
         .pipeline {
             padding: 1.25rem;
@@ -760,6 +824,16 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         }
         .principles-grid {
             grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero__title {
+            font-size: clamp(1.5rem, 7vw, 2rem);
+        }
+
+        .cta {
+            padding: 1.5rem 1rem;
         }
     }
 </style>
