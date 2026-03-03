@@ -25,12 +25,14 @@ const longDescriptionHtml = marked(item.longDescription);
 >
   <main class="product">
     <div class="container">
-      <!-- Receipt + Download -->
+      <!-- Receipt + Download (JS-driven after device bind) -->
       {
         purchased && (
-          <div class="receipt-box">
+          <div class="receipt-box" id="receipt-box">
             <div class="receipt-box__header">
-              <span class="receipt-icon">✓</span>
+              <span class="receipt-icon" id="receipt-icon">
+                ✓
+              </span>
               <div>
                 <h2 class="receipt-title">Purchase complete!</h2>
                 <p class="receipt-subtitle">
@@ -44,9 +46,12 @@ const longDescriptionHtml = marked(item.longDescription);
                 <span class="receipt-item__price">${item.price}.00</span>
               </div>
               <div class="receipt-divider" />
+
+              {/* Download button — href filled in by JS after device bind */}
               <a
-                href={`/api/download?slug=${item.slug}&session_id=${sessionId}`}
-                class="btn-download"
+                id="btn-download"
+                href="#"
+                class="btn-download btn-download--loading"
                 download={`${item.slug}.zip`}
               >
                 <svg
@@ -65,10 +70,59 @@ const longDescriptionHtml = marked(item.longDescription);
                 </svg>
                 Download {item.name}.zip
               </a>
-              <p class="receipt-note">
-                Your download link is unique to your purchase. Keep this page
-                URL if you need to re-download.
-              </p>
+
+              {/* Note + Copy URL */}
+              <div class="receipt-note-row">
+                <p class="receipt-note" id="receipt-note">
+                  Verifying your device…
+                </p>
+                <button
+                  class="btn-copy-url"
+                  id="btn-copy-url"
+                  title="Copy page URL for re-download"
+                  aria-label="Copy download page URL"
+                  style="display:none"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <span id="copy-label">Copy link</span>
+                </button>
+              </div>
+
+              {/* Claimed-by-another-device recovery UI */}
+              <div
+                class="receipt-claimed"
+                id="receipt-claimed"
+                style="display:none"
+              >
+                <p class="receipt-claimed__msg">
+                  This download has already been claimed on another device.
+                  Enter your purchase email to re-link:
+                </p>
+                <div class="receipt-claimed__form">
+                  <input
+                    id="recovery-email"
+                    type="email"
+                    placeholder="your@email.com"
+                    class="receipt-email-input"
+                  />
+                  <button id="btn-recover" class="btn-recover">
+                    Re-link device
+                  </button>
+                </div>
+                <p class="receipt-claimed__hint" id="recovery-msg" />
+              </div>
             </div>
           </div>
         )
@@ -763,3 +817,235 @@ const longDescriptionHtml = marked(item.longDescription);
     }
   }
 </style>
+
+<style>
+  /* Download loading state */
+  .btn-download--loading {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* Note row with copy button */
+  .receipt-note-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .receipt-note {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    margin: 0;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .btn-copy-url {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .btn-copy-url:hover {
+    border-color: var(--text-accent);
+    color: var(--text-accent);
+  }
+
+  .btn-copy-url.copied {
+    border-color: #22c55e;
+    color: #22c55e;
+    background: color-mix(in srgb, #22c55e 10%, transparent);
+  }
+
+  /* Claimed / recovery */
+  .receipt-claimed {
+    border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+    border-radius: 10px;
+    background: color-mix(in srgb, #f59e0b 6%, transparent);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .receipt-claimed__msg {
+    font-size: 0.83rem;
+    color: #b45309;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .receipt-claimed__form {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .receipt-email-input {
+    flex: 1;
+    min-width: 180px;
+    padding: 0.45rem 0.75rem;
+    border-radius: 7px;
+    border: 1px solid var(--border-glass);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    outline: none;
+  }
+
+  .receipt-email-input:focus {
+    border-color: var(--text-accent);
+  }
+
+  .btn-recover {
+    padding: 0.45rem 1rem;
+    border-radius: 7px;
+    border: none;
+    background: #f59e0b;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-recover:hover {
+    opacity: 0.85;
+  }
+
+  .receipt-claimed__hint {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    margin: 0;
+  }
+</style>
+
+<script is:inline define:vars={{ sessionId, itemSlug: item.slug }}>
+  if (sessionId) {
+    (async () => {
+      const LS_KEY = `dt_${sessionId}`;
+      const dlBtn = document.getElementById("btn-download");
+      const noteEl = document.getElementById("receipt-note");
+      const copyBtn = document.getElementById("btn-copy-url");
+      const copyLabel = document.getElementById("copy-label");
+      const claimedEl = document.getElementById("receipt-claimed");
+      const recoverBtn = document.getElementById("btn-recover");
+      const recoveryMsg = document.getElementById("recovery-msg");
+
+      function activateDownload(token) {
+        if (!dlBtn) return;
+        const url = `/api/download?slug=${itemSlug}&session_id=${sessionId}&dt=${encodeURIComponent(
+          token
+        )}`;
+        dlBtn.href = url;
+        dlBtn.classList.remove("btn-download--loading");
+        if (noteEl)
+          noteEl.textContent =
+            "Your download link is bound to this device. Keep this page URL to re-download.";
+        if (copyBtn) copyBtn.style.display = "inline-flex";
+      }
+
+      function showClaimed() {
+        if (dlBtn) {
+          dlBtn.classList.add("btn-download--loading");
+        }
+        if (noteEl) noteEl.textContent = "Download claimed on another device.";
+        if (claimedEl) claimedEl.style.display = "flex";
+      }
+
+      // Copy URL button
+      if (copyBtn) {
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            copyBtn.classList.add("copied");
+            if (copyLabel) copyLabel.textContent = "Copied!";
+            setTimeout(() => {
+              copyBtn.classList.remove("copied");
+              if (copyLabel) copyLabel.textContent = "Copy link";
+            }, 2000);
+          } catch {}
+        });
+      }
+
+      // Email recovery
+      if (recoverBtn) {
+        recoverBtn.addEventListener("click", async () => {
+          const emailInput = document.getElementById("recovery-email");
+          const email = emailInput ? emailInput.value.trim() : "";
+          if (!email) return;
+          recoverBtn.disabled = true;
+          recoverBtn.textContent = "Verifying…";
+          try {
+            const res = await fetch("/api/bind", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ session_id: sessionId, email }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.token) {
+              if (recoveryMsg)
+                recoveryMsg.textContent =
+                  "Email does not match purchase record. Contact support.";
+              recoverBtn.disabled = false;
+              recoverBtn.textContent = "Re-link device";
+              return;
+            }
+            // Success — store new token and activate
+            localStorage.setItem(LS_KEY, data.token);
+            if (claimedEl) claimedEl.style.display = "none";
+            activateDownload(data.token);
+          } catch {
+            if (recoveryMsg)
+              recoveryMsg.textContent = "Network error. Try again.";
+            recoverBtn.disabled = false;
+            recoverBtn.textContent = "Re-link device";
+          }
+        });
+      }
+
+      // Try existing localStorage token first
+      const storedToken = localStorage.getItem(LS_KEY);
+      const body = storedToken
+        ? { session_id: sessionId, device_token: storedToken }
+        : { session_id: sessionId };
+
+      try {
+        const res = await fetch("/api/bind", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          localStorage.setItem(LS_KEY, data.token);
+          activateDownload(data.token);
+        } else if (res.status === 409) {
+          showClaimed();
+        } else {
+          if (noteEl)
+            noteEl.textContent =
+              "Could not verify purchase. Refresh and try again.";
+        }
+      } catch {
+        if (noteEl)
+          noteEl.textContent =
+            "Network error verifying device. Please refresh.";
+      }
+    })();
+  }
+</script>
