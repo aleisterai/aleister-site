@@ -83,31 +83,33 @@ export const GET: APIRoute = async () => {
     // Fetch native ETH balance
     const ethRawBalance = await getEthBalance(TREASURY_SAFE);
     const ethBalance = formatBalance(ethRawBalance, TOKENS.ETH.decimals);
-    balances.push({
-      symbol: 'ETH',
-      balance: ethBalance,
-      rawBalance: ethRawBalance,
-      decimals: TOKENS.ETH.decimals,
-      type: 'native'
-    });
     
     // Fetch WETH balance
     const wethRawBalance = await getTokenBalance(TOKENS.WETH.address, TREASURY_SAFE);
     const wethBalance = formatBalance(wethRawBalance, TOKENS.WETH.decimals);
+    
+    // Combine ETH and WETH into single ETH balance
+    const totalEthBalance = ethBalance + wethBalance;
     balances.push({
-      symbol: 'WETH',
-      balance: wethBalance,
-      rawBalance: wethRawBalance,
-      decimals: TOKENS.WETH.decimals,
-      address: TOKENS.WETH.address,
-      type: 'erc20'
+      symbol: 'ETH',
+      balance: totalEthBalance,
+      rawBalance: ethRawBalance,
+      wethRawBalance: wethRawBalance,
+      ethBalance: ethBalance,
+      wethBalance: wethBalance,
+      decimals: TOKENS.ETH.decimals,
+      type: 'combined',
+      breakdown: {
+        native: ethBalance,
+        wrapped: wethBalance
+      }
     });
     
     // Fetch ALEISTER balance
     const aleisterRawBalance = await getTokenBalance(TOKENS.ALEISTER.address, TREASURY_SAFE);
     const aleisterBalance = formatBalance(aleisterRawBalance, TOKENS.ALEISTER.decimals);
     balances.push({
-      symbol: 'ALEISTER',
+      symbol: '$ALEISTER',
       balance: aleisterBalance,
       rawBalance: aleisterRawBalance,
       decimals: TOKENS.ALEISTER.decimals,
@@ -148,10 +150,28 @@ export const GET: APIRoute = async () => {
       success: false,
       treasuryAddress: TREASURY_SAFE,
       balances: [
-        { symbol: 'ETH', balance: 0.00508263, type: 'native', decimals: 18 },
-        { symbol: 'WETH', balance: 0, type: 'erc20', decimals: 18 },
-        { symbol: 'ALEISTER', balance: 0, type: 'erc20', decimals: 18 },
-        { symbol: 'USDC', balance: 10, type: 'erc20', decimals: 6 }
+        { 
+          symbol: 'ETH', 
+          balance: 0.3340255931893871, // Combined ETH + WETH
+          type: 'combined',
+          decimals: 18,
+          breakdown: {
+            native: 0.00508263,
+            wrapped: 0.3289429631893871
+          }
+        },
+        { 
+          symbol: '$ALEISTER', 
+          balance: 0, 
+          type: 'erc20', 
+          decimals: 18 
+        },
+        { 
+          symbol: 'USDC', 
+          balance: 10, 
+          type: 'erc20', 
+          decimals: 6 
+        }
       ],
       timestamp: new Date().toISOString(),
       error: 'Using fallback data'

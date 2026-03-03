@@ -96,18 +96,11 @@ const mockTreasuryData = {
             </div>
             <div class="token-balance">0</div>
             <div class="token-value">$0</div>
+            <div class="token-breakdown">(Native + Wrapped)</div>
           </div>
-          <div class="treasury-card" data-token="WETH">
+          <div class="treasury-card" data-token="$ALEISTER">
             <div class="treasury-card__header">
-              <div class="token-symbol">WETH</div>
-              <div class="token-change change-up">+0%</div>
-            </div>
-            <div class="token-balance">0</div>
-            <div class="token-value">$0</div>
-          </div>
-          <div class="treasury-card" data-token="ALEISTER">
-            <div class="treasury-card__header">
-              <div class="token-symbol">ALEISTER</div>
+              <div class="token-symbol">$ALEISTER</div>
               <div class="token-change change-up">+0%</div>
             </div>
             <div class="token-balance">0</div>
@@ -446,6 +439,13 @@ const mockTreasuryData = {
     color: var(--text-secondary);
   }
 
+  .token-breakdown {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    margin-top: 0.25rem;
+    font-style: italic;
+  }
+
   /* ──── Treasury Address ──── */
   .treasury-address {
     background: var(--bg-secondary);
@@ -775,11 +775,10 @@ const mockTreasuryData = {
         
         let priceData;
         switch(symbol) {
-          case 'ALEISTER':
+          case '$ALEISTER':
             priceData = pricesData.aleister;
             break;
-          case 'ETH':
-          case 'WETH': // WETH uses same price as ETH
+          case 'ETH': // Combined ETH + WETH
             priceData = pricesData.ethereum;
             break;
           case 'USDC':
@@ -796,7 +795,8 @@ const mockTreasuryData = {
           symbol,
           balance,
           value,
-          change24h: priceData.change24h
+          change24h: priceData.change24h,
+          breakdown: tokenBalance.breakdown
         });
       });
 
@@ -805,10 +805,25 @@ const mockTreasuryData = {
       console.error('Error fetching treasury data:', error);
       return {
         tokens: [
-          { symbol: 'ETH', balance: 0, value: 0, change24h: 0 },
-          { symbol: 'WETH', balance: 0, value: 0, change24h: 0 },
-          { symbol: 'ALEISTER', balance: 0, value: 0, change24h: 0 },
-          { symbol: 'USDC', balance: 0, value: 0, change24h: 0 }
+          { 
+            symbol: 'ETH', 
+            balance: 0, 
+            value: 0, 
+            change24h: 0,
+            breakdown: { native: 0, wrapped: 0 }
+          },
+          { 
+            symbol: '$ALEISTER', 
+            balance: 0, 
+            value: 0, 
+            change24h: 0 
+          },
+          { 
+            symbol: 'USDC', 
+            balance: 0, 
+            value: 0, 
+            change24h: 0 
+          }
         ],
         totalValue: 0
       };
@@ -870,6 +885,7 @@ const mockTreasuryData = {
         const changeEl = card.querySelector('.token-change');
         const balanceEl = card.querySelector('.token-balance');
         const valueEl = card.querySelector('.token-value');
+        const breakdownEl = card.querySelector('.token-breakdown');
         
         if (symbolEl) symbolEl.textContent = token.symbol;
         if (changeEl) {
@@ -878,6 +894,14 @@ const mockTreasuryData = {
         }
         if (balanceEl) balanceEl.textContent = formatNumber(token.balance, 2);
         if (valueEl) valueEl.textContent = formatCurrency(token.value);
+        
+        // Show ETH breakdown if available
+        if (breakdownEl && token.breakdown) {
+          const native = token.breakdown.native || 0;
+          const wrapped = token.breakdown.wrapped || 0;
+          breakdownEl.textContent = `(Native: ${formatNumber(native, 4)} + Wrapped: ${formatNumber(wrapped, 4)})`;
+          breakdownEl.title = `Native ETH: ${native.toFixed(6)}\nWrapped ETH: ${wrapped.toFixed(6)}`;
+        }
       }
     });
 
