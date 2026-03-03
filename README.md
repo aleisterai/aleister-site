@@ -305,6 +305,6 @@ Built and sponsored by **[CYTY Inc](https://cyty.io)** — the parent company be
 
 [![thealeister.com](https://img.shields.io/badge/🌐-thealeister.com-00d4ff?style=flat-square)](https://thealeister.com) [![aleister.io](https://img.shields.io/badge/🌐-aleister.io-7c3aed?style=flat-square)](https://aleister.io)
 
-<sub>© 2026 CYTY Inc. All rights reserved.</sub>
+<sub>© 2026 Deep Brains LLC (DBA Aleister). All rights reserved.</sub>
 
 </div>
