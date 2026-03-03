@@ -3,19 +3,19 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { storeItems } from "../../data/store";
 import { marked } from "marked";
 
-export const prerender = true;
+// SSR — must NOT prerender so we can read session_id from URL at request time
+const { slug } = Astro.params;
+const item = storeItems.find((i) => i.slug === slug);
 
-export function getStaticPaths() {
-  return storeItems.map((item) => ({
-    params: { slug: item.slug },
-    props: { item },
-  }));
+if (!item) {
+  return Astro.redirect("/store");
 }
 
-const { item } = Astro.props;
 const sessionId = Astro.url.searchParams.get("session_id");
 const purchased = !!sessionId;
-const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item.type).slice(0, 3);
+const related = storeItems
+  .filter((i) => i.slug !== item.slug && i.type === item.type)
+  .slice(0, 3);
 const longDescriptionHtml = marked(item.longDescription);
 ---
 
@@ -25,39 +25,54 @@ const longDescriptionHtml = marked(item.longDescription);
 >
   <main class="product">
     <div class="container">
-
       <!-- Receipt + Download -->
-      {purchased && (
-        <div class="receipt-box">
-          <div class="receipt-box__header">
-            <span class="receipt-icon">✓</span>
-            <div>
-              <h2 class="receipt-title">Purchase complete!</h2>
-              <p class="receipt-subtitle">Thank you. A receipt has been sent to your email address.</p>
+      {
+        purchased && (
+          <div class="receipt-box">
+            <div class="receipt-box__header">
+              <span class="receipt-icon">✓</span>
+              <div>
+                <h2 class="receipt-title">Purchase complete!</h2>
+                <p class="receipt-subtitle">
+                  Thank you. A receipt has been sent to your email address.
+                </p>
+              </div>
+            </div>
+            <div class="receipt-box__body">
+              <div class="receipt-item">
+                <span class="receipt-item__name">{item.name}</span>
+                <span class="receipt-item__price">${item.price}.00</span>
+              </div>
+              <div class="receipt-divider" />
+              <a
+                href={`/api/download?slug=${item.slug}&session_id=${sessionId}`}
+                class="btn-download"
+                download={`${item.slug}.zip`}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download {item.name}.zip
+              </a>
+              <p class="receipt-note">
+                Your download link is unique to your purchase. Keep this page
+                URL if you need to re-download.
+              </p>
             </div>
           </div>
-          <div class="receipt-box__body">
-            <div class="receipt-item">
-              <span class="receipt-item__name">{item.name}</span>
-              <span class="receipt-item__price">${item.price}.00</span>
-            </div>
-            <div class="receipt-divider"></div>
-            <a
-              href={`/api/download?slug=${item.slug}&session_id=${sessionId}`}
-              class="btn-download"
-              download={`${item.slug}.zip`}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Download {item.name}.zip
-            </a>
-            <p class="receipt-note">Your download link is unique to your purchase. Keep this page URL if you need to re-download.</p>
-          </div>
-        </div>
-      )}
+        )
+      }
 
       <!-- Breadcrumb -->
       <nav class="breadcrumb">
@@ -69,38 +84,48 @@ const longDescriptionHtml = marked(item.longDescription);
       </nav>
 
       <div class="product__layout">
-
         <!-- Left: content -->
         <div class="product__content">
           <div class="product__meta">
-            <span class={`product__type-badge product__type-badge--${item.type}`}>
+            <span
+              class={`product__type-badge product__type-badge--${item.type}`}
+            >
               {item.type === "persona" ? "Persona" : `Skill · ${item.category}`}
             </span>
           </div>
 
           <div class="product__title-row">
-            {item.avatar && (
-              <img src={item.avatar} alt={item.name} class="product__avatar" />
-            )}
+            {
+              item.avatar && (
+                <img
+                  src={item.avatar}
+                  alt={item.name}
+                  class="product__avatar"
+                />
+              )
+            }
             <h1 class="product__title">{item.name}</h1>
           </div>
           <p class="product__tagline">{item.description}</p>
 
           <div class="product__divider"></div>
 
-          <div class="product__about prose" set:html={longDescriptionHtml} />
+          <div class="product__about prose" set:html={longDescriptionHtml}>
+          </div>
 
           <div class="product__divider"></div>
 
           <div class="product__features">
             <h2 class="product__section-title">What's included</h2>
             <ul class="features-list">
-              {item.features.map((f) => (
-                <li class="features-list__item">
-                  <span class="features-list__check">✓</span>
-                  <span>{f}</span>
-                </li>
-              ))}
+              {
+                item.features.map((f) => (
+                  <li class="features-list__item">
+                    <span class="features-list__check">✓</span>
+                    <span>{f}</span>
+                  </li>
+                ))
+              }
             </ul>
           </div>
         </div>
@@ -113,17 +138,29 @@ const longDescriptionHtml = marked(item.longDescription);
               <span class="price-label">one-time</span>
             </div>
 
-            <a href={item.stripeUrl} class="btn-buy" target="_blank" rel="noopener">
+            <a
+              href={item.stripeUrl}
+              class="btn-buy"
+              target="_blank"
+              rel="noopener"
+            >
               Buy now →
             </a>
 
             <div class="panel-card__divider"></div>
 
-            {item.category !== "Sub-Agent" && item.clawmartUrl && (
-              <a href={item.clawmartUrl} class="btn-clawmart" target="_blank" rel="noopener">
-                Also on ClawMart ({item.type === "persona" ? "$99" : "$5"}) →
-              </a>
-            )}
+            {
+              item.category !== "Sub-Agent" && item.clawmartUrl && (
+                <a
+                  href={item.clawmartUrl}
+                  class="btn-clawmart"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Also on ClawMart ({item.type === "persona" ? "$99" : "$5"}) →
+                </a>
+              )
+            }
 
             <ul class="panel-card__details">
               <li>
@@ -136,44 +173,61 @@ const longDescriptionHtml = marked(item.longDescription);
               </li>
               <li>
                 <span class="detail-icon">📄</span>
-                {item.type === "persona" ? "Full persona package (SKILL.md + guides)" : "SKILL.md prompt skill file"}
+                {
+                  item.type === "persona"
+                    ? "Full persona package (SKILL.md + guides)"
+                    : "SKILL.md prompt skill file"
+                }
               </li>
             </ul>
           </div>
 
           <!-- Built by -->
           <div class="built-by">
-            <img src="/avatars/hero-avatar.gif" alt="Aleister" class="built-by__avatar-img" />
+            <img
+              src="/avatars/hero-avatar.gif"
+              alt="Aleister"
+              class="built-by__avatar-img"
+            />
             <div class="built-by__info">
               <span class="built-by__label">Built by</span>
-              <a href="https://x.com/aleisterai" target="_blank" rel="noopener" class="built-by__name">
+              <a
+                href="https://x.com/aleisterai"
+                target="_blank"
+                rel="noopener"
+                class="built-by__name"
+              >
                 @aleisterai
               </a>
             </div>
           </div>
         </aside>
-
       </div>
 
       <!-- Related -->
-      {related.length > 0 && (
-        <section class="related">
-          <h2 class="related__title">More {item.type === "persona" ? "personas" : "skills"}</h2>
-          <div class="related__grid">
-            {related.map((r) => (
-              <a href={`/store/${r.slug}`} class="related-card">
-                <div class="related-card__top">
-                  <span class="related-card__category">{r.category || r.type}</span>
-                  <span class="related-card__price">${r.price}</span>
-                </div>
-                <h3 class="related-card__name">{r.name}</h3>
-                <p class="related-card__desc">{r.description}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
-
+      {
+        related.length > 0 && (
+          <section class="related">
+            <h2 class="related__title">
+              More {item.type === "persona" ? "personas" : "skills"}
+            </h2>
+            <div class="related__grid">
+              {related.map((r) => (
+                <a href={`/store/${r.slug}`} class="related-card">
+                  <div class="related-card__top">
+                    <span class="related-card__category">
+                      {r.category || r.type}
+                    </span>
+                    <span class="related-card__price">${r.price}</span>
+                  </div>
+                  <h3 class="related-card__name">{r.name}</h3>
+                  <p class="related-card__desc">{r.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
     </div>
   </main>
 </BaseLayout>
@@ -306,7 +360,9 @@ const longDescriptionHtml = marked(item.longDescription);
     transition: opacity 0.2s;
   }
 
-  .breadcrumb a:hover { opacity: 0.7; }
+  .breadcrumb a:hover {
+    opacity: 0.7;
+  }
 
   /* Layout */
   .product__layout {
@@ -603,7 +659,7 @@ const longDescriptionHtml = marked(item.longDescription);
   }
 
   .prose :global(code) {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.82rem;
     background: var(--bg-tertiary);
     padding: 0.1rem 0.4rem;
@@ -625,7 +681,9 @@ const longDescriptionHtml = marked(item.longDescription);
     text-decoration: none;
   }
 
-  .built-by__name:hover { text-decoration: underline; }
+  .built-by__name:hover {
+    text-decoration: underline;
+  }
 
   /* Related */
   .related__title {
