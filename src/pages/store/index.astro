@@ -32,8 +32,15 @@ const skills = storeItems.filter((i) => i.type === "skill");
           {persona.map((item) => (
             <a href={`/store/${item.slug}`} class="store-card store-card--persona">
               {item.badge && <span class="store-card__badge">{item.badge}</span>}
-              <div class="store-card__type">Persona</div>
-              <h3 class="store-card__name">{item.name}</h3>
+              <div class="store-card__persona-top">
+                {item.avatar && (
+                  <img src={item.avatar} alt={item.name} class="store-card__avatar" />
+                )}
+                <div>
+                  <div class="store-card__type">Persona</div>
+                  <h3 class="store-card__name">{item.name}</h3>
+                </div>
+              </div>
               <p class="store-card__desc">{item.description}</p>
               <ul class="store-card__features">
                 {item.features.slice(0, 4).map((f) => (
@@ -197,6 +204,22 @@ const skills = storeItems.filter((i) => i.type === "skill");
   /* Persona card — wider layout */
   .store-card--persona {
     max-width: 680px;
+  }
+
+  .store-card__persona-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .store-card__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-glass);
+    flex-shrink: 0;
   }
 
   .store-card--persona::before {

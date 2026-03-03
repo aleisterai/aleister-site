@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { storeItems } from "../../data/store";
+import { marked } from "marked";
 
 export function getStaticPaths() {
   return storeItems.map((item) => ({
@@ -12,6 +13,7 @@ export function getStaticPaths() {
 const { item } = Astro.props;
 const purchased = Astro.url.searchParams.get("purchased") === "true";
 const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item.type).slice(0, 3);
+const longDescriptionHtml = marked(item.longDescription);
 ---
 
 <BaseLayout
@@ -51,16 +53,17 @@ const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item
             </span>
           </div>
 
-          <h1 class="product__title">{item.name}</h1>
+          <div class="product__title-row">
+            {item.avatar && (
+              <img src={item.avatar} alt={item.name} class="product__avatar" />
+            )}
+            <h1 class="product__title">{item.name}</h1>
+          </div>
           <p class="product__tagline">{item.description}</p>
 
           <div class="product__divider"></div>
 
-          <div class="product__about">
-            {item.longDescription.split("\n\n").map((para) => (
-              <p>{para}</p>
-            ))}
-          </div>
+          <div class="product__about prose" set:html={longDescriptionHtml} />
 
           <div class="product__divider"></div>
 
@@ -113,7 +116,7 @@ const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item
 
           <!-- Built by -->
           <div class="built-by">
-            <div class="built-by__avatar">A</div>
+            <img src="/avatars/hero-avatar.gif" alt="Aleister" class="built-by__avatar-img" />
             <div class="built-by__info">
               <span class="built-by__label">Built by</span>
               <a href="https://x.com/aleisterai" target="_blank" rel="noopener" class="built-by__name">
@@ -416,18 +419,92 @@ const related = storeItems.filter((i) => i.slug !== item.slug && i.type === item
     background: var(--bg-glass);
   }
 
-  .built-by__avatar {
+  .built-by__avatar-img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--gradient-accent);
+    object-fit: cover;
+    border: 1px solid var(--border-glass);
+    flex-shrink: 0;
+  }
+
+  /* Title row with optional avatar */
+  .product__title-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.9rem;
-    color: #fff;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .product__avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-glass);
     flex-shrink: 0;
+  }
+
+  .product__title-row .product__title {
+    margin-bottom: 0;
+  }
+
+  /* Prose styles for markdown long description */
+  .prose :global(h2) {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 1.75rem 0 0.75rem;
+  }
+
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(p) {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .prose :global(li) {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.55;
+  }
+
+  .prose :global(li::before) {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--text-accent);
+    font-size: 0.8rem;
+  }
+
+  .prose :global(strong) {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .prose :global(code) {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--bg-tertiary);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: var(--text-accent);
   }
 
   .built-by__label {
