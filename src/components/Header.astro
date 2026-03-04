@@ -29,7 +29,14 @@ const navLinks = [
       {
         navLinks.map((link) => (
           <li>
-            <a href={link.href} class={"header__link" + (isActive(link.href) ? " header__link--active" : "")} aria-current={isActive(link.href) ? "page" : undefined}>
+            <a
+              href={link.href}
+              class={
+                "header__link" +
+                (isActive(link.href) ? " header__link--active" : "")
+              }
+              aria-current={isActive(link.href) ? "page" : undefined}
+            >
               {link.label}
             </a>
           </li>
@@ -76,13 +83,13 @@ const navLinks = [
     z-index: 100;
     padding: 0.75rem 0;
     transition: all 0.3s ease;
-    background: transparent;
-  }
-
-  .header.scrolled {
     background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid transparent;
+  }
+
+  .header.scrolled {
     border-bottom: 1px solid var(--glass-border);
   }
 
