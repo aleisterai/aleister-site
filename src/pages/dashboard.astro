@@ -15,26 +15,25 @@ const CLAW_MART_EARNINGS = 89;
 >
   <div class="dashboard-page">
     <div class="container">
-      <!-- ── Zone 1: Hero + Stats ── -->
+      <!-- ── Hero ── -->
       <div class="dashboard-hero">
         <div class="dashboard-hero__text">
-          <p class="dashboard-chain">Base Mainnet · Live Dashboard</p>
-          <h1 class="dashboard-title">Revenue & Treasury</h1>
+          <p class="dashboard-chain">
+            Base Mainnet · Live <span class="live-dot-inline"
+              ><span></span>
+            </span>
+          </p>
+          <h1 class="dashboard-title">Dashboard</h1>
           <p class="dashboard-desc">
-            Real-time tracking of earnings and on-chain holdings. Updated every
-            60 seconds.
+            All-time revenue, revenue streams, and on-chain treasury.
+            Auto-refreshes every 60 seconds.
           </p>
         </div>
         <div class="dashboard-hero__stats">
-          <div class="stat-card">
-            <div class="stat-label">Claw Mart Earnings</div>
-            <div class="stat-value" id="clawmart-earnings">$89</div>
-            <div class="stat-change" id="earnings-change">Live from API</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Treasury Value</div>
-            <div class="stat-value" id="treasury-value">$0</div>
-            <div class="stat-change" id="treasury-change">Loading...</div>
+          <div class="stat-card stat-card--accent">
+            <div class="stat-label">All-Time Revenue</div>
+            <div class="stat-value" id="all-time-revenue">—</div>
+            <div class="stat-change" id="all-time-change">Aggregating...</div>
           </div>
           <button
             class="refresh-btn"
@@ -58,7 +57,52 @@ const CLAW_MART_EARNINGS = 89;
         </div>
       </div>
 
-      <!-- ── Zone 3: Treasury Holdings ── -->
+      <!-- ── Revenue Streams ── -->
+      <div class="dashboard-section">
+        <h2 class="section-title">Revenue Streams</h2>
+        <div class="revenue-grid">
+          <div class="revenue-card" id="rev-clawmart">
+            <div class="revenue-card__icon">🐾</div>
+            <div class="revenue-card__body">
+              <div class="revenue-card__name">Claw Mart</div>
+              <div class="revenue-card__amount" id="clawmart-earnings">
+                $89.00
+              </div>
+              <div class="revenue-card__sub" id="clawmart-sub">
+                Product sales
+              </div>
+            </div>
+          </div>
+          <div class="revenue-card" id="rev-store">
+            <div class="revenue-card__icon">🛒</div>
+            <div class="revenue-card__body">
+              <div class="revenue-card__name">Aleister Store</div>
+              <div class="revenue-card__amount" id="store-revenue">—</div>
+              <div class="revenue-card__sub" id="store-sub">
+                Loading from Stripe...
+              </div>
+            </div>
+          </div>
+          <div class="revenue-card" id="rev-patreon">
+            <div class="revenue-card__icon">❤️</div>
+            <div class="revenue-card__body">
+              <div class="revenue-card__name">Patreon</div>
+              <div class="revenue-card__amount">$0.00</div>
+              <div class="revenue-card__sub">Coming soon</div>
+            </div>
+          </div>
+          <div class="revenue-card" id="rev-token">
+            <div class="revenue-card__icon">⛓️</div>
+            <div class="revenue-card__body">
+              <div class="revenue-card__name">Token Fees</div>
+              <div class="revenue-card__amount" id="token-fees">$0.00</div>
+              <div class="revenue-card__sub">Buy/sell tax revenue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Treasury Holdings ── -->
       <div class="dashboard-section">
         <h2 class="section-title">Treasury Holdings</h2>
         <div class="treasury-grid">
@@ -69,7 +113,6 @@ const CLAW_MART_EARNINGS = 89;
             </div>
             <div class="token-balance">0</div>
             <div class="token-value">$0</div>
-            <div class="token-breakdown">(Native + Wrapped)</div>
           </div>
           <div class="treasury-card" data-token="$ALEISTER">
             <div class="treasury-card__header">
@@ -108,33 +151,6 @@ const CLAW_MART_EARNINGS = 89;
             >
               BaseScan ↗
             </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Zone 4: Store Revenue (Stripe) ── -->
-      <div class="dashboard-section">
-        <h2 class="section-title">Store Revenue · Stripe</h2>
-        <div class="treasury-grid">
-          <div class="treasury-card" id="stripe-balance-card">
-            <div class="treasury-card__header">
-              <div class="token-symbol">Balance</div>
-              <div class="live-dot" title="Live data"><span></span></div>
-            </div>
-            <div class="token-balance" id="stripe-balance">—</div>
-            <div class="token-breakdown" id="stripe-balance-detail">
-              Loading from Stripe...
-            </div>
-          </div>
-          <div class="treasury-card" id="stripe-revenue-card">
-            <div class="treasury-card__header">
-              <div class="token-symbol">30d Revenue</div>
-              <div class="token-change change-up" id="stripe-charge-count">
-                0 charges
-              </div>
-            </div>
-            <div class="token-balance" id="stripe-revenue-30d">—</div>
-            <div class="token-breakdown">Last 30 days</div>
           </div>
         </div>
       </div>
@@ -274,6 +290,11 @@ const CLAW_MART_EARNINGS = 89;
     color: #ef4444;
   }
 
+  .stat-card--accent {
+    border-color: color-mix(in srgb, #10b981 30%, var(--border-glass));
+    background: color-mix(in srgb, #10b981 5%, var(--bg-glass));
+  }
+
   /* ──── Sections ──── */
   .dashboard-section {
     margin-bottom: 2.5rem;
@@ -293,6 +314,61 @@ const CLAW_MART_EARNINGS = 89;
     letter-spacing: 0.08em;
     color: var(--text-tertiary);
     margin-bottom: 1.25rem;
+  }
+
+  /* ──── Revenue Grid ──── */
+  .revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .revenue-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .revenue-card:hover {
+    border-color: var(--border-subtle);
+  }
+
+  .revenue-card__icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    flex-shrink: 0;
+    padding-top: 0.1rem;
+  }
+
+  .revenue-card__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .revenue-card__name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+  }
+
+  .revenue-card__amount {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .revenue-card__sub {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    font-style: italic;
   }
 
   /* ──── Treasury Grid ──── */
@@ -469,6 +545,23 @@ const CLAW_MART_EARNINGS = 89;
       opacity: 0.5;
       box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
     }
+  }
+
+  .live-dot-inline {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.35rem;
+    vertical-align: middle;
+  }
+
+  .live-dot-inline span {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);
+    animation: pulse-dot 2s ease-in-out infinite;
   }
 
   /* ──── Disclaimer ──── */
@@ -720,47 +813,16 @@ const CLAW_MART_EARNINGS = 89;
 
   // Update UI with data
   function updateUI(treasuryData, clawMartData) {
-    // Update treasury value
-    const treasuryValueEl = document.getElementById("treasury-value");
-    const treasuryChangeEl = document.getElementById("treasury-change");
-
-    if (treasuryValueEl) {
-      treasuryValueEl.textContent = formatCurrency(treasuryData.totalValue);
-    }
-
-    if (treasuryChangeEl) {
-      // Calculate weighted average change
-      let weightedChange = 0;
-      let totalWeight = 0;
-
-      treasuryData.tokens.forEach((token) => {
-        const weight = token.value;
-        weightedChange += token.change24h * weight;
-        totalWeight += weight;
-      });
-
-      const avgChange = totalWeight > 0 ? weightedChange / totalWeight : 0;
-      treasuryChangeEl.textContent = `${
-        avgChange >= 0 ? "+" : ""
-      }${avgChange.toFixed(1)}% 24h`;
-      treasuryChangeEl.className = `stat-change ${
-        avgChange >= 0 ? "change-up" : "change-down"
-      }`;
-    }
-
     // Update token cards
     treasuryData.tokens.forEach((token) => {
       const card = document.querySelector(
         `.treasury-card[data-token="${token.symbol}"]`
       );
       if (card) {
-        const symbolEl = card.querySelector(".token-symbol");
         const changeEl = card.querySelector(".token-change");
         const balanceEl = card.querySelector(".token-balance");
         const valueEl = card.querySelector(".token-value");
-        const breakdownEl = card.querySelector(".token-breakdown");
 
-        if (symbolEl) symbolEl.textContent = token.symbol;
         if (changeEl) {
           changeEl.textContent = `${
             token.change24h >= 0 ? "+" : ""
@@ -771,62 +833,45 @@ const CLAW_MART_EARNINGS = 89;
         }
         if (balanceEl) balanceEl.textContent = formatNumber(token.balance, 2);
         if (valueEl) valueEl.textContent = formatCurrency(token.value);
-
-        // Show ETH breakdown if available
-        if (breakdownEl && token.breakdown) {
-          const native = token.breakdown.native || 0;
-          const wrapped = token.breakdown.wrapped || 0;
-          breakdownEl.textContent = `(Native: ${formatNumber(
-            native,
-            4
-          )} + Wrapped: ${formatNumber(wrapped, 4)})`;
-          breakdownEl.title = `Native ETH: ${native.toFixed(
-            6
-          )}\nWrapped ETH: ${wrapped.toFixed(6)}`;
-        }
       }
     });
 
-    // Update Claw Mart earnings
+    // Update Claw Mart revenue card
     if (clawMartData && clawMartData.totalEarnings > 0) {
       const earningsEl = document.getElementById("clawmart-earnings");
-      const earningsChangeEl = document.getElementById("earnings-change");
-
-      if (earningsEl) {
+      const subEl = document.getElementById("clawmart-sub");
+      if (earningsEl)
         earningsEl.textContent = `$${clawMartData.totalEarnings.toFixed(2)}`;
-      }
-
-      if (earningsChangeEl) {
-        // Format the last updated time
-        const lastUpdated = new Date(clawMartData.lastUpdated);
-        const now = new Date();
-        const diffMinutes = Math.floor((now - lastUpdated) / (1000 * 60));
-
-        if (diffMinutes < 1) {
-          earningsChangeEl.textContent = "Updated just now";
-        } else if (diffMinutes < 60) {
-          earningsChangeEl.textContent = `Updated ${diffMinutes} min ago`;
-        } else {
-          earningsChangeEl.textContent = `Updated at ${lastUpdated.toLocaleTimeString(
-            [],
-            { hour: "2-digit", minute: "2-digit" }
-          )}`;
-        }
-      }
+      if (subEl) subEl.textContent = "Product sales";
+      window.__clawmartRevenue = clawMartData.totalEarnings;
     }
 
-    // Update timestamp
-    const now = new Date();
-    // Update treasury timestamp
-    if (
-      treasuryChangeEl &&
-      !treasuryChangeEl.classList.contains("change-up") &&
-      !treasuryChangeEl.classList.contains("change-down")
-    ) {
-      treasuryChangeEl.textContent = `Updated: ${now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
+    // Update all-time revenue
+    updateAllTimeRevenue();
+  }
+
+  // Aggregate all revenue streams into hero card
+  function updateAllTimeRevenue() {
+    const clawmart = window.__clawmartRevenue || 89;
+    const store = window.__storeRevenue || 0;
+    const patreon = 0; // Coming soon
+    const tokenFees = 0; // Coming soon
+    const total = clawmart + store + patreon + tokenFees;
+
+    const el = document.getElementById("all-time-revenue");
+    const changeEl = document.getElementById("all-time-change");
+    if (el) el.textContent = formatCurrency(total);
+    if (changeEl) {
+      const streams = [
+        clawmart > 0,
+        store > 0,
+        patreon > 0,
+        tokenFees > 0,
+      ].filter(Boolean).length;
+      changeEl.textContent = `${streams} active stream${
+        streams !== 1 ? "s" : ""
+      }`;
+      changeEl.className = "stat-change change-up";
     }
   }
 
@@ -836,104 +881,80 @@ const CLAW_MART_EARNINGS = 89;
     if (loadingIndicator) {
       loadingIndicator.style.display = loading ? "block" : "none";
     }
-
-    // Disable/enable refresh button if exists
     const refreshBtn = document.getElementById("refresh-btn");
-    if (refreshBtn) {
-      refreshBtn.disabled = loading;
-    }
+    if (refreshBtn) refreshBtn.disabled = loading;
   }
 
   // Main refresh function
   async function refreshData() {
     if (isLoading) return;
-
     console.log("Refreshing dashboard data...");
-
     const treasuryData = await fetchTreasuryData();
     const clawMartData = await fetchClawMartEarnings();
-
-    if (treasuryData) {
-      updateUI(treasuryData, clawMartData);
-    }
+    if (treasuryData) updateUI(treasuryData, clawMartData);
   }
 
   // Manual refresh button handler
   function setupRefreshButton() {
     const refreshBtn = document.getElementById("refresh-btn");
     if (refreshBtn) {
-      refreshBtn.addEventListener("click", refreshData);
+      refreshBtn.addEventListener("click", () => {
+        refreshData();
+        fetchStoreRevenue();
+      });
     }
   }
 
   // Start auto-refresh
   document.addEventListener("DOMContentLoaded", () => {
-    // Add loading indicator
     const loadingIndicator = document.createElement("div");
     loadingIndicator.id = "loading-indicator";
     loadingIndicator.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--gradient-accent);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      z-index: 1000;
-      display: none;
+      position: fixed; top: 20px; right: 20px;
+      background: var(--gradient-accent); color: white;
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: 600;
+      z-index: 1000; display: none;
       box-shadow: var(--shadow-md);
     `;
     loadingIndicator.textContent = "Loading data...";
     document.body.appendChild(loadingIndicator);
 
-    // Initial load
     refreshData();
     fetchStoreRevenue();
 
-    // Setup auto-refresh every 60 seconds
     refreshInterval = setInterval(() => {
       refreshData();
       fetchStoreRevenue();
     }, 60000);
 
-    // Setup manual refresh
     setupRefreshButton();
 
-    // Cleanup on page unload
     window.addEventListener("beforeunload", () => {
       clearInterval(refreshInterval);
     });
   });
 
-  // ──── Stripe Store Revenue ────
+  // ──── Stripe Store Revenue → Aleister Store card ────
   async function fetchStoreRevenue() {
     try {
       const res = await fetch("/api/store-revenue.json");
       const data = await res.json();
 
-      // Balance
-      const balanceEl = document.getElementById("stripe-balance");
-      const detailEl = document.getElementById("stripe-balance-detail");
-      if (balanceEl)
-        balanceEl.textContent = `$${data.balance.total.toFixed(2)}`;
-      if (detailEl) {
-        detailEl.textContent = `Available: $${data.balance.available.toFixed(
-          2
-        )} · Pending: $${data.balance.pending.toFixed(2)}`;
+      const amountEl = document.getElementById("store-revenue");
+      const subEl = document.getElementById("store-sub");
+
+      const total = data.balance?.total || 0;
+      window.__storeRevenue = total;
+
+      if (amountEl) amountEl.textContent = formatCurrency(total);
+      if (subEl) {
+        subEl.textContent = `${
+          data.chargeCount30d || 0
+        } charges last 30d · Stripe`;
       }
 
-      // 30d revenue
-      const rev30El = document.getElementById("stripe-revenue-30d");
-      const countEl = document.getElementById("stripe-charge-count");
-      if (rev30El) rev30El.textContent = `$${data.revenue30d.toFixed(2)}`;
-      if (countEl) {
-        countEl.textContent = `${data.chargeCount30d} charge${
-          data.chargeCount30d !== 1 ? "s" : ""
-        }`;
-        countEl.className = "token-change change-up";
-      }
+      updateAllTimeRevenue();
     } catch (err) {
       console.error("Store revenue fetch error:", err);
     }
