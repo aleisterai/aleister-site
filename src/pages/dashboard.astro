@@ -87,7 +87,7 @@ const CLAW_MART_EARNINGS = 89;
               <div class="revenue-card__name">
                 Patreon <span class="live-dot-inline"><span></span></span>
               </div>
-              <div class="revenue-card__amount">$0.00</div>
+              <div class="revenue-card__amount">$4.00</div>
             </div>
           </a>
           <div class="revenue-card" id="rev-token">
@@ -864,7 +864,7 @@ const CLAW_MART_EARNINGS = 89;
   function updateAllTimeRevenue() {
     const clawmart = window.__clawmartRevenue || 89;
     const store = window.__storeRevenue || 0;
-    const patreon = 0;
+    const patreon = 4; // 1 membership × $4/mo
     const tokenFees = window.__tokenFeesRevenue || 0;
     const total = clawmart + store + patreon + tokenFees;
 
