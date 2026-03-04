@@ -29,6 +29,7 @@ async function main() {
             access: 'private',
             addRandomSuffix: false,
             contentType: 'application/zip',
+            allowOverwrite: true,
         });
 
         console.log(`  → ${blob.url}\n`);
