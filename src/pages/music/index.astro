@@ -1,0 +1,576 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { songs, STATUS_CONFIG } from "../../data/music";
+---
+
+<BaseLayout
+  title="Music — Distribution Dashboard"
+  description="Explore Aleister's music catalog. Track songs from development to delivery across Spotify, Apple Music, YouTube Music and more."
+>
+  <section class="music section">
+    <div class="container">
+      <!-- Header -->
+      <div class="music__header">
+        <div class="music__badge">🎵 Music Distribution</div>
+        <h1 class="music__title">
+          Music <span class="text-gradient">Distribution</span>
+        </h1>
+        <p class="music__subtitle">
+          Track songs from studio to streaming platforms. Every release, every
+          status, every store — in one place.
+        </p>
+      </div>
+
+      <!-- Status legend -->
+      <div class="music__legend">
+        {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+          <div class="legend-item">
+            <span class="legend-dot" style={`background: ${config.color}`}></span>
+            <span class="legend-label">{config.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Song grid -->
+      <div class="music-grid">
+        {songs.map((song, i) => {
+          const status = STATUS_CONFIG[song.status];
+          return (
+            <div class={`song-card animate-in`} style={`animation-delay: ${i * 0.1}s`} data-slug={song.slug}>
+              <!-- Artwork -->
+              <div class="song-card__artwork-wrap">
+                <img
+                  src={song.artwork}
+                  alt={`${song.title} cover art`}
+                  class="song-card__artwork"
+                  loading="lazy"
+                  width="500"
+                  height="500"
+                />
+                {song.audioSrc && (
+                  <button
+                    class="song-card__play-btn"
+                    data-audio={song.audioSrc}
+                    data-title={song.title}
+                    aria-label={`Play ${song.title}`}
+                  >
+                    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" style="display:none">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                  </button>
+                )}
+                <!-- Status badge on artwork -->
+                <div
+                  class={`song-card__status song-card__status--${song.status}`}
+                  style={`--status-color: ${status.color}`}
+                >
+                  <span class="song-card__status-dot"></span>
+                  {status.label}
+                </div>
+              </div>
+
+              <!-- Info -->
+              <div class="song-card__info">
+                <h2 class="song-card__title">{song.title}</h2>
+                <p class="song-card__artist">{song.artist}</p>
+                <span class="song-card__genre">{song.genre}</span>
+
+                {/* Audio progress bar (hidden until playing) */}
+                {song.audioSrc && (
+                  <div class="song-card__progress" data-progress-for={song.slug} style="display:none">
+                    <div class="progress-bar">
+                      <div class="progress-bar__fill"></div>
+                    </div>
+                    <div class="progress-time">
+                      <span class="progress-time__current">0:00</span>
+                      <span class="progress-time__duration">0:00</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Stores */}
+                {song.stores.length > 0 && (
+                  <div class="song-card__stores">
+                    <span class="song-card__stores-label">
+                      {song.status === "delivered" ? "Live on:" : "Shipping to:"}
+                    </span>
+                    <div class="song-card__store-tags">
+                      {song.stores.map((store) => (
+                        <span class="store-tag">{store}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Platform links for delivered songs */}
+                {song.status === "delivered" && song.platformLinks && (
+                  <div class="song-card__links">
+                    {song.platformLinks.map((link) => (
+                      <a
+                        href={link.url}
+                        class="platform-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={`Listen on ${link.platform}`}
+                      >
+                        <span class="platform-link__icon">{link.icon}</span>
+                        <span class="platform-link__name">{link.platform}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                {song.releaseDate && (
+                  <p class="song-card__date">
+                    {song.status === "delivered" ? "Released" : "Expected"}: {song.releaseDate}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<!-- Audio Player Script -->
+<script is:inline>
+(function () {
+  let currentAudio = null;
+  let currentBtn = null;
+  let currentCard = null;
+  let animFrame = null;
+
+  function formatTime(s) {
+    if (!s || isNaN(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ":" + (sec < 10 ? "0" : "") + sec;
+  }
+
+  function stopCurrent() {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
+    if (currentBtn) {
+      currentBtn.querySelector(".play-icon").style.display = "";
+      currentBtn.querySelector(".pause-icon").style.display = "none";
+      currentBtn.classList.remove("playing");
+      currentBtn = null;
+    }
+    if (currentCard) {
+      const progress = currentCard.querySelector("[data-progress-for]");
+      if (progress) progress.style.display = "none";
+      currentCard = null;
+    }
+    if (animFrame) {
+      cancelAnimationFrame(animFrame);
+      animFrame = null;
+    }
+  }
+
+  function updateProgress() {
+    if (!currentAudio || !currentCard) return;
+    const progress = currentCard.querySelector("[data-progress-for]");
+    if (!progress) return;
+    const fill = progress.querySelector(".progress-bar__fill");
+    const cur = progress.querySelector(".progress-time__current");
+    const dur = progress.querySelector(".progress-time__duration");
+    if (fill) fill.style.width = ((currentAudio.currentTime / currentAudio.duration) * 100) + "%";
+    if (cur) cur.textContent = formatTime(currentAudio.currentTime);
+    if (dur) dur.textContent = formatTime(currentAudio.duration);
+    animFrame = requestAnimationFrame(updateProgress);
+  }
+
+  document.querySelectorAll(".song-card__play-btn").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      const audioSrc = btn.dataset.audio;
+      const card = btn.closest(".song-card");
+
+      // Toggle off
+      if (currentBtn === btn && currentAudio && !currentAudio.paused) {
+        currentAudio.pause();
+        btn.querySelector(".play-icon").style.display = "";
+        btn.querySelector(".pause-icon").style.display = "none";
+        btn.classList.remove("playing");
+        cancelAnimationFrame(animFrame);
+        return;
+      }
+
+      // Resume
+      if (currentBtn === btn && currentAudio && currentAudio.paused) {
+        currentAudio.play();
+        btn.querySelector(".play-icon").style.display = "none";
+        btn.querySelector(".pause-icon").style.display = "";
+        btn.classList.add("playing");
+        animFrame = requestAnimationFrame(updateProgress);
+        return;
+      }
+
+      // New track
+      stopCurrent();
+
+      currentAudio = new Audio(audioSrc);
+      currentBtn = btn;
+      currentCard = card;
+
+      const progress = card.querySelector("[data-progress-for]");
+      if (progress) progress.style.display = "";
+
+      btn.querySelector(".play-icon").style.display = "none";
+      btn.querySelector(".pause-icon").style.display = "";
+      btn.classList.add("playing");
+
+      currentAudio.play().catch(function () {
+        stopCurrent();
+      });
+
+      currentAudio.addEventListener("ended", function () {
+        stopCurrent();
+      });
+
+      animFrame = requestAnimationFrame(updateProgress);
+    });
+  });
+
+  // Click on progress bar to seek
+  document.querySelectorAll(".progress-bar").forEach(function (bar) {
+    bar.addEventListener("click", function (e) {
+      if (!currentAudio) return;
+      const rect = bar.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      currentAudio.currentTime = pct * currentAudio.duration;
+    });
+  });
+})();
+</script>
+
+<style>
+  /* ========== Music Page ========== */
+  .music {
+    padding: 6rem 0 4rem;
+  }
+
+  .music__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .music__badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .music__title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 1rem;
+  }
+
+  .music__subtitle {
+    max-width: 580px;
+    margin: 0 auto;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  /* ── Legend ── */
+  .music__legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Grid ── */
+  .music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+  }
+
+  /* ── Song Card ── */
+  .song-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .song-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-glass);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Artwork */
+  .song-card__artwork-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .song-card__artwork {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .song-card:hover .song-card__artwork {
+    transform: scale(1.05);
+  }
+
+  /* Play button */
+  .song-card__play-btn {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+    z-index: 2;
+  }
+
+  .song-card:hover .song-card__play-btn,
+  .song-card__play-btn.playing {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .song-card__play-btn:hover {
+    background: rgba(0, 212, 255, 0.4);
+    border-color: rgba(0, 212, 255, 0.5);
+  }
+
+  .song-card__play-btn.playing {
+    background: rgba(0, 212, 255, 0.3);
+    border-color: rgba(0, 212, 255, 0.5);
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.3); }
+    50% { box-shadow: 0 0 20px 4px rgba(0, 212, 255, 0.15); }
+  }
+
+  /* Status badge */
+  .song-card__status {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 2;
+  }
+
+  .song-card__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--status-color);
+    box-shadow: 0 0 6px var(--status-color);
+  }
+
+  .song-card__status--development { border-color: rgba(59, 130, 246, 0.3); }
+  .song-card__status--shipped { border-color: rgba(234, 179, 8, 0.3); }
+  .song-card__status--delivered { border-color: rgba(34, 197, 94, 0.3); }
+
+  /* Info section */
+  .song-card__info {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .song-card__title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+  }
+
+  .song-card__artist {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+  }
+
+  .song-card__genre {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+  }
+
+  /* Progress bar */
+  .song-card__progress {
+    margin: 0.75rem 0;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .progress-bar__fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-start), var(--accent-mid));
+    border-radius: 2px;
+    transition: width 0.1s linear;
+  }
+
+  .progress-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    margin-top: 0.3rem;
+  }
+
+  /* Stores */
+  .song-card__stores {
+    margin-top: 0.75rem;
+  }
+
+  .song-card__stores-label {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .song-card__store-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .store-tag {
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+
+  /* Platform links */
+  .song-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .platform-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    text-decoration: none;
+  }
+
+  .platform-link:hover {
+    border-color: var(--border-accent);
+    color: var(--text-accent);
+    background: var(--bg-card-hover);
+  }
+
+  .platform-link__icon {
+    font-size: 0.9rem;
+  }
+
+  .platform-link__name {
+    font-weight: 500;
+  }
+
+  /* Release date */
+  .song-card__date {
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .music {
+      padding: 4rem 0 3rem;
+    }
+
+    .music-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .song-card__play-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
