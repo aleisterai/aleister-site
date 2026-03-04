@@ -55,18 +55,23 @@ const longDescriptionHtml = marked(item.longDescription);
       {
         purchased && (
           <div class="receipt-box" id="receipt-box">
-            <div class="receipt-box__header">
+            <div class="receipt-box__header" id="receipt-toggle" role="button" tabindex="0" aria-expanded="true" aria-controls="receipt-body">
               <span class="receipt-icon" id="receipt-icon">
                 ✓
               </span>
-              <div>
+              <div class="receipt-box__header-text">
                 <h2 class="receipt-title">Purchase complete!</h2>
                 <p class="receipt-subtitle">
                   Thank you. A receipt has been sent to your email address.
                 </p>
               </div>
+              <button class="receipt-chevron" id="receipt-chevron" aria-hidden="true" tabindex="-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
+              </button>
             </div>
-            <div class="receipt-box__body">
+            <div class="receipt-box__body" id="receipt-body">
               <div class="receipt-item">
                 <span class="receipt-item__name">{item.name}</span>
                 <span class="receipt-item__price">${item.price}.00</span>
@@ -480,6 +485,61 @@ const longDescriptionHtml = marked(item.longDescription);
     gap: 1rem;
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid color-mix(in srgb, #22c55e 20%, transparent);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .receipt-box__header:hover {
+    background: color-mix(in srgb, #22c55e 8%, transparent);
+  }
+
+  .receipt-box__header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .receipt-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: color-mix(in srgb, #22c55e 12%, transparent);
+    color: #22c55e;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.25s;
+    padding: 0;
+  }
+
+  .receipt-chevron svg {
+    transition: transform 0.25s ease;
+  }
+
+  /* Collapsed state — chevron flips down */
+  .receipt-box--collapsed .receipt-chevron svg {
+    transform: rotate(180deg);
+  }
+
+  /* Collapsible body */
+  .receipt-box__body {
+    overflow: hidden;
+    max-height: 600px;
+    transition: max-height 0.3s ease, padding 0.2s ease;
+    padding-top: 0;
+  }
+
+  .receipt-box--collapsed .receipt-box__body {
+    max-height: 0;
+  }
+
+  /* Header border removed when collapsed */
+  .receipt-box--collapsed .receipt-box__header {
+    border-bottom-color: transparent;
   }
 
   .receipt-icon {
@@ -1433,6 +1493,38 @@ const longDescriptionHtml = marked(item.longDescription);
     }
   }
 </style>
+
+<script is:inline>
+  (function () {
+    const box      = document.getElementById('receipt-box');
+    const toggle   = document.getElementById('receipt-toggle');
+    const LS_KEY   = 'receipt_collapsed';
+
+    if (!box || !toggle) return;
+
+    // Restore previous state
+    if (localStorage.getItem(LS_KEY) === '1') {
+      box.classList.add('receipt-box--collapsed');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function doToggle() {
+      const isCollapsed = box.classList.toggle('receipt-box--collapsed');
+      toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+      localStorage.setItem(LS_KEY, isCollapsed ? '1' : '0');
+    }
+
+    toggle.addEventListener('click', doToggle);
+
+    // Keyboard: Enter / Space
+    toggle.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        doToggle();
+      }
+    });
+  })();
+</script>
 
 <script is:inline define:vars={{ sessionId, itemSlug: item.slug }}>
   if (sessionId) {
