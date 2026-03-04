@@ -1,11 +1,41 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { songs, STATUS_CONFIG } from "../../data/music";
+
+const siteUrl = "https://thealeister.com";
+
+// JSON-LD: MusicPlaylist + individual MusicRecording entries
+const musicJsonLd = [
+  {
+    "@type": "MusicPlaylist",
+    "@id": `${siteUrl}/music/#playlist`,
+    name: "The Aleister — Music Catalog",
+    description: "Songs by The Aleister — from studio to streaming platforms.",
+    url: `${siteUrl}/music`,
+    numTracks: songs.length,
+    track: songs.map((song, i) => ({
+      "@type": "MusicRecording",
+      "@id": `${siteUrl}/music/#${song.slug}`,
+      name: song.title,
+      byArtist: { "@type": "MusicGroup", name: song.artist },
+      genre: song.genre,
+      position: i + 1,
+      ...(song.releaseDate ? { datePublished: song.releaseDate } : {}),
+      ...(song.artwork ? { image: `${siteUrl}${song.artwork}` } : {}),
+      ...(song.audioSrc ? { contentUrl: `${siteUrl}${song.audioSrc}` } : {}),
+    })),
+  },
+];
 ---
 
 <BaseLayout
-  title="Music — Distribution Dashboard"
-  description="Explore Aleister's music catalog. Track songs from development to delivery across Spotify, Apple Music, YouTube Music and more."
+  title="Music — Distribution Dashboard | The Aleister"
+  description="Explore The Aleister's music catalog. Track songs from development to delivery across Spotify, Apple Music, YouTube Music, Amazon Music, Tidal and more."
+  image="/og-music.jpg"
+  imageWidth={1200}
+  imageHeight={630}
+  imageAlt="The Aleister — Music Distribution Dashboard"
+  jsonLdExtra={musicJsonLd}
 >
   <section class="music section">
     <div class="container">
