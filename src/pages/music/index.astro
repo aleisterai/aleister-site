@@ -31,56 +31,51 @@ import { songs, STATUS_CONFIG } from "../../data/music";
         ))}
       </div>
 
-      <!-- Song grid -->
-      <div class="music-grid">
+      <!-- Song list -->
+      <div class="song-list">
         {songs.map((song, i) => {
           const status = STATUS_CONFIG[song.status];
           return (
-            <div class={`song-card animate-in`} style={`animation-delay: ${i * 0.1}s`} data-slug={song.slug}>
-              <!-- Artwork -->
-              <div class="song-card__artwork-wrap">
+            <div class={`song-row animate-in`} style={`animation-delay: ${i * 0.08}s`} data-slug={song.slug}>
+              <!-- Artwork thumbnail -->
+              <div class="song-row__artwork-wrap">
                 <img
                   src={song.artwork}
                   alt={`${song.title} cover art`}
-                  class="song-card__artwork"
+                  class="song-row__artwork"
                   loading="lazy"
-                  width="500"
-                  height="500"
+                  width="120"
+                  height="120"
                 />
                 {song.audioSrc && (
                   <button
-                    class="song-card__play-btn"
+                    class="song-row__play-btn"
                     data-audio={song.audioSrc}
                     data-title={song.title}
                     aria-label={`Play ${song.title}`}
                   >
-                    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
                       <path d="M8 5v14l11-7z" />
                     </svg>
-                    <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28" style="display:none">
+                    <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" style="display:none">
                       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                     </svg>
                   </button>
                 )}
-                <!-- Status badge on artwork -->
-                <div
-                  class={`song-card__status song-card__status--${song.status}`}
-                  style={`--status-color: ${status.color}`}
-                >
-                  <span class="song-card__status-dot"></span>
-                  {status.label}
-                </div>
               </div>
 
-              <!-- Info -->
-              <div class="song-card__info">
-                <h2 class="song-card__title">{song.title}</h2>
-                <p class="song-card__artist">{song.artist}</p>
-                <span class="song-card__genre">{song.genre}</span>
+              <!-- Song info -->
+              <div class="song-row__info">
+                <div class="song-row__main">
+                  <h2 class="song-row__title">{song.title}</h2>
+                  <p class="song-row__artist">{song.artist}</p>
+                </div>
 
-                {/* Audio progress bar (hidden until playing) */}
+                <span class="song-row__genre">{song.genre}</span>
+
+                {/* Audio progress bar */}
                 {song.audioSrc && (
-                  <div class="song-card__progress" data-progress-for={song.slug} style="display:none">
+                  <div class="song-row__progress" data-progress-for={song.slug} style="display:none">
                     <div class="progress-bar">
                       <div class="progress-bar__fill"></div>
                     </div>
@@ -93,11 +88,8 @@ import { songs, STATUS_CONFIG } from "../../data/music";
 
                 {/* Stores */}
                 {song.stores.length > 0 && (
-                  <div class="song-card__stores">
-                    <span class="song-card__stores-label">
-                      {song.status === "delivered" ? "Live on:" : "Shipping to:"}
-                    </span>
-                    <div class="song-card__store-tags">
+                  <div class="song-row__stores">
+                    <div class="song-row__store-tags">
                       {song.stores.map((store) => (
                         <span class="store-tag">{store}</span>
                       ))}
@@ -107,7 +99,7 @@ import { songs, STATUS_CONFIG } from "../../data/music";
 
                 {/* Platform links for delivered songs */}
                 {song.status === "delivered" && song.platformLinks && (
-                  <div class="song-card__links">
+                  <div class="song-row__links">
                     {song.platformLinks.map((link) => (
                       <a
                         href={link.url}
@@ -122,11 +114,19 @@ import { songs, STATUS_CONFIG } from "../../data/music";
                     ))}
                   </div>
                 )}
+              </div>
 
+              <!-- Status + date (right side) -->
+              <div class="song-row__meta">
+                <div
+                  class={`song-row__status song-row__status--${song.status}`}
+                  style={`--status-color: ${status.color}`}
+                >
+                  <span class="song-row__status-dot"></span>
+                  {status.label}
+                </div>
                 {song.releaseDate && (
-                  <p class="song-card__date">
-                    {song.status === "delivered" ? "Released" : "Expected"}: {song.releaseDate}
-                  </p>
+                  <span class="song-row__date">{song.releaseDate}</span>
                 )}
               </div>
             </div>
@@ -142,7 +142,7 @@ import { songs, STATUS_CONFIG } from "../../data/music";
 (function () {
   let currentAudio = null;
   let currentBtn = null;
-  let currentCard = null;
+  let currentRow = null;
   let animFrame = null;
 
   function formatTime(s) {
@@ -164,10 +164,10 @@ import { songs, STATUS_CONFIG } from "../../data/music";
       currentBtn.classList.remove("playing");
       currentBtn = null;
     }
-    if (currentCard) {
-      const progress = currentCard.querySelector("[data-progress-for]");
+    if (currentRow) {
+      var progress = currentRow.querySelector("[data-progress-for]");
       if (progress) progress.style.display = "none";
-      currentCard = null;
+      currentRow = null;
     }
     if (animFrame) {
       cancelAnimationFrame(animFrame);
@@ -176,25 +176,24 @@ import { songs, STATUS_CONFIG } from "../../data/music";
   }
 
   function updateProgress() {
-    if (!currentAudio || !currentCard) return;
-    const progress = currentCard.querySelector("[data-progress-for]");
+    if (!currentAudio || !currentRow) return;
+    var progress = currentRow.querySelector("[data-progress-for]");
     if (!progress) return;
-    const fill = progress.querySelector(".progress-bar__fill");
-    const cur = progress.querySelector(".progress-time__current");
-    const dur = progress.querySelector(".progress-time__duration");
+    var fill = progress.querySelector(".progress-bar__fill");
+    var cur = progress.querySelector(".progress-time__current");
+    var dur = progress.querySelector(".progress-time__duration");
     if (fill) fill.style.width = ((currentAudio.currentTime / currentAudio.duration) * 100) + "%";
     if (cur) cur.textContent = formatTime(currentAudio.currentTime);
     if (dur) dur.textContent = formatTime(currentAudio.duration);
     animFrame = requestAnimationFrame(updateProgress);
   }
 
-  document.querySelectorAll(".song-card__play-btn").forEach(function (btn) {
+  document.querySelectorAll(".song-row__play-btn").forEach(function (btn) {
     btn.addEventListener("click", function (e) {
       e.stopPropagation();
-      const audioSrc = btn.dataset.audio;
-      const card = btn.closest(".song-card");
+      var audioSrc = btn.dataset.audio;
+      var row = btn.closest(".song-row");
 
-      // Toggle off
       if (currentBtn === btn && currentAudio && !currentAudio.paused) {
         currentAudio.pause();
         btn.querySelector(".play-icon").style.display = "";
@@ -204,7 +203,6 @@ import { songs, STATUS_CONFIG } from "../../data/music";
         return;
       }
 
-      // Resume
       if (currentBtn === btn && currentAudio && currentAudio.paused) {
         currentAudio.play();
         btn.querySelector(".play-icon").style.display = "none";
@@ -214,38 +212,29 @@ import { songs, STATUS_CONFIG } from "../../data/music";
         return;
       }
 
-      // New track
       stopCurrent();
-
       currentAudio = new Audio(audioSrc);
       currentBtn = btn;
-      currentCard = card;
+      currentRow = row;
 
-      const progress = card.querySelector("[data-progress-for]");
+      var progress = row.querySelector("[data-progress-for]");
       if (progress) progress.style.display = "";
 
       btn.querySelector(".play-icon").style.display = "none";
       btn.querySelector(".pause-icon").style.display = "";
       btn.classList.add("playing");
 
-      currentAudio.play().catch(function () {
-        stopCurrent();
-      });
-
-      currentAudio.addEventListener("ended", function () {
-        stopCurrent();
-      });
-
+      currentAudio.play().catch(function () { stopCurrent(); });
+      currentAudio.addEventListener("ended", function () { stopCurrent(); });
       animFrame = requestAnimationFrame(updateProgress);
     });
   });
 
-  // Click on progress bar to seek
   document.querySelectorAll(".progress-bar").forEach(function (bar) {
     bar.addEventListener("click", function (e) {
       if (!currentAudio) return;
-      const rect = bar.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
+      var rect = bar.getBoundingClientRect();
+      var pct = (e.clientX - rect.left) / rect.width;
       currentAudio.currentTime = pct * currentAudio.duration;
     });
   });
@@ -253,7 +242,6 @@ import { songs, STATUS_CONFIG } from "../../data/music";
 </script>
 
 <style>
-  /* ========== Music Page ========== */
   .music {
     padding: 6rem 0 4rem;
   }
@@ -312,159 +300,113 @@ import { songs, STATUS_CONFIG } from "../../data/music";
     flex-shrink: 0;
   }
 
-  /* ── Grid ── */
-  .music-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 2rem;
+  /* ── Song List ── */
+  .song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  /* ── Song Card ── */
-  .song-card {
+  /* ── Song Row ── */
+  .song-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 12px;
+    transition: background 0.2s ease, border-color 0.2s ease;
   }
 
-  .song-card:hover {
-    transform: translateY(-4px);
+  .song-row:hover {
+    background: var(--bg-card-hover);
     border-color: var(--border-glass);
-    box-shadow: var(--shadow-md);
   }
 
-  /* Artwork */
-  .song-card__artwork-wrap {
+  /* Artwork thumbnail */
+  .song-row__artwork-wrap {
     position: relative;
-    aspect-ratio: 1;
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: 8px;
     overflow: hidden;
   }
 
-  .song-card__artwork {
+  .song-row__artwork {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
   }
 
-  .song-card:hover .song-card__artwork {
-    transform: scale(1.05);
-  }
-
-  /* Play button */
-  .song-card__play-btn {
+  .song-row__play-btn {
     position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #fff;
-    cursor: pointer;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
-    z-index: 2;
-  }
-
-  .song-card:hover .song-card__play-btn,
-  .song-card__play-btn.playing {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .song-card__play-btn:hover {
-    background: rgba(0, 212, 255, 0.4);
-    border-color: rgba(0, 212, 255, 0.5);
-  }
-
-  .song-card__play-btn.playing {
-    background: rgba(0, 212, 255, 0.3);
-    border-color: rgba(0, 212, 255, 0.5);
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.3); }
-    50% { box-shadow: 0 0 20px 4px rgba(0, 212, 255, 0.15); }
-  }
-
-  /* Status badge */
-  .song-card__status {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    border: none;
     color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 2;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
 
-  .song-card__status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--status-color);
-    box-shadow: 0 0 6px var(--status-color);
+  .song-row:hover .song-row__play-btn,
+  .song-row__play-btn.playing {
+    opacity: 1;
   }
 
-  .song-card__status--development { border-color: rgba(59, 130, 246, 0.3); }
-  .song-card__status--shipped { border-color: rgba(234, 179, 8, 0.3); }
-  .song-card__status--delivered { border-color: rgba(34, 197, 94, 0.3); }
-
-  /* Info section */
-  .song-card__info {
-    padding: 1.25rem 1.5rem 1.5rem;
+  .song-row__play-btn.playing {
+    background: rgba(0, 212, 255, 0.25);
   }
 
-  .song-card__title {
-    font-size: 1.2rem;
-    font-weight: 700;
+  /* Info (middle, grows) */
+  .song-row__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .song-row__main {
     margin-bottom: 0.25rem;
+  }
+
+  .song-row__title {
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .song-card__artist {
-    font-size: 0.9rem;
+  .song-row__artist {
+    font-size: 0.85rem;
     color: var(--text-secondary);
-    margin-bottom: 0.6rem;
   }
 
-  .song-card__genre {
+  .song-row__genre {
     display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
     background: var(--bg-glass);
     border: 1px solid var(--border-subtle);
     color: var(--text-tertiary);
-    margin-bottom: 1rem;
+    margin-top: 0.35rem;
   }
 
-  /* Progress bar */
-  .song-card__progress {
-    margin: 0.75rem 0;
+  /* Progress */
+  .song-row__progress {
+    margin-top: 0.5rem;
   }
 
   .progress-bar {
     width: 100%;
-    height: 4px;
+    height: 3px;
     background: var(--bg-tertiary);
     border-radius: 2px;
     cursor: pointer;
@@ -482,78 +424,96 @@ import { songs, STATUS_CONFIG } from "../../data/music";
   .progress-time {
     display: flex;
     justify-content: space-between;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-tertiary);
-    margin-top: 0.3rem;
+    margin-top: 0.2rem;
   }
 
   /* Stores */
-  .song-card__stores {
-    margin-top: 0.75rem;
+  .song-row__stores {
+    margin-top: 0.4rem;
   }
 
-  .song-card__stores-label {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  .song-card__store-tags {
+  .song-row__store-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.3rem;
   }
 
   .store-tag {
-    padding: 0.15rem 0.5rem;
+    padding: 0.1rem 0.4rem;
     border-radius: 4px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     background: var(--bg-glass);
     border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
   }
 
   /* Platform links */
-  .song-card__links {
+  .song-row__links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
   }
 
   .platform-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.35rem 0.7rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    gap: 0.3rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
     background: var(--bg-glass);
     border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease;
     text-decoration: none;
   }
 
   .platform-link:hover {
     border-color: var(--border-accent);
     color: var(--text-accent);
-    background: var(--bg-card-hover);
   }
 
-  .platform-link__icon {
-    font-size: 0.9rem;
+  /* Right meta column */
+  .song-row__meta {
+    flex-shrink: 0;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
   }
 
-  .platform-link__name {
-    font-weight: 500;
+  .song-row__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--bg-glass);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    white-space: nowrap;
   }
 
-  /* Release date */
-  .song-card__date {
-    margin-top: 0.75rem;
-    font-size: 0.75rem;
+  .song-row__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--status-color);
+    box-shadow: 0 0 6px var(--status-color);
+  }
+
+  .song-row__status--development { border-color: rgba(59, 130, 246, 0.25); }
+  .song-row__status--shipped { border-color: rgba(234, 179, 8, 0.25); }
+  .song-row__status--delivered { border-color: rgba(34, 197, 94, 0.25); }
+
+  .song-row__date {
+    font-size: 0.7rem;
     color: var(--text-tertiary);
   }
 
@@ -563,14 +523,21 @@ import { songs, STATUS_CONFIG } from "../../data/music";
       padding: 4rem 0 3rem;
     }
 
-    .music-grid {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
+    .song-row {
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
     }
 
-    .song-card__play-btn {
+    .song-row__meta {
+      flex-direction: row;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .song-row__play-btn {
       opacity: 1;
-      transform: translateY(0);
     }
   }
 </style>
