@@ -874,8 +874,7 @@ const CLAW_MART_EARNINGS = 89;
     const store = window.__storeRevenue || 0;
     const patreon = 0;
     const tokenFees = window.__tokenFeesRevenue || 0;
-    const treasury = window.__treasuryValue || 0;
-    const total = clawmart + store + patreon + tokenFees + treasury;
+    const total = clawmart + store + patreon + tokenFees;
 
     const el = document.getElementById("all-time-revenue");
     const changeEl = document.getElementById("all-time-change");
@@ -889,7 +888,7 @@ const CLAW_MART_EARNINGS = 89;
       ].filter(Boolean).length;
       changeEl.textContent = `${streams} revenue stream${
         streams !== 1 ? "s" : ""
-      } + treasury`;
+      }`;
       changeEl.className = "stat-change change-up";
     }
   }
