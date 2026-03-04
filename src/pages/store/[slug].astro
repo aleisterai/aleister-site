@@ -56,15 +56,10 @@ const longDescriptionHtml = marked(item.longDescription);
         purchased && (
           <div class="receipt-box" id="receipt-box">
             <div class="receipt-box__header">
-              <span class="receipt-icon" id="receipt-icon">
-                ✓
-              </span>
-              <div>
-                <h2 class="receipt-title">Purchase complete!</h2>
-                <p class="receipt-subtitle">
-                  Thank you. A receipt has been sent to your email address.
-                </p>
-              </div>
+              <span class="receipt-dot"></span>
+              <span class="receipt-status">Purchase complete</span>
+              <span class="receipt-sep">·</span>
+              <span class="receipt-hint">Receipt sent to your email</span>
             </div>
 
             {/* Always-visible: download + note/copy */}
@@ -489,9 +484,36 @@ const longDescriptionHtml = marked(item.longDescription);
   .receipt-box__header {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid color-mix(in srgb, #22c55e 20%, transparent);
+    gap: 0.55rem;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid color-mix(in srgb, #22c55e 15%, transparent);
+    flex-wrap: wrap;
+  }
+
+  .receipt-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
+  }
+
+  .receipt-status {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #22c55e;
+    white-space: nowrap;
+  }
+
+  .receipt-sep {
+    color: var(--text-tertiary);
+    font-size: 0.72rem;
+  }
+
+  .receipt-hint {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
   }
 
   /* Always-visible actions section */
