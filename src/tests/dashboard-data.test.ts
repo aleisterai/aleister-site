@@ -409,6 +409,90 @@ describe('market-data.json', () => {
     });
 });
 
+// ─── patreon-revenue.json ─────────────────────────────────────────────────────
+
+describe('patreon-revenue.json', () => {
+    let GET: (ctx: any) => Promise<Response>;
+    let fetchSpy: FetchMock;
+
+    beforeEach(async () => {
+        vi.resetModules();
+        vi.stubEnv('PATREON_ACCESS_TOKEN', 'test_access_token');
+        ({ GET } = await import('../pages/api/patreon-revenue.json.ts?t=' + Date.now()));
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        vi.unstubAllEnvs();
+    });
+
+    it('returns patron count and monthly revenue from Patreon API', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+            const url = String(input);
+            if (url.includes('/campaigns?')) {
+                return mockResponse({
+                    data: [{
+                        id: '12345',
+                        attributes: {
+                            patron_count: 1,
+                            pledge_sum: 400,
+                            creation_name: 'Aleister',
+                        },
+                    }],
+                });
+            }
+            if (url.includes('/members')) {
+                return mockResponse({
+                    data: [{
+                        attributes: {
+                            patron_status: 'active_patron',
+                            currently_entitled_amount_cents: 400,
+                            full_name: 'Test Patron',
+                        },
+                    }],
+                });
+            }
+            return mockResponse({}, false, 500);
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.monthlyRevenue).toBe(4); // 400 cents = $4
+        expect(data.patronCount).toBe(1);
+        expect(data.campaignName).toBe('Aleister');
+    });
+
+    it('returns $4 fallback when Patreon API is down', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+            throw new Error('Patreon API unavailable');
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(false);
+        expect(data.monthlyRevenue).toBe(4); // Known fallback
+        expect(data.patronCount).toBe(1);
+    });
+
+    it('handles missing access token gracefully', async () => {
+        vi.resetModules();
+        vi.unstubAllEnvs();
+        // No PATREON_ACCESS_TOKEN set
+        const mod = await import('../pages/api/patreon-revenue.json.ts?t=notoken' + Date.now());
+
+        const res = await mod.GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data.monthlyRevenue).toBe(4); // Fallback
+    });
+});
+
 // ─── Stress Tests ─────────────────────────────────────────────────────────────
 
 describe('Stress — concurrent dashboard requests', () => {
@@ -520,18 +604,21 @@ describe('Stress — concurrent dashboard requests', () => {
         // Test all endpoints in parallel
         vi.resetModules();
         vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_OUTAGE');
-        const [tokenMod, treasuryMod, stripeMod, marketMod] = await Promise.all([
+        vi.stubEnv('PATREON_ACCESS_TOKEN', 'test_outage');
+        const [tokenMod, treasuryMod, stripeMod, marketMod, patreonMod] = await Promise.all([
             import('../pages/api/token-prices.json.ts?t=outage' + Date.now()),
             import('../pages/api/treasury-balances.json.ts?t=outage' + Date.now()),
             import('../pages/api/store-revenue.json.ts?t=outage' + Date.now()),
             import('../pages/api/market-data.json.ts?t=outage' + Date.now()),
+            import('../pages/api/patreon-revenue.json.ts?t=outage' + Date.now()),
         ]);
 
-        const [tokenRes, treasuryRes, stripeRes, marketRes] = await Promise.all([
+        const [tokenRes, treasuryRes, stripeRes, marketRes, patreonRes] = await Promise.all([
             tokenMod.GET(makeAstroCtx()),
             treasuryMod.GET(makeAstroCtx()),
             stripeMod.GET(makeAstroCtx()),
             marketMod.GET(makeAstroCtx()),
+            patreonMod.GET(makeAstroCtx()),
         ]);
 
         // ALL must return 200 — never crash or 500
@@ -539,11 +626,13 @@ describe('Stress — concurrent dashboard requests', () => {
         expect(treasuryRes.status).toBe(200);
         expect(stripeRes.status).toBe(200);
         expect(marketRes.status).toBe(200);
+        expect(patreonRes.status).toBe(200);
 
         const tokenData = await tokenRes.json();
         const treasuryData = await treasuryRes.json();
         const stripeData = await stripeRes.json();
         const marketData = await marketRes.json();
+        const patreonData = await patreonRes.json();
 
         // token-prices: ETH should never be $0
         expect(tokenData.ethereum.usd).toBeGreaterThan(0);
@@ -558,7 +647,11 @@ describe('Stress — concurrent dashboard requests', () => {
         // market-data: zero but not crash
         expect(marketData.price).toBe(0);
 
-        console.log('✓ All 4 endpoints survived total API outage with graceful fallbacks');
+        // patreon: $4 fallback
+        expect(patreonData.monthlyRevenue).toBe(4);
+        expect(patreonData.patronCount).toBe(1);
+
+        console.log('✓ All 5 endpoints survived total API outage with graceful fallbacks');
     });
 });
 
