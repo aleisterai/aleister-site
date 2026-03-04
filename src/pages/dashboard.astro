@@ -848,12 +848,8 @@ const CLAW_MART_EARNINGS = 89;
     // Store treasury total for all-time calc
     window.__treasuryValue = treasuryData.totalValue || 0;
 
-    // Token Fees = USD value of treasury ETH + $ALEISTER
-    let tokenFeesTotal = 0;
-    treasuryData.tokens.forEach((t) => {
-      if (t.symbol === "ETH" || t.symbol === "$ALEISTER")
-        tokenFeesTotal += t.value;
-    });
+    // Token Fees = total USD value of all treasury holdings
+    const tokenFeesTotal = treasuryData.totalValue || 0;
     const tokenFeesEl = document.getElementById("token-fees");
     if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
     window.__tokenFeesRevenue = tokenFeesTotal;
