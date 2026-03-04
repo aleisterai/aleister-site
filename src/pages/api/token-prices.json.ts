@@ -58,16 +58,20 @@ export const GET: APIRoute = async ({ request }) => {
       data['usd-coin'] = { usd: 1, usd_24h_change: 0 };
     }
 
-    // $ALEISTER token: fetch from our market-data endpoint or use 0
+    // $ALEISTER token: fetch price directly from GeckoTerminal (Base DEX pool)
+    // Cannot self-fetch /api/market-data.json on Vercel serverless — call GeckoTerminal directly
+    const GECKO_POOL = '0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d';
     try {
-      const marketResponse = await fetch(new URL('/api/market-data.json', request.url).toString(), {
-        signal: AbortSignal.timeout(3000),
-      });
-      if (marketResponse.ok) {
-        const marketData = await marketResponse.json();
+      const poolRes = await fetch(
+        `https://api.geckoterminal.com/api/v2/networks/base/pools/${GECKO_POOL}`,
+        { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(5000) }
+      );
+      if (poolRes.ok) {
+        const poolData = await poolRes.json();
+        const attrs = poolData?.data?.attributes || {};
         data.aleister = {
-          usd: marketData.price || 0,
-          usd_24h_change: marketData.change24h || 0,
+          usd: parseFloat(attrs.base_token_price_usd || '0'),
+          usd_24h_change: parseFloat(attrs.price_change_percentage?.h24 || '0'),
         };
       } else {
         data.aleister = { usd: 0, usd_24h_change: 0 };
