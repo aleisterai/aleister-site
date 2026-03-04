@@ -850,6 +850,16 @@ const CLAW_MART_EARNINGS = 89;
     // Store treasury total for all-time calc
     window.__treasuryValue = treasuryData.totalValue || 0;
 
+    // Token Fees = USD value of treasury ETH + $ALEISTER
+    let tokenFeesTotal = 0;
+    treasuryData.tokens.forEach((t) => {
+      if (t.symbol === "ETH" || t.symbol === "$ALEISTER")
+        tokenFeesTotal += t.value;
+    });
+    const tokenFeesEl = document.getElementById("token-fees");
+    if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
+    window.__tokenFeesRevenue = tokenFeesTotal;
+
     // Update Claw Mart revenue card
     if (clawMartData && clawMartData.totalEarnings > 0) {
       const earningsEl = document.getElementById("clawmart-earnings");
@@ -869,7 +879,7 @@ const CLAW_MART_EARNINGS = 89;
     const clawmart = window.__clawmartRevenue || 89;
     const store = window.__storeRevenue || 0;
     const patreon = 0;
-    const tokenFees = 0;
+    const tokenFees = window.__tokenFeesRevenue || 0;
     const treasury = window.__treasuryValue || 0;
     const total = clawmart + store + patreon + tokenFees + treasury;
 
