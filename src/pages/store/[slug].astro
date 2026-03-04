@@ -1532,10 +1532,34 @@ const longDescriptionHtml = marked(item.longDescription);
 
       function activateDownload(token) {
         if (!dlBtn) return;
-        const url = `/api/download?slug=${itemSlug}&session_id=${sessionId}&dt=${encodeURIComponent(
+        const apiUrl = `/api/download?slug=${itemSlug}&session_id=${sessionId}&dt=${encodeURIComponent(
           token
         )}`;
-        dlBtn.href = url;
+        // Use programmatic fetch+blob so the .zip filename works on all browsers (iOS Safari ignores download attr for API responses)
+        dlBtn.removeAttribute("href");
+        dlBtn.style.cursor = "pointer";
+        dlBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          dlBtn.classList.add("btn-download--loading");
+          try {
+            const res = await fetch(apiUrl);
+            if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+            const blob = await res.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = `${itemSlug}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+          } catch (err) {
+            console.error("Download error:", err);
+            alert("Download failed. Please try again.");
+          } finally {
+            dlBtn.classList.remove("btn-download--loading");
+          }
+        });
         dlBtn.classList.remove("btn-download--loading");
         if (noteEl)
           noteEl.textContent =
