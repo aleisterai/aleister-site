@@ -27,7 +27,7 @@ const {
 const resolvedImage = typeof image === "string" ? image : (image as any).src;
 
 const siteUrl = "https://thealeister.com";
-const canonical = canonicalUrl || Astro.url.href;
+const canonical = canonicalUrl || `${siteUrl}${Astro.url.pathname}`;
 const ogImageUrl = resolvedImage.startsWith("http")
   ? resolvedImage
   : `${siteUrl}${resolvedImage}`;
