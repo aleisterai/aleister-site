@@ -1,8 +1,6 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
-import { readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
 
 const VALID_SLUGS = [
   "aleister-persona",
@@ -10,6 +8,15 @@ const VALID_SLUGS = [
   "onchain-treasury", "build-in-public", "daily-briefing", "stripe-revenue-tracker",
   "cipher", "sage", "quill", "rally", "echo", "pixel", "forge", "prism", "lyra",
 ];
+
+/** Construct Blob URL and auth for private store */
+function getBlobConfig(slug: string): { url: string; token: string } {
+  const baseUrl = import.meta.env.BLOB_STORE_BASE_URL;
+  const token = import.meta.env.BLOB_READ_WRITE_TOKEN;
+  if (!baseUrl) throw new Error("BLOB_STORE_BASE_URL not configured");
+  if (!token) throw new Error("BLOB_READ_WRITE_TOKEN not configured");
+  return { url: `${baseUrl}/downloads/${slug}.zip`, token };
+}
 
 async function verifySessionAndDevice(
   sessionId: string,
@@ -64,20 +71,31 @@ export const GET: APIRoute = async ({ request }) => {
     return new Response(reason ?? "Not authorized", { status: 403 });
   }
 
-  const zipPath = join(process.cwd(), "downloads", `${slug}.zip`);
-  if (!existsSync(zipPath)) {
-    return new Response("Bundle not found", { status: 404 });
+  // Fetch from Vercel Blob (private storage)
+  try {
+    const { url: blobUrl, token } = getBlobConfig(slug);
+    const blobRes = await fetch(blobUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!blobRes.ok) {
+      console.error(`Blob fetch failed for ${slug}: ${blobRes.status}`);
+      return new Response("Bundle not found", { status: 404 });
+    }
+
+    const fileBuffer = await blobRes.arrayBuffer();
+
+    return new Response(fileBuffer, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/zip",
+        "Content-Disposition": `attachment; filename="${slug}.zip"`,
+        "Content-Length": String(fileBuffer.byteLength),
+        "Cache-Control": "no-store",
+      },
+    });
+  } catch (err) {
+    console.error(`Download error for ${slug}:`, err);
+    return new Response("Download service unavailable", { status: 503 });
   }
-
-  const fileBuffer = readFileSync(zipPath);
-
-  return new Response(fileBuffer, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/zip",
-      "Content-Disposition": `attachment; filename="${slug}.zip"`,
-      "Content-Length": String(fileBuffer.length),
-      "Cache-Control": "no-store",
-    },
-  });
 };
