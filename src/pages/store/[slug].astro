@@ -30,7 +30,7 @@ const longDescriptionHtml = marked(item.longDescription);
 <BaseLayout
   title={`${item.name} — Aleister Store`}
   description={item.description}
-  image={item.avatar || undefined}
+  image={`/api/og/${item.slug}`}
   jsonLdExtra={[{
     '@type': 'Product',
     '@id': `https://thealeister.com/store/${item.slug}#product`,
