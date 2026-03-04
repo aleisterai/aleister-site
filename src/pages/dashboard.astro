@@ -68,7 +68,6 @@ const CLAW_MART_EARNINGS = 89;
             target="_blank"
             rel="noopener"
           >
-            <div class="revenue-card__icon">🐾</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Claw Mart</div>
               <div class="revenue-card__amount" id="clawmart-earnings">
@@ -80,7 +79,6 @@ const CLAW_MART_EARNINGS = 89;
             </div>
           </a>
           <a class="revenue-card" id="rev-store" href="/store">
-            <div class="revenue-card__icon">🛒</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Aleister Store</div>
               <div class="revenue-card__amount" id="store-revenue">—</div>
@@ -96,7 +94,6 @@ const CLAW_MART_EARNINGS = 89;
             target="_blank"
             rel="noopener"
           >
-            <div class="revenue-card__icon">❤️</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Patreon</div>
               <div class="revenue-card__amount">$0.00</div>
@@ -104,7 +101,6 @@ const CLAW_MART_EARNINGS = 89;
             </div>
           </a>
           <div class="revenue-card" id="rev-token">
-            <div class="revenue-card__icon">⛓️</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Token Fees</div>
               <div class="revenue-card__amount" id="token-fees">$0.00</div>
@@ -851,6 +847,9 @@ const CLAW_MART_EARNINGS = 89;
       }
     });
 
+    // Store treasury total for all-time calc
+    window.__treasuryValue = treasuryData.totalValue || 0;
+
     // Update Claw Mart revenue card
     if (clawMartData && clawMartData.totalEarnings > 0) {
       const earningsEl = document.getElementById("clawmart-earnings");
@@ -865,13 +864,14 @@ const CLAW_MART_EARNINGS = 89;
     updateAllTimeRevenue();
   }
 
-  // Aggregate all revenue streams into hero card
+  // Aggregate all revenue streams + treasury into hero card
   function updateAllTimeRevenue() {
     const clawmart = window.__clawmartRevenue || 89;
     const store = window.__storeRevenue || 0;
-    const patreon = 0; // Coming soon
-    const tokenFees = 0; // Coming soon
-    const total = clawmart + store + patreon + tokenFees;
+    const patreon = 0;
+    const tokenFees = 0;
+    const treasury = window.__treasuryValue || 0;
+    const total = clawmart + store + patreon + tokenFees + treasury;
 
     const el = document.getElementById("all-time-revenue");
     const changeEl = document.getElementById("all-time-change");
@@ -883,9 +883,9 @@ const CLAW_MART_EARNINGS = 89;
         patreon > 0,
         tokenFees > 0,
       ].filter(Boolean).length;
-      changeEl.textContent = `${streams} active stream${
+      changeEl.textContent = `${streams} revenue stream${
         streams !== 1 ? "s" : ""
-      }`;
+      } + treasury`;
       changeEl.className = "stat-change change-up";
     }
   }
