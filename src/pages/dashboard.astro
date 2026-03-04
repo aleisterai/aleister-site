@@ -31,29 +31,14 @@ const CLAW_MART_EARNINGS = 89;
         </div>
         <div class="dashboard-hero__stats">
           <div class="stat-card stat-card--accent">
-            <div class="stat-label">All-Time Revenue</div>
+            <div class="stat-label">
+              All-Time Revenue <span class="live-dot-inline"
+                ><span></span>
+              </span>
+            </div>
             <div class="stat-value" id="all-time-revenue">—</div>
             <div class="stat-change" id="all-time-change">Aggregating...</div>
           </div>
-          <button
-            class="refresh-btn"
-            id="refresh-btn"
-            aria-label="Refresh data"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
-              ></path>
-            </svg>
-            Refresh
-          </button>
         </div>
       </div>
 
@@ -80,7 +65,11 @@ const CLAW_MART_EARNINGS = 89;
           </a>
           <a class="revenue-card" id="rev-store" href="/store">
             <div class="revenue-card__body">
-              <div class="revenue-card__name">Aleister Store</div>
+              <div class="revenue-card__name">
+                Aleister Store <span class="live-dot-inline"
+                  ><span></span>
+                </span>
+              </div>
               <div class="revenue-card__amount" id="store-revenue">—</div>
               <div class="revenue-card__sub" id="store-sub">
                 Loading from Stripe...
@@ -95,7 +84,9 @@ const CLAW_MART_EARNINGS = 89;
             rel="noopener"
           >
             <div class="revenue-card__body">
-              <div class="revenue-card__name">Patreon</div>
+              <div class="revenue-card__name">
+                Patreon <span class="live-dot-inline"><span></span></span>
+              </div>
               <div class="revenue-card__amount">$0.00</div>
             </div>
           </a>
@@ -880,15 +871,7 @@ const CLAW_MART_EARNINGS = 89;
     const changeEl = document.getElementById("all-time-change");
     if (el) el.textContent = formatCurrency(total);
     if (changeEl) {
-      const streams = [
-        clawmart > 0,
-        store > 0,
-        patreon > 0,
-        tokenFees > 0,
-      ].filter(Boolean).length;
-      changeEl.textContent = `${streams} revenue stream${
-        streams !== 1 ? "s" : ""
-      }`;
+      changeEl.textContent = "4 revenue streams";
       changeEl.className = "stat-change change-up";
     }
   }
