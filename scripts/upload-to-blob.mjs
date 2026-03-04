@@ -26,7 +26,7 @@ async function main() {
         console.log(`Uploading ${file} (${(data.length / 1024).toFixed(0)} KB)...`);
 
         const blob = await put(blobPath, data, {
-            access: 'public',  // URL is public but unguessable; download API still gates access
+            access: 'private',
             addRandomSuffix: false,
             contentType: 'application/zip',
         });

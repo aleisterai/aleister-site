@@ -9,11 +9,13 @@ const VALID_SLUGS = [
   "cipher", "sage", "quill", "rally", "echo", "pixel", "forge", "prism", "lyra",
 ];
 
-/** Map slug → Vercel Blob URL (set via env, populated by upload script) */
-function getBlobUrl(slug: string): string {
+/** Construct Blob URL and auth for private store */
+function getBlobConfig(slug: string): { url: string; token: string } {
   const baseUrl = import.meta.env.BLOB_STORE_BASE_URL;
+  const token = import.meta.env.BLOB_READ_WRITE_TOKEN;
   if (!baseUrl) throw new Error("BLOB_STORE_BASE_URL not configured");
-  return `${baseUrl}/downloads/${slug}.zip`;
+  if (!token) throw new Error("BLOB_READ_WRITE_TOKEN not configured");
+  return { url: `${baseUrl}/downloads/${slug}.zip`, token };
 }
 
 async function verifySessionAndDevice(
@@ -71,8 +73,10 @@ export const GET: APIRoute = async ({ request }) => {
 
   // Fetch from Vercel Blob (private storage)
   try {
-    const blobUrl = getBlobUrl(slug);
-    const blobRes = await fetch(blobUrl);
+    const { url: blobUrl, token } = getBlobConfig(slug);
+    const blobRes = await fetch(blobUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     if (!blobRes.ok) {
       console.error(`Blob fetch failed for ${slug}: ${blobRes.status}`);
