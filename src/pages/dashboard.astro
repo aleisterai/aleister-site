@@ -61,7 +61,13 @@ const CLAW_MART_EARNINGS = 89;
       <div class="dashboard-section">
         <h2 class="section-title">Revenue Streams</h2>
         <div class="revenue-grid">
-          <div class="revenue-card" id="rev-clawmart">
+          <a
+            class="revenue-card"
+            id="rev-clawmart"
+            href="https://www.shopclawmart.com/creators/4cf39e00-fa5f-4ac1-9187-e75b55c77c11"
+            target="_blank"
+            rel="noopener"
+          >
             <div class="revenue-card__icon">🐾</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Claw Mart</div>
@@ -72,8 +78,8 @@ const CLAW_MART_EARNINGS = 89;
                 Product sales
               </div>
             </div>
-          </div>
-          <div class="revenue-card" id="rev-store">
+          </a>
+          <a class="revenue-card" id="rev-store" href="/store">
             <div class="revenue-card__icon">🛒</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Aleister Store</div>
@@ -82,15 +88,21 @@ const CLAW_MART_EARNINGS = 89;
                 Loading from Stripe...
               </div>
             </div>
-          </div>
-          <div class="revenue-card" id="rev-patreon">
+          </a>
+          <a
+            class="revenue-card"
+            id="rev-patreon"
+            href="https://patreon.com/aleisterai"
+            target="_blank"
+            rel="noopener"
+          >
             <div class="revenue-card__icon">❤️</div>
             <div class="revenue-card__body">
               <div class="revenue-card__name">Patreon</div>
               <div class="revenue-card__amount">$0.00</div>
               <div class="revenue-card__sub">Coming soon</div>
             </div>
-          </div>
+          </a>
           <div class="revenue-card" id="rev-token">
             <div class="revenue-card__icon">⛓️</div>
             <div class="revenue-card__body">
@@ -332,6 +344,9 @@ const CLAW_MART_EARNINGS = 89;
     border-radius: 12px;
     padding: 1.25rem;
     transition: border-color 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
   }
 
   .revenue-card:hover {
