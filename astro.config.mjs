@@ -18,6 +18,17 @@ const downloadFiles = existsSync(downloadsDir)
     .map((f) => `./downloads/${f}`)
   : [];
 
+// Dynamically read store slugs so every product page appears in the sitemap.
+// @astrojs/sitemap only auto-discovers static routes; SSR dynamic routes need customPages.
+/** @type {string[]} */
+let storeCustomPages = [];
+try {
+  const { storeItems } = await import('./src/data/store.ts');
+  storeCustomPages = storeItems.map((i) => `https://thealeister.com/store/${i.slug}/`);
+} catch (_) {
+  // Fallback: silently skip if store data is unavailable during build
+}
+
 export default defineConfig({
   site: 'https://thealeister.com',
   output: 'server',
@@ -25,7 +36,7 @@ export default defineConfig({
     webAnalytics: { enabled: true },
     includeFiles: downloadFiles,
   }),
-  integrations: [sitemap()],
+  integrations: [sitemap({ customPages: storeCustomPages })],
   vite: {
     css: {
       preprocessorOptions: {},

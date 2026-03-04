@@ -8,10 +8,21 @@ export interface Props {
   title: string;
   description: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
   jsonLdExtra?: object[];
 }
 
-const { title, description, image, jsonLdExtra } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  imageWidth,
+  imageHeight,
+  imageAlt,
+  jsonLdExtra,
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -32,6 +43,9 @@ const { title, description, image, jsonLdExtra } = Astro.props;
       title={title}
       description={description}
       image={image}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
+      imageAlt={imageAlt}
       jsonLdExtra={jsonLdExtra}
     />
   </head>

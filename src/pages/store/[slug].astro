@@ -31,6 +31,9 @@ const longDescriptionHtml = marked(item.longDescription);
   title={`${item.name} — Aleister Store`}
   description={item.description}
   image={`/api/og/${item.slug}`}
+  imageWidth={1200}
+  imageHeight={630}
+  imageAlt={`${item.name} — Aleister Store`}
   jsonLdExtra={[{
     '@type': 'Product',
     '@id': `https://thealeister.com/store/${item.slug}#product`,
