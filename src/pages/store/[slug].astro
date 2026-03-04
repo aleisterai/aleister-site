@@ -30,6 +30,7 @@ const longDescriptionHtml = marked(item.longDescription);
 <BaseLayout
   title={`${item.name} — Aleister Store`}
   description={item.description}
+  image={item.avatar || undefined}
   jsonLdExtra={[{
     '@type': 'Product',
     '@id': `https://thealeister.com/store/${item.slug}#product`,
@@ -419,6 +420,37 @@ const longDescriptionHtml = marked(item.longDescription);
       }
     </div>
   </main>
+
+  {/* Fixed bottom buy bar — mobile only (hidden on desktop via CSS) */}
+  {!purchased && (
+    <div class="store-buy-bar">
+      <div class="store-buy-bar__inner">
+        <div class="store-buy-bar__info">
+          {item.avatar && (
+            <img
+              src={item.avatar}
+              alt={item.name}
+              class="store-buy-bar__avatar"
+              style={teamData ? `--agent-color: ${teamData.color}` : undefined}
+            />
+          )}
+          <div class="store-buy-bar__text">
+            <span class="store-buy-bar__name">{item.name}</span>
+            <span class="store-buy-bar__price">${item.price} one-time</span>
+          </div>
+        </div>
+        <a
+          href={item.stripeUrl}
+          class="store-buy-bar__btn"
+          target="_blank"
+          rel="noopener"
+          style={teamData ? `--agent-color: ${teamData.color}` : undefined}
+        >
+          Buy now →
+        </a>
+      </div>
+    </div>
+  )}
 </BaseLayout>
 
 <style>
@@ -1057,6 +1089,107 @@ const longDescriptionHtml = marked(item.longDescription);
       width: 56px;
       height: 56px;
     }
+  }
+
+  /* ─── Fixed bottom buy bar (mobile only) ─── */
+  .store-buy-bar {
+    display: none; /* hidden on desktop */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--bg-primary, #0a0a0f) 85%, transparent);
+    border-top: 1px solid var(--border-glass);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .store-buy-bar__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.8rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .store-buy-bar__info {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .store-buy-bar__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid color-mix(in srgb, var(--agent-color, var(--border-glass)) 50%, transparent);
+    flex-shrink: 0;
+  }
+
+  .store-buy-bar__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .store-buy-bar__name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .store-buy-bar__price {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+  }
+
+  .store-buy-bar__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.35rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background: var(--agent-color, var(--gradient-accent));
+    color: #fff;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--agent-color, var(--text-accent)) 30%, transparent);
+  }
+
+  .store-buy-bar__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Show bar + add scroll padding only on mobile (matches sidebar breakpoint) */
+  @media (max-width: 860px) {
+    .store-buy-bar {
+      display: block;
+    }
+
+    .product {
+      padding-bottom: 90px;
+    }
+  }
+
+  /* Non-subagent items: use gradient accent instead of agent color */
+  .store-buy-bar__btn:not([style]) {
+    background: var(--gradient-accent);
+    background-size: 200% 200%;
   }
 </style>
 
