@@ -89,9 +89,10 @@ export const GET: APIRoute = async ({ request }) => {
       status: 200,
       headers: {
         "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="${slug}.zip"`,
+        "Content-Disposition": `attachment; filename="${slug}.zip"; filename*=UTF-8''${encodeURIComponent(slug + '.zip')}`,
         "Content-Length": String(fileBuffer.byteLength),
         "Cache-Control": "no-store",
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (err) {
