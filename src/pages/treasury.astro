@@ -1,35 +1,50 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-const TOKEN  = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
-const SAFE   = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
-const TX_FEE = "0xc713f1c69c1ed62c1cba3c68c92e015fc33460507f072883d3e692ce0f5a6ea3";
-const TX_FND = "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd07";
-const DEXSCREENER = "https://dexscreener.com/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
-const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
+const TOKEN = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
+const SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
+const TX_FEE =
+  "0xc713f1c69c1ed62c1cba3c68c92e015fc33460507f072883d3e692ce0f5a6ea3";
+const TX_FND =
+  "0x8b5371015ca1e81becf5eae221ec146b3f19691fe6b6fda70cba42038482fd07";
+const DEXSCREENER =
+  "https://dexscreener.com/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
+const OKX =
+  "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 ---
 
 <BaseLayout
   title="$ALEISTER · Treasury"
   description="On-chain transparency for $ALEISTER on Base. Token contract, treasury Safe, proof of claim, and spending policy."
-  image="/og-treasury.png"
+  image="/api/og/treasury"
 >
   <div class="tr-page">
     <div class="container">
-
       <!-- ── Zone 1: Hero + CTAs ── -->
       <div class="tr-hero">
         <div class="tr-hero__text">
           <p class="tr-chain">Base Mainnet · Chain ID 8453</p>
-        <p class="tr-mcap" id="tr-mcap" aria-live="polite"></p>
+          <p class="tr-mcap" id="tr-mcap" aria-live="polite"></p>
           <h1 class="tr-title">$ALEISTER</h1>
-          <p class="tr-desc">One canonical source of truth. All addresses verifiable on-chain.</p>
+          <p class="tr-desc">
+            One canonical source of truth. All addresses verifiable on-chain.
+          </p>
         </div>
         <div class="tr-hero__ctas">
-          <a href={DEXSCREENER} target="_blank" rel="noopener" class="tr-cta tr-cta--primary">
+          <a
+            href={DEXSCREENER}
+            target="_blank"
+            rel="noopener"
+            class="tr-cta tr-cta--primary"
+          >
             Trade on DexScreener
           </a>
-          <a href={OKX} target="_blank" rel="noopener" class="tr-cta tr-cta--secondary">
+          <a
+            href={OKX}
+            target="_blank"
+            rel="noopener"
+            class="tr-cta tr-cta--secondary"
+          >
             View on OKX Web3
           </a>
         </div>
@@ -46,11 +61,20 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
           <div class="tr-addr-body">
             <code class="tr-addr" id="token-addr">{TOKEN}</code>
             <div class="tr-addr-actions">
-              <button class="tr-copy-btn" data-copy={TOKEN} aria-label="Copy token address">
+              <button
+                class="tr-copy-btn"
+                data-copy={TOKEN}
+                aria-label="Copy token address"
+              >
                 <span class="tr-copy-icon">⎘</span>
                 <span class="tr-copy-text">Copy</span>
               </button>
-              <a href={`https://basescan.org/token/${TOKEN}`} target="_blank" rel="noopener" class="tr-badge">
+              <a
+                href={`https://basescan.org/token/${TOKEN}`}
+                target="_blank"
+                rel="noopener"
+                class="tr-badge"
+              >
                 BaseScan ↗
               </a>
             </div>
@@ -68,11 +92,20 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
           <div class="tr-addr-body">
             <code class="tr-addr" id="safe-addr">{SAFE}</code>
             <div class="tr-addr-actions">
-              <button class="tr-copy-btn" data-copy={SAFE} aria-label="Copy safe address">
+              <button
+                class="tr-copy-btn"
+                data-copy={SAFE}
+                aria-label="Copy safe address"
+              >
                 <span class="tr-copy-icon">⎘</span>
                 <span class="tr-copy-text">Copy</span>
               </button>
-              <a href={`https://basescan.org/address/${SAFE}`} target="_blank" rel="noopener" class="tr-badge">
+              <a
+                href={`https://basescan.org/address/${SAFE}`}
+                target="_blank"
+                rel="noopener"
+                class="tr-badge"
+              >
                 BaseScan ↗
               </a>
             </div>
@@ -85,17 +118,31 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
       <!-- On-chain proof -->
       <div class="tr-block">
         <h2 class="tr-block-title">On-Chain Proof</h2>
-        <a href={`https://basescan.org/tx/${TX_FEE}`} target="_blank" rel="noopener" class="tr-tx">
+        <a
+          href={`https://basescan.org/tx/${TX_FEE}`}
+          target="_blank"
+          rel="noopener"
+          class="tr-tx"
+        >
           <div class="tr-tx-left">
             <span class="tr-tx-label">✅ 1st Fee Claim</span>
-            <code class="tr-tx-hash">{TX_FEE.slice(0,10)}…{TX_FEE.slice(-6)}</code>
+            <code class="tr-tx-hash"
+              >{TX_FEE.slice(0, 10)}…{TX_FEE.slice(-6)}</code
+            >
           </div>
           <span class="tr-badge">BaseScan ↗</span>
         </a>
-        <a href={`https://basescan.org/tx/${TX_FND}`} target="_blank" rel="noopener" class="tr-tx">
+        <a
+          href={`https://basescan.org/tx/${TX_FND}`}
+          target="_blank"
+          rel="noopener"
+          class="tr-tx"
+        >
           <div class="tr-tx-left">
             <span class="tr-tx-label">✅ 1st Treasury Funding</span>
-            <code class="tr-tx-hash">{TX_FND.slice(0,10)}…{TX_FND.slice(-6)}</code>
+            <code class="tr-tx-hash"
+              >{TX_FND.slice(0, 10)}…{TX_FND.slice(-6)}</code
+            >
           </div>
           <span class="tr-badge">BaseScan ↗</span>
         </a>
@@ -111,15 +158,23 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
           </div>
           <div class="tr-policy-item">
             <span class="tr-policy-head">✅ Development</span>
-            <p>Continued work on Aleister's skills, sub-agents, and integrations.</p>
+            <p>
+              Continued work on Aleister's skills, sub-agents, and integrations.
+            </p>
           </div>
           <div class="tr-policy-item">
             <span class="tr-policy-head">🔜 Governance</span>
-            <p>Token holders may gain governance over feature flags, plugin registry. Not yet active.</p>
+            <p>
+              Token holders may gain governance over feature flags, plugin
+              registry. Not yet active.
+            </p>
           </div>
           <div class="tr-policy-item">
             <span class="tr-policy-head">🚫 Never</span>
-            <p>No market making. No influencer payments. No buybacks. No price promises.</p>
+            <p>
+              No market making. No influencer payments. No buybacks. No price
+              promises.
+            </p>
           </div>
         </div>
       </div>
@@ -128,18 +183,23 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
       <div class="tr-block tr-block--muted">
         <h2 class="tr-block-title">Utility — Current Status</h2>
         <p class="tr-status-text">
-          <strong>No active utility yet.</strong> No staking, no access gating, no governance live.
-          Directions being explored: session credits, on-chain membership for FundlyHub features, plugin governance.
-          When utility ships it will be announced on <a href="https://x.com/aleisterai" target="_blank" rel="noopener">@aleisterai</a> with on-chain proof. None of this is a promise.
+          <strong>No active utility yet.</strong> No staking, no access gating, no
+          governance live. Directions being explored: session credits, on-chain membership
+          for FundlyHub features, plugin governance. When utility ships it will be
+          announced on <a
+            href="https://x.com/aleisterai"
+            target="_blank"
+            rel="noopener">@aleisterai</a
+          > with on-chain proof. None of this is a promise.
         </p>
       </div>
 
       <!-- Disclaimer -->
       <div class="tr-disclaimer">
-        $ALEISTER is not an investment. No expectation of profit, no returns, no price targets.
-        The contract addresses above are the only canonical $ALEISTER addresses — anything else is not affiliated.
+        $ALEISTER is not an investment. No expectation of profit, no returns, no
+        price targets. The contract addresses above are the only canonical
+        $ALEISTER addresses — anything else is not affiliated.
       </div>
-
     </div>
   </div>
 </BaseLayout>
@@ -163,7 +223,7 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
 
   .tr-chain {
     font-size: 0.72rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-tertiary);
@@ -212,12 +272,14 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
   .tr-cta--primary {
     background: var(--gradient-accent);
     color: #fff;
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--text-accent) 30%, transparent);
+    box-shadow: 0 4px 16px
+      color-mix(in srgb, var(--text-accent) 30%, transparent);
   }
 
   .tr-cta--primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--text-accent) 40%, transparent);
+    box-shadow: 0 8px 24px
+      color-mix(in srgb, var(--text-accent) 40%, transparent);
   }
 
   .tr-cta--secondary {
@@ -277,8 +339,12 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
     flex-shrink: 0;
   }
 
-  .tr-dot--token { background: #7c3aed; }
-  .tr-dot--safe  { background: #059669; }
+  .tr-dot--token {
+    background: #7c3aed;
+  }
+  .tr-dot--safe {
+    background: #059669;
+  }
 
   .tr-addr-label {
     font-size: 0.8rem;
@@ -295,7 +361,7 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
   }
 
   .tr-addr {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.78rem;
     color: var(--text-primary);
     word-break: break-all;
@@ -377,7 +443,9 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
     gap: 1rem;
   }
 
-  .tr-tx:last-child { margin-bottom: 0; }
+  .tr-tx:last-child {
+    margin-bottom: 0;
+  }
 
   .tr-tx:hover {
     border-color: var(--text-accent);
@@ -397,7 +465,7 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
   }
 
   .tr-tx-hash {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.72rem;
     color: var(--text-tertiary);
   }
@@ -440,7 +508,8 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
 
   .tr-status-text a {
     color: var(--text-accent);
-    border-bottom: 1px solid color-mix(in srgb, var(--text-accent) 30%, transparent);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--text-accent) 30%, transparent);
   }
 
   /* ──── Disclaimer ──── */
@@ -457,7 +526,7 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
   /* ── Live MCap ── */
   .tr-mcap {
     font-size: 0.75rem;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     color: var(--text-tertiary);
     margin-bottom: 0.4rem;
     min-height: 1.1rem;
@@ -466,8 +535,12 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
     gap: 0.5rem;
   }
 
-  .tr-mcap__change--up   { color: #10b981; }
-  .tr-mcap__change--down { color: #ef4444; }
+  .tr-mcap__change--up {
+    color: #10b981;
+  }
+  .tr-mcap__change--down {
+    color: #ef4444;
+  }
 
   @media (max-width: 700px) {
     .tr-hero {
@@ -500,52 +573,60 @@ const OKX    = "https://web3.okx.com/token/base/0xacb4543f479ea44e6df4fa01e483bb
 
 <script>
   // Copy to clipboard buttons
-  document.querySelectorAll<HTMLButtonElement>('.tr-copy-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const text = btn.dataset.copy ?? '';
-      try {
-        await navigator.clipboard.writeText(text);
-        const textEl = btn.querySelector('.tr-copy-text');
-        if (textEl) {
-          btn.classList.add('copied');
-          textEl.textContent = 'Copied!';
-          setTimeout(() => {
-            btn.classList.remove('copied');
-            textEl.textContent = 'Copy';
-          }, 2000);
+  document
+    .querySelectorAll<HTMLButtonElement>(".tr-copy-btn")
+    .forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const text = btn.dataset.copy ?? "";
+        try {
+          await navigator.clipboard.writeText(text);
+          const textEl = btn.querySelector(".tr-copy-text");
+          if (textEl) {
+            btn.classList.add("copied");
+            textEl.textContent = "Copied!";
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              textEl.textContent = "Copy";
+            }, 2000);
+          }
+        } catch {
+          // fallback: select text
+          const el = document.getElementById(
+            btn.dataset.copy === text ? "token-addr" : "safe-addr"
+          );
+          window.getSelection()?.selectAllChildren(el ?? document.body);
         }
-      } catch {
-        // fallback: select text
-        const el = document.getElementById(btn.dataset.copy === text ? 'token-addr' : 'safe-addr');
-        window.getSelection()?.selectAllChildren(el ?? document.body);
-      }
+      });
     });
-  });
-<script>
-  (async () => {
-    const el = document.getElementById('tr-mcap');
+  <script>(async () => {
+    const el = document.getElementById("tr-mcap");
     if (!el) return;
     try {
       // Using GeckoTerminal API for market data (DexScreener doesn't have public API)
-      const POOL = '0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d';
+      const POOL =
+        "0xc12fb6d8757ae63623c4e9478fcd194a7e89ed97bbd88ceeb1a68fd1ab9c3e0d";
       const url = `https://api.geckoterminal.com/api/v2/networks/base/pools/${POOL}`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (!res.ok) return;
       const { data } = await res.json();
       const attrs = data?.attributes ?? {};
-      const mcapRaw = parseFloat(attrs.market_cap_usd ?? attrs.fdv_usd ?? '0');
-      const change24 = parseFloat(attrs.price_change_percentage?.h24 ?? '0');
+      const mcapRaw = parseFloat(attrs.market_cap_usd ?? attrs.fdv_usd ?? "0");
+      const change24 = parseFloat(attrs.price_change_percentage?.h24 ?? "0");
       if (!mcapRaw) return;
 
-      const fmt = (n) => n >= 1e6
-        ? `$${(n / 1e6).toFixed(2)}M`
-        : n >= 1e3
-        ? `$${(n / 1e3).toFixed(1)}K`
-        : `$${n.toFixed(2)}`;
+      const fmt = (n) =>
+        n >= 1e6
+          ? `$${(n / 1e6).toFixed(2)}M`
+          : n >= 1e3
+          ? `$${(n / 1e3).toFixed(1)}K`
+          : `$${n.toFixed(2)}`;
 
-      const changeClass = change24 >= 0 ? 'tr-mcap__change--up' : 'tr-mcap__change--down';
-      const changeStr = `${change24 >= 0 ? '+' : ''}${change24.toFixed(1)}%`;
-      el.innerHTML = `MCap: ${fmt(mcapRaw)} &nbsp;<span class="${changeClass}">${changeStr} 24h</span>`;
+      const changeClass =
+        change24 >= 0 ? "tr-mcap__change--up" : "tr-mcap__change--down";
+      const changeStr = `${change24 >= 0 ? "+" : ""}${change24.toFixed(1)}%`;
+      el.innerHTML = `MCap: ${fmt(
+        mcapRaw
+      )} &nbsp;<span class="${changeClass}">${changeStr} 24h</span>`;
     } catch {}
   })();
-</script> 
+</script>

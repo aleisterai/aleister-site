@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { storeItems } from '../../../data/store';
+import { h, rgba, ogResponse } from '../../../lib/og-template';
 
 // Font cache
 let _interRegular: ArrayBuffer | null = null;
@@ -17,19 +18,6 @@ async function loadFonts() {
     ]);
     _interRegular = r; _interBold = b; _interBlack = bk;
     return [r, b, bk] as const;
-}
-
-const h = (type: string, props: Record<string, any> = {}, ...children: any[]): any => ({
-    type,
-    props: {
-        ...props,
-        children: children.length === 0 ? undefined : children.length === 1 ? children[0] : children,
-    },
-});
-
-function rgba(hex: string, alpha: number) {
-    const [, r, g, b] = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex) ?? ['', '0', '0', '0'];
-    return `rgba(${parseInt(r, 16)},${parseInt(g, 16)},${parseInt(b, 16)},${alpha})`;
 }
 
 async function fetchAvatarDataUrl(avatarPath: string): Promise<string | null> {
@@ -202,10 +190,5 @@ export const GET: APIRoute = async () => {
     const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } });
     const png = new Uint8Array(resvg.render().asPng());
 
-    return new Response(png, {
-        headers: {
-            'Content-Type': 'image/png',
-            'Cache-Control': 'public, max-age=86400, s-maxage=604800',
-        },
-    });
+    return ogResponse(png);
 };
