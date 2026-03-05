@@ -37,6 +37,7 @@ function avatarSrc(step: WorkflowStep): string {
 <BaseLayout
     title={`${workflow.title} — Aleister Workflows`}
     description={workflow.description}
+    image={`/api/og/workflow-detail?slug=${workflow.slug}`}
     jsonLdExtra={[howToJsonLd]}
 >
     <div class="pipeline-page">
