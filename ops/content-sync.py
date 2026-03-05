@@ -189,8 +189,9 @@ def sync_directory(src_dir: str, dst_dir: str, parser, converter, label: str):
     errors = 0
 
     if not os.path.isdir(src_dir):
-        print(f"  ⚠️  Source dir not found: {src_dir}")
-        return 0, 0, 0
+        # This is an error that should be reported
+        print(f"ERROR: Source directory not found: {src_dir}")
+        return 0, 0, 1
 
     for filename in sorted(os.listdir(src_dir)):
         if not filename.endswith(".md") or filename == "README.md":
@@ -216,10 +217,9 @@ def sync_directory(src_dir: str, dst_dir: str, parser, converter, label: str):
             with open(dst, "w") as f:
                 f.write(content)
             synced += 1
-            print(f"  ✅ [{label}] {filename}")
 
         except Exception as e:
-            print(f"  ❌ [{label}] {filename} — {e}")
+            print(f"ERROR: Failed to sync {label} file {filename}: {e}")
             errors += 1
 
     return synced, skipped, errors
@@ -231,6 +231,14 @@ def git_push(total_synced: int):
         return
 
     os.chdir(SITE_ROOT)
+    
+    # Pull latest changes first to avoid conflicts
+    try:
+        subprocess.run(["git", "pull", "--rebase"], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"  ⚠️  Git pull failed: {e.stderr}")
+        # Continue anyway, might fail later but at least we tried
+    
     subprocess.run(["git", "add", "src/content/til/", "src/content/team/"], check=True)
 
     result = subprocess.run(["git", "diff", "--cached", "--quiet"])
@@ -242,13 +250,16 @@ def git_push(total_synced: int):
         ["git", "commit", "-m", f"content: sync {total_synced} file(s) from Obsidian vault"],
         check=True,
     )
-    subprocess.run(["git", "push"], check=True)
-    print(f"  📤 Pushed {total_synced} file(s) → Vercel will rebuild")
+    
+    try:
+        subprocess.run(["git", "push"], check=True)
+        print(f"  📤 Pushed {total_synced} file(s) → Vercel will rebuild")
+    except subprocess.CalledProcessError as e:
+        print(f"  ⚠️  Git push failed: {e.stderr}")
+        # Don't raise exception to avoid cron failure
 
 
 def main():
-    print("🔄 Content Sync: Obsidian → Aleister Site")
-
     # TIL sync
     t_synced, t_skipped, t_errors = sync_directory(
         os.path.join(OBSIDIAN_ROOT, "TIL"),
@@ -265,16 +276,13 @@ def main():
 
     total_synced = t_synced + m_synced
     total_errors = t_errors + m_errors
-    print(f"\n  TIL:  {t_synced} synced, {t_skipped} unchanged, {t_errors} errors")
-    print(f"  Team: {m_synced} synced, {m_skipped} unchanged, {m_errors} errors")
 
     if total_synced > 0:
         git_push(total_synced)
 
-    if total_errors == 0:
-        print("✅ Done")
-    else:
-        print(f"⚠️  Done with {total_errors} error(s)")
+    # Only exit with error if there are sync errors
+    if total_errors > 0:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
