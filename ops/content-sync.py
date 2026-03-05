@@ -260,12 +260,17 @@ def git_push(total_synced: int):
 
 
 def main():
+    print(f"Starting content sync at {SITE_ROOT}")
+    print(f"Obsidian source: {OBSIDIAN_ROOT}")
+    print(f"Site target: {SITE_CONTENT}")
+    
     # TIL sync
     t_synced, t_skipped, t_errors = sync_directory(
         os.path.join(OBSIDIAN_ROOT, "TIL"),
         os.path.join(SITE_CONTENT, "til"),
         parse_obsidian_til, til_to_astro, "TIL"
     )
+    print(f"TIL: {t_synced} synced, {t_skipped} unchanged, {t_errors} errors")
 
     # Team sync
     m_synced, m_skipped, m_errors = sync_directory(
@@ -273,6 +278,7 @@ def main():
         os.path.join(SITE_CONTENT, "team"),
         parse_obsidian_team, team_to_astro, "Team"
     )
+    print(f"Team: {m_synced} synced, {m_skipped} unchanged, {m_errors} errors")
 
     total_synced = t_synced + m_synced
     total_errors = t_errors + m_errors
@@ -282,7 +288,10 @@ def main():
 
     # Only exit with error if there are sync errors
     if total_errors > 0:
+        print(f"ERROR: {total_errors} errors encountered during sync")
         sys.exit(1)
+    else:
+        print("✅ Sync completed successfully")
 
 
 if __name__ == "__main__":
