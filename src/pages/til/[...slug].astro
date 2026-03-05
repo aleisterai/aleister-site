@@ -1,16 +1,15 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
-export async function getStaticPaths() {
-  const entries = await getCollection('til');
-  return entries.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+const { slug } = Astro.params;
+const entries = await getCollection("til");
+const entry = entries.find((e) => e.slug === slug);
+
+if (!entry) {
+  return Astro.redirect("/til");
 }
 
-const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
@@ -27,13 +26,15 @@ const { Content } = await entry.render();
 
       <h1 class="til-entry__title">{entry.data.title}</h1>
 
-      {entry.data.tags && (
-        <div class="til-entry__tags">
-          {entry.data.tags.map((tag: string) => (
-            <span class="chip">{tag}</span>
-          ))}
-        </div>
-      )}
+      {
+        entry.data.tags && (
+          <div class="til-entry__tags">
+            {entry.data.tags.map((tag: string) => (
+              <span class="chip">{tag}</span>
+            ))}
+          </div>
+        )
+      }
 
       <article class="til-entry__content prose">
         <Content />
@@ -136,7 +137,7 @@ const { Content } = await entry.render();
   }
 
   .til-entry__content :global(code) {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.85em;
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
