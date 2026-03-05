@@ -1,10 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { workflows } from "../data/workflows";
+
+const featured = workflows.find(w => w.badgeType === 'featured')!;
+const rest = workflows.filter(w => w.badgeType !== 'featured');
 ---
 
 <BaseLayout
   title="Workflows — How Aleister Gets Things Done"
-  description="Aleister follows structured, repeatable workflows that produce reliable, production-grade results. Explore the 6-phase Feature Development Pipeline and future workflows in development."
+  description="Aleister follows structured, repeatable workflows that produce reliable, production-grade results. Explore 7 production workflows — from feature development to security audits."
   image="/api/og/workflows"
 >
   <section class="workflows section">
@@ -24,97 +28,57 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       <!-- Workflow cards grid -->
       <div class="workflows-grid">
-        <!-- Featured: Feature Development Pipeline (live) -->
+        <!-- Featured: Feature Development Pipeline -->
         <a
-          href="/workflows/feature-development-pipeline"
+          href={`/workflows/${featured.slug}`}
           class="wf-card wf-card--featured"
         >
           <div class="wf-card__top">
             <span class="wf-card__badge wf-card__badge--live"
-              >⚙️ Featured Workflow</span
+              >{featured.badge}</span
             >
           </div>
-          <h2 class="wf-card__title">6-Phase Feature Development Pipeline</h2>
-          <p class="wf-card__desc">
-            The cornerstone of Aleister's engineering process. Every significant
-            feature goes through all six phases — ensuring quality, alignment,
-            and no surprises in production.
-          </p>
+          <h2 class="wf-card__title">{featured.title}</h2>
+          <p class="wf-card__desc">{featured.description}</p>
           <!-- Mini phase strip -->
           <div class="wf-card__phases">
-            {
-              [
-                { emoji: "🎓", label: "Research", agent: "Sage" },
-                { emoji: "🎨", label: "Design", agent: "Pixel" },
-                { emoji: "📝", label: "Docs", agent: "Quill" },
-                { emoji: "📊", label: "QA Plan", agent: "Prism" },
-                { emoji: "🏁", label: "Agile", agent: "Rally" },
-                { emoji: "⚡", label: "Build", agent: "Cipher · Forge" },
-              ].map((p) => (
+            {featured.phases.map((p) => (
+              <div class="wf-phase">
+                <span class="wf-phase__emoji">{p.emoji}</span>
+                <span class="wf-phase__label">{p.label}</span>
+                <span class="wf-phase__agent">{p.agent}</span>
+              </div>
+            ))}
+          </div>
+          <div class="wf-card__cta">View workflow →</div>
+        </a>
+
+        <!-- All other workflows -->
+        {rest.map((wf) => (
+          <a
+            href={`/workflows/${wf.slug}`}
+            class="wf-card wf-card--live"
+          >
+            <div class="wf-card__top">
+              <span class="wf-card__badge wf-card__badge--live"
+                >{wf.badge}</span
+              >
+            </div>
+            <h2 class="wf-card__title">{wf.emoji} {wf.shortTitle}</h2>
+            <p class="wf-card__desc">{wf.description}</p>
+            <!-- Mini phase strip -->
+            <div class="wf-card__phases">
+              {wf.phases.map((p) => (
                 <div class="wf-phase">
                   <span class="wf-phase__emoji">{p.emoji}</span>
                   <span class="wf-phase__label">{p.label}</span>
                   <span class="wf-phase__agent">{p.agent}</span>
                 </div>
-              ))
-            }
-          </div>
-          <div class="wf-card__cta">View workflow →</div>
-        </a>
-
-        <!-- In Development cards -->
-        <div class="wf-card wf-card--dev">
-          <div class="wf-card__top">
-            <span class="wf-card__badge wf-card__badge--dev"
-              >🚧 In Development</span
-            >
-          </div>
-          <h2 class="wf-card__title">📱 Social Content Workflow</h2>
-          <p class="wf-card__desc">
-            Echo-led pipeline for planning, drafting, approving, and scheduling
-            multi-platform content campaigns with performance tracking.
-          </p>
-        </div>
-
-        <div class="wf-card wf-card--dev">
-          <div class="wf-card__top">
-            <span class="wf-card__badge wf-card__badge--dev"
-              >🚧 In Development</span
-            >
-          </div>
-          <h2 class="wf-card__title">🔍 Research Deep Dive Workflow</h2>
-          <p class="wf-card__desc">
-            Sage's full academic-grade research pipeline with structured
-            citations, competitive analysis templates, and evidence-backed
-            recommendations.
-          </p>
-        </div>
-
-        <div class="wf-card wf-card--dev">
-          <div class="wf-card__top">
-            <span class="wf-card__badge wf-card__badge--dev"
-              >🚧 In Development</span
-            >
-          </div>
-          <h2 class="wf-card__title">📈 Growth Analytics Workflow</h2>
-          <p class="wf-card__desc">
-            Prism-led weekly reporting loop covering SEO metrics, Stripe
-            revenue, social engagement, and actionable growth recommendations.
-          </p>
-        </div>
-
-        <div class="wf-card wf-card--dev">
-          <div class="wf-card__top">
-            <span class="wf-card__badge wf-card__badge--dev"
-              >🚧 In Development</span
-            >
-          </div>
-          <h2 class="wf-card__title">🚀 Deployment &amp; Release Workflow</h2>
-          <p class="wf-card__desc">
-            Forge-driven CI/CD pipeline with automated security audits, canary
-            releases, rollback triggers, and post-deploy verification.
-          </p>
-        </div>
+              ))}
+            </div>
+            <div class="wf-card__cta">View workflow →</div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
@@ -182,28 +146,28 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     flex-direction: column;
     gap: 0.85rem;
     transition: border-color 0.2s, transform 0.15s;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .wf-card:hover {
+    border-color: var(--text-accent);
+    transform: translateY(-2px);
   }
 
   .wf-card--featured {
     grid-column: 1 / -1; /* full width */
-    text-decoration: none;
-    color: inherit;
     border-color: color-mix(
       in srgb,
       var(--text-accent) 30%,
       var(--border-glass)
     );
     background: color-mix(in srgb, var(--text-accent) 4%, var(--bg-glass));
-    cursor: pointer;
   }
 
-  .wf-card--featured:hover {
-    border-color: var(--text-accent);
-    transform: translateY(-2px);
-  }
-
-  .wf-card--dev {
-    opacity: 0.72;
+  .wf-card--live {
+    /* live but not featured */
   }
 
   .wf-card__top {
@@ -228,12 +192,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     border: 1px solid color-mix(in srgb, var(--text-accent) 30%, transparent);
   }
 
-  .wf-card__badge--dev {
-    background: color-mix(in srgb, #f59e0b 12%, transparent);
-    color: #f59e0b;
-    border: 1px solid color-mix(in srgb, #f59e0b 25%, transparent);
-  }
-
   .wf-card__title {
     font-size: 1.25rem;
     font-weight: 700;
@@ -241,8 +199,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     line-height: 1.3;
   }
 
-  .wf-card--dev .wf-card__title {
-    font-size: 1.05rem;
+  .wf-card--live .wf-card__title {
+    font-size: 1.1rem;
   }
 
   .wf-card__desc {
@@ -252,12 +210,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin: 0;
   }
 
-  /* Mini phase strip on featured card */
+  /* Mini phase strip on cards */
   .wf-card__phases {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 0.5rem;
     margin-top: 0.25rem;
+  }
+
+  .wf-card--featured .wf-card__phases {
+    grid-template-columns: repeat(6, 1fr);
   }
 
   .wf-phase {
@@ -296,7 +258,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     transition: gap 0.15s;
   }
 
-  .wf-card--featured:hover .wf-card__cta {
+  .wf-card:hover .wf-card__cta {
     text-decoration: underline;
   }
 
@@ -315,10 +277,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     .wf-card__phases {
       grid-template-columns: repeat(3, 1fr);
     }
+
+    .wf-card--featured .wf-card__phases {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   @media (max-width: 480px) {
     .wf-card__phases {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .wf-card--featured .wf-card__phases {
       grid-template-columns: repeat(2, 1fr);
     }
   }
