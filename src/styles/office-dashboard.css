@@ -1,0 +1,592 @@
+/* ── Office Dashboard ─── Premium dark theme with glassmorphism ────── */
+
+.ops-dashboard {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 6rem 1.5rem 3rem;
+    min-height: 100vh;
+}
+
+/* ── Section Titles ─────────────────────────────────────────────────── */
+.ops-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--text-muted, #94a3b8);
+    margin-bottom: 1rem;
+}
+
+/* ── Top Row: Office Card + Agent Status ────────────────────────────── */
+.ops-top-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .ops-top-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Office Preview Card */
+.ops-office-card {
+    position: relative;
+    display: block;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    aspect-ratio: 16 / 10;
+}
+
+.ops-office-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.ops-office-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ops-office-card__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ops-office-card__label {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Live Dot */
+.ops-live-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #636e72;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+.ops-live-dot--online {
+    background: #00b894;
+    box-shadow: 0 0 8px rgba(0, 184, 148, 0.6);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px rgba(0, 184, 148, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 12px rgba(0, 184, 148, 0.8);
+    }
+}
+
+/* ── Agent Summary Panel ────────────────────────────────────────────── */
+.ops-agent-summary {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.25rem;
+    backdrop-filter: blur(10px);
+}
+
+/* Badges */
+.ops-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.ops-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.ops-badge--online {
+    background: rgba(0, 184, 148, 0.15);
+    color: #00b894;
+    border: 1px solid rgba(0, 184, 148, 0.3);
+}
+
+.ops-badge--working {
+    background: rgba(108, 92, 231, 0.15);
+    color: #a29bfe;
+    border: 1px solid rgba(108, 92, 231, 0.3);
+}
+
+.ops-badge--idle {
+    background: rgba(253, 203, 110, 0.15);
+    color: #fdcb6e;
+    border: 1px solid rgba(253, 203, 110, 0.3);
+}
+
+.ops-badge--offline {
+    background: rgba(214, 48, 49, 0.15);
+    color: #ff7675;
+    border: 1px solid rgba(214, 48, 49, 0.3);
+}
+
+.ops-badge--loading {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted, #94a3b8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Agent Grid */
+.ops-agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.6rem;
+}
+
+.ops-agent-card {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.15s;
+}
+
+.ops-agent-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.ops-agent-card__emoji {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+.ops-agent-card__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.ops-agent-card__name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary, #e2e8f0);
+}
+
+.ops-agent-card__role {
+    font-size: 0.72rem;
+    color: var(--text-muted, #94a3b8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ops-agent-card__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.ops-agent-card__dot--working {
+    background: #6c5ce7;
+    box-shadow: 0 0 6px rgba(108, 92, 231, 0.6);
+}
+
+.ops-agent-card__dot--idle {
+    background: #fdcb6e;
+}
+
+.ops-agent-card__dot--offline {
+    background: #636e72;
+}
+
+/* ── Metrics Row ────────────────────────────────────────────────────── */
+.ops-metrics-section {
+    margin-bottom: 2rem;
+}
+
+.ops-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.75rem;
+}
+
+.ops-metric-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    backdrop-filter: blur(8px);
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.ops-metric-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.ops-metric--skeleton {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.ops-metric__icon {
+    font-size: 1.3rem;
+}
+
+.ops-metric__value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary, #e2e8f0);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.ops-metric__label {
+    font-size: 0.72rem;
+    color: var(--text-muted, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ── Task Ledger ────────────────────────────────────────────────────── */
+.ops-ledger-section {
+    margin-bottom: 2rem;
+}
+
+.ops-ledger-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.ops-ledger-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.ops-filter-select {
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary, #e2e8f0);
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.ops-filter-select:focus {
+    border-color: #6c5ce7;
+}
+
+.ops-filter-select option {
+    background: #1a1a2e;
+    color: #e2e8f0;
+}
+
+.ops-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(8px);
+}
+
+.ops-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.ops-table thead {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.ops-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted, #94a3b8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+}
+
+.ops-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-primary, #e2e8f0);
+    vertical-align: middle;
+}
+
+.ops-table tbody tr {
+    transition: background 0.1s;
+}
+
+.ops-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.ops-table__title {
+    font-weight: 500;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ops-table__board {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    white-space: nowrap;
+}
+
+.ops-table__time {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    white-space: nowrap;
+}
+
+.ops-table__loading,
+.ops-table__empty {
+    text-align: center;
+    padding: 2rem !important;
+    color: var(--text-muted, #94a3b8);
+    font-style: italic;
+}
+
+/* Status badges */
+.ops-status {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ops-status--progress {
+    background: rgba(108, 92, 231, 0.15);
+    color: #a29bfe;
+}
+
+.ops-status--done {
+    background: rgba(0, 184, 148, 0.15);
+    color: #00b894;
+}
+
+.ops-status--todo {
+    background: rgba(116, 185, 255, 0.15);
+    color: #74b9ff;
+}
+
+.ops-status--backlog {
+    background: rgba(99, 110, 114, 0.15);
+    color: #b2bec3;
+}
+
+.ops-status--unknown {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted, #94a3b8);
+}
+
+/* Labels */
+.ops-label {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 500;
+    background: color-mix(in srgb, var(--label-color, #6c5ce7) 15%, transparent);
+    color: var(--label-color, #a29bfe);
+    border: 1px solid color-mix(in srgb, var(--label-color, #6c5ce7) 25%, transparent);
+    margin-right: 0.25rem;
+}
+
+.ops-label--sm {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+}
+
+/* Lock icon */
+.ops-lock {
+    margin-right: 0.35rem;
+    font-size: 0.75rem;
+}
+
+/* ── Backlog Queue ──────────────────────────────────────────────────── */
+.ops-backlog-section {
+    margin-bottom: 3rem;
+}
+
+.ops-backlog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.ops-backlog-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.ops-backlog-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ops-backlog-item__title {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text-primary, #e2e8f0);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ops-backlog-item__meta {
+    font-size: 0.72rem;
+    color: var(--text-muted, #94a3b8);
+    white-space: nowrap;
+}
+
+.ops-backlog-item__labels {
+    display: flex;
+    gap: 0.2rem;
+}
+
+.ops-backlog__empty {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-muted, #94a3b8);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────── */
+.ops-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    background: rgba(30, 30, 50, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 9999;
+}
+
+.ops-toast--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* ── Light theme overrides ──────────────────────────────────────────── */
+[data-theme="light"] .ops-office-card,
+[data-theme="light"] .ops-agent-summary,
+[data-theme="light"] .ops-metric-card,
+[data-theme="light"] .ops-table-wrapper,
+[data-theme="light"] .ops-backlog-item {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .ops-agent-card {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .ops-agent-card:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .ops-table thead {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .ops-table th {
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .ops-table td {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .ops-filter-select {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .ops-filter-select option {
+    background: #fff;
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .ops-toast {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a2e;
+    border-color: rgba(0, 0, 0, 0.12);
+}
