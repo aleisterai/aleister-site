@@ -1,9 +1,10 @@
 ---
 import "../../styles/global.css";
-import "../../styles/office.css";
+import "../../styles/office-dashboard.css";
 import SEO from "../../components/SEO.astro";
 import ThemeToggle from "../../components/ThemeToggle.astro";
 import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
 ---
 
 <!DOCTYPE html>
@@ -22,168 +23,509 @@ import Header from "../../components/Header.astro";
             })();
         </script>
         <SEO
-            title="Aleister — Pixel Office"
-            description="Watch Aleister and 9 AI subagents at work in a real-time pixel-art office. See who's coding, researching, chilling, or making coffee."
+            title="Aleister — Operations Center"
+            description="Live operational dashboard: agent status, task ledger, and project metrics for the Aleister AI agent system."
             image="/images/og/aleister-hq-office.png"
         />
     </head>
-    <body class="office-body">
+    <body>
         <Header />
+        <main class="ops-dashboard">
+            <!-- ── Top Row: Office Preview + Agent Summary ──────────────── -->
+            <section class="ops-top-row">
+                <!-- Office Preview Card -->
+                <a
+                    href="/office/interactive"
+                    class="ops-office-card"
+                    title="View Interactive Pixel Office"
+                >
+                    <img
+                        src="/images/og/aleister-hq-office.png"
+                        alt="Pixel Office"
+                        class="ops-office-thumb"
+                        loading="lazy"
+                    />
+                    <div class="ops-office-card__overlay">
+                        <span class="ops-office-card__label"
+                            >Interactive Office →</span
+                        >
+                        <span
+                            class="ops-live-dot"
+                            id="live-dot"
+                            title="Checking..."></span>
+                    </div>
+                </a>
+
+                <!-- Agent Status Summary -->
+                <div class="ops-agent-summary">
+                    <h2 class="ops-section-title">Agent Status</h2>
+                    <div class="ops-badges" id="status-badges">
+                        <span class="ops-badge ops-badge--loading"
+                            >Loading...</span
+                        >
+                    </div>
+                    <div class="ops-agent-grid" id="agent-grid">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Metrics Row ──────────────────────────────────────────── -->
+            <section class="ops-metrics-section">
+                <h2 class="ops-section-title">Metrics</h2>
+                <div class="ops-metrics-row" id="metrics-row">
+                    <div class="ops-metric-card ops-metric--skeleton">
+                        <span class="ops-metric__value">—</span><span
+                            class="ops-metric__label">Total Cost</span>
+                    </div>
+                    <div class="ops-metric-card ops-metric--skeleton">
+                        <span class="ops-metric__value">—</span><span
+                            class="ops-metric__label">Tokens</span>
+                    </div>
+                    <div class="ops-metric-card ops-metric--skeleton">
+                        <span class="ops-metric__value">—</span><span
+                            class="ops-metric__label">Commits</span>
+                    </div>
+                    <div class="ops-metric-card ops-metric--skeleton">
+                        <span class="ops-metric__value">—</span><span
+                            class="ops-metric__label">Tasks Done</span>
+                    </div>
+                    <div class="ops-metric-card ops-metric--skeleton">
+                        <span class="ops-metric__value">—</span><span
+                            class="ops-metric__label">Issues Closed</span>
+                    </div>
+                    <div class="ops-metric-card ops-metric--skeleton">
+                        <span class="ops-metric__value">—</span><span
+                            class="ops-metric__label">Treasury</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── Task Ledger ──────────────────────────────────────────── -->
+            <section class="ops-ledger-section">
+                <div class="ops-ledger-header">
+                    <h2 class="ops-section-title">Task Ledger</h2>
+                    <div class="ops-ledger-filters">
+                        <select
+                            id="filter-board"
+                            class="ops-filter-select"
+                            title="Filter by board"
+                        >
+                            <option value="all">All Boards</option>
+                        </select>
+                        <select
+                            id="filter-status"
+                            class="ops-filter-select"
+                            title="Filter by status"
+                        >
+                            <option value="all">All Statuses</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="To Do">To Do</option>
+                            <option value="Done">Done</option>
+                            <option value="Backlog">Backlog</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ops-table-wrapper">
+                    <table class="ops-table" id="task-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Board</th>
+                                <th>Assigned</th>
+                                <th>Status</th>
+                                <th>Labels</th>
+                                <th>Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-tbody">
+                            <tr
+                                ><td colspan="6" class="ops-table__loading"
+                                    >Loading tasks...</td
+                                >
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ── Backlog Queue ────────────────────────────────────────── -->
+            <section class="ops-backlog-section">
+                <h2 class="ops-section-title">Backlog Queue</h2>
+                <div class="ops-backlog-list" id="backlog-list">
+                    <div class="ops-table__loading">Loading backlog...</div>
+                </div>
+            </section>
+        </main>
+        <Footer />
+
+        <!-- ── Toast notification ───────────────────────────────────── -->
+        <div class="ops-toast" id="ops-toast"></div>
+
         <script is:inline>
-          // Office page cannot scroll — force the glass header immediately
-          document.getElementById("header").classList.add("scrolled");
+            (function () {
+                "use strict";
+
+                // ── Helpers ────────────────────────────────────────────────
+                function $(sel) {
+                    return document.querySelector(sel);
+                }
+                function $$(sel) {
+                    return document.querySelectorAll(sel);
+                }
+
+                function timeAgo(dateStr) {
+                    if (!dateStr) return "—";
+                    const d = new Date(dateStr);
+                    const s = Math.floor((Date.now() - d.getTime()) / 1000);
+                    if (s < 60) return "just now";
+                    if (s < 3600) return Math.floor(s / 60) + "m ago";
+                    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+                    return Math.floor(s / 86400) + "d ago";
+                }
+
+                function showToast(msg) {
+                    const t = $("#ops-toast");
+                    t.textContent = msg;
+                    t.classList.add("ops-toast--visible");
+                    setTimeout(
+                        () => t.classList.remove("ops-toast--visible"),
+                        3000
+                    );
+                }
+
+                function statusBadgeClass(status) {
+                    switch (status) {
+                        case "In Progress":
+                            return "ops-status--progress";
+                        case "Done":
+                            return "ops-status--done";
+                        case "To Do":
+                        case "Todo":
+                            return "ops-status--todo";
+                        case "Backlog":
+                            return "ops-status--backlog";
+                        default:
+                            return "ops-status--unknown";
+                    }
+                }
+
+                // ── Agent Status ───────────────────────────────────────────
+                async function loadAgentStatus() {
+                    try {
+                        const res = await fetch("/api/agent-status.json");
+                        const data = await res.json();
+                        if (!data.success) return;
+
+                        const s = data.summary;
+                        const badgesEl = $("#status-badges");
+                        badgesEl.innerHTML = `
+                        <span class="ops-badge ops-badge--online">${
+                            s.online
+                        } Online</span>
+                        <span class="ops-badge ops-badge--working">${
+                            s.working
+                        } Working</span>
+                        <span class="ops-badge ops-badge--idle">${
+                            s.idle
+                        } Idle</span>
+                        ${
+                            s.offline > 0
+                                ? `<span class="ops-badge ops-badge--offline">${s.offline} Offline</span>`
+                                : ""
+                        }
+                    `;
+
+                        const gridEl = $("#agent-grid");
+                        gridEl.innerHTML = data.agents
+                            .map(
+                                (a) => `
+                        <div class="ops-agent-card" style="--agent-color: ${a.color}">
+                            <span class="ops-agent-card__emoji">${a.emoji}</span>
+                            <div class="ops-agent-card__info">
+                                <span class="ops-agent-card__name">${a.name}</span>
+                                <span class="ops-agent-card__role">${a.role}</span>
+                            </div>
+                            <span class="ops-agent-card__dot ops-agent-card__dot--${a.status}" title="${a.activity}"></span>
+                        </div>
+                    `
+                            )
+                            .join("");
+
+                        // Live dot
+                        const dot = $("#live-dot");
+                        dot.classList.toggle(
+                            "ops-live-dot--online",
+                            data.gatewayOnline || data.agents[0]?.online
+                        );
+                        dot.title = data.gatewayOnline
+                            ? "Gateway Online"
+                            : "Simulated";
+                    } catch (e) {
+                        console.error("Agent status error:", e);
+                    }
+                }
+
+                // ── Metrics ────────────────────────────────────────────────
+                async function loadMetrics() {
+                    try {
+                        const [metricsRes, treasuryRes, boardRes] =
+                            await Promise.all([
+                                fetch("/api/agent-metrics.json"),
+                                fetch("/api/treasury-balances.json"),
+                                fetch("/api/project-board.json"),
+                            ]);
+                        const metrics = await metricsRes.json();
+                        const treasury = await treasuryRes.json();
+                        const board = await boardRes.json();
+
+                        // Calculate treasury total
+                        let treasuryTotal = 0;
+                        if (treasury.balances) {
+                            // We need prices — fetch separately
+                            try {
+                                const pricesRes = await fetch(
+                                    "/api/token-prices.json"
+                                );
+                                const prices = await pricesRes.json();
+                                for (const t of treasury.balances) {
+                                    let price = 0;
+                                    if (t.symbol === "ETH")
+                                        price = prices.ethereum?.usd || 0;
+                                    else if (t.symbol === "$ALEISTER")
+                                        price = prices.aleister?.usd || 0;
+                                    else if (t.symbol === "USDC")
+                                        price = prices["usd-coin"]?.usd || 1;
+                                    treasuryTotal += t.balance * price;
+                                }
+                            } catch (_) {}
+                        }
+
+                        const doneCount = board.summary?.done || 0;
+                        const m = metrics.metrics || {};
+
+                        const cards = [
+                            {
+                                value: "$" + (170.54).toLocaleString(),
+                                label: "Total Cost",
+                                icon: "💰",
+                            },
+                            {
+                                value: (20218).toLocaleString(),
+                                label: "API Requests",
+                                icon: "🔢",
+                            },
+                            {
+                                value: (m.commits?.total || 0).toLocaleString(),
+                                label: "All-Time Commits",
+                                icon: "📝",
+                            },
+                            {
+                                value: doneCount.toString(),
+                                label: "Tasks Done",
+                                icon: "✅",
+                            },
+                            {
+                                value: (m.issuesClosed?.month || 0).toString(),
+                                label: "Issues Closed (30d)",
+                                icon: "🎯",
+                            },
+                            {
+                                value: "$" + treasuryTotal.toFixed(0),
+                                label: "Treasury",
+                                icon: "🏦",
+                            },
+                        ];
+
+                        const row = $("#metrics-row");
+                        row.innerHTML = cards
+                            .map(
+                                (c) => `
+                        <div class="ops-metric-card">
+                            <span class="ops-metric__icon">${c.icon}</span>
+                            <span class="ops-metric__value">${c.value}</span>
+                            <span class="ops-metric__label">${c.label}</span>
+                        </div>
+                    `
+                            )
+                            .join("");
+                    } catch (e) {
+                        console.error("Metrics error:", e);
+                    }
+                }
+
+                // ── Task Ledger ────────────────────────────────────────────
+                let allTasks = [];
+                let allBoards = [];
+
+                async function loadTasks() {
+                    try {
+                        const res = await fetch("/api/project-board.json");
+                        const data = await res.json();
+                        if (!data.success) return;
+
+                        allTasks = data.items || [];
+                        allBoards = data.boards || [];
+
+                        // Populate board filter
+                        const boardFilter = $("#filter-board");
+                        boardFilter.innerHTML =
+                            '<option value="all">All Boards</option>' +
+                            allBoards
+                                .map(
+                                    (b) =>
+                                        `<option value="${b.label}">${
+                                            b.label
+                                        } (${b.totalCount || 0})</option>`
+                                )
+                                .join("");
+
+                        renderTasks();
+                        renderBacklog();
+                    } catch (e) {
+                        console.error("Tasks error:", e);
+                    }
+                }
+
+                function renderTasks() {
+                    const boardVal = $("#filter-board").value;
+                    const statusVal = $("#filter-status").value;
+
+                    let filtered = allTasks.filter(
+                        (t) => t.status !== "Backlog"
+                    );
+                    if (boardVal !== "all")
+                        filtered = filtered.filter((t) => t.board === boardVal);
+                    if (statusVal !== "all")
+                        filtered = filtered.filter(
+                            (t) => t.status === statusVal
+                        );
+
+                    // Sort: In Progress first, then To Do, then Done
+                    const order = {
+                        "In Progress": 0,
+                        "To Do": 1,
+                        Todo: 1,
+                        Done: 2,
+                    };
+                    filtered.sort(
+                        (a, b) =>
+                            (order[a.status] ?? 3) - (order[b.status] ?? 3)
+                    );
+
+                    const tbody = $("#task-tbody");
+                    if (filtered.length === 0) {
+                        tbody.innerHTML =
+                            '<tr><td colspan="6" class="ops-table__empty">No tasks found</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = filtered
+                        .map((t) => {
+                            const labels = (t.labels || [])
+                                .map(
+                                    (l) =>
+                                        `<span class="ops-label" style="--label-color: #${l.color}">${l.name}</span>`
+                                )
+                                .join("");
+                            const assigned =
+                                t.assignedAgent ||
+                                t.assignees?.join(", ") ||
+                                "—";
+                            const statusClass = statusBadgeClass(t.status);
+                            const isPrivate = t.isPrivate;
+                            const clickAttr = isPrivate
+                                ? `onclick="event.preventDefault(); window.__opsToast('This task resides on a private board')"`
+                                : t.url
+                                ? `onclick="window.open('${t.url}', '_blank')"`
+                                : "";
+                            const cursor =
+                                isPrivate || t.url ? "cursor: pointer;" : "";
+                            const lockIcon = isPrivate
+                                ? '<span class="ops-lock" title="Private board">🔒</span>'
+                                : "";
+
+                            return `<tr style="${cursor}" ${clickAttr}>
+                        <td class="ops-table__title">${lockIcon}${t.title}</td>
+                        <td class="ops-table__board">${t.board}</td>
+                        <td>${assigned}</td>
+                        <td><span class="ops-status ${statusClass}">${
+                                t.status
+                            }</span></td>
+                        <td>${labels || "—"}</td>
+                        <td class="ops-table__time">${timeAgo(t.updatedAt)}</td>
+                    </tr>`;
+                        })
+                        .join("");
+                }
+
+                function renderBacklog() {
+                    const backlog = allTasks.filter(
+                        (t) => t.status === "Backlog"
+                    );
+                    const list = $("#backlog-list");
+
+                    if (backlog.length === 0) {
+                        list.innerHTML =
+                            '<div class="ops-backlog__empty">No items in backlog</div>';
+                        return;
+                    }
+
+                    list.innerHTML = backlog
+                        .map((t) => {
+                            const isPrivate = t.isPrivate;
+                            const clickAttr = isPrivate
+                                ? `onclick="window.__opsToast('This task resides on a private board')"`
+                                : t.url
+                                ? `onclick="window.open('${t.url}', '_blank')"`
+                                : "";
+                            const lockIcon = isPrivate
+                                ? '<span class="ops-lock">🔒</span>'
+                                : "";
+                            const labels = (t.labels || [])
+                                .slice(0, 2)
+                                .map(
+                                    (l) =>
+                                        `<span class="ops-label ops-label--sm" style="--label-color: #${l.color}">${l.name}</span>`
+                                )
+                                .join("");
+
+                            return `<div class="ops-backlog-item" ${clickAttr}>
+                        <span class="ops-backlog-item__title">${lockIcon}${
+                                t.title
+                            }</span>
+                        <span class="ops-backlog-item__meta">${
+                            t.board
+                        } · ${timeAgo(t.createdAt)}</span>
+                        <span class="ops-backlog-item__labels">${labels}</span>
+                    </div>`;
+                        })
+                        .join("");
+                }
+
+                // ── Toast helper ───────────────────────────────────────────
+                window.__opsToast = showToast;
+
+                // ── Filters ────────────────────────────────────────────────
+                document.addEventListener("change", (e) => {
+                    if (
+                        e.target.id === "filter-board" ||
+                        e.target.id === "filter-status"
+                    ) {
+                        renderTasks();
+                    }
+                });
+
+                // ── Init ───────────────────────────────────────────────────
+                loadAgentStatus();
+                loadMetrics();
+                loadTasks();
+
+                // Auto-refresh every 60s
+                setInterval(loadAgentStatus, 30000);
+                setInterval(loadMetrics, 120000);
+                setInterval(loadTasks, 120000);
+            })();
         </script>
-        <div class="office-topbar__actions">
-                <ThemeToggle />
-            </div>
-        </div>
-
-        <!-- Control toolbar -->
-        <div class="office-toolbar" id="office-toolbar">
-            <div class="office-toolbar__group">
-                <button
-                    class="office-toolbar__btn"
-                    id="btn-zoom-in"
-                    aria-label="Zoom in"
-                    title="Zoom in"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        ><line x1="12" y1="5" x2="12" y2="19"></line><line
-                            x1="5"
-                            y1="12"
-                            x2="19"
-                            y2="12"></line>
-                    </svg>
-                </button>
-                <button
-                    class="office-toolbar__btn"
-                    id="btn-zoom-out"
-                    aria-label="Zoom out"
-                    title="Zoom out"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        ><line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="office-toolbar__group">
-                <button
-                    class="office-toolbar__btn"
-                    id="btn-rotate-left"
-                    aria-label="Rotate left"
-                    title="Rotate left"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        ><polyline points="1 4 1 10 7 10"></polyline><path
-                            d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                    </svg>
-                </button>
-                <button
-                    class="office-toolbar__btn"
-                    id="btn-rotate-right"
-                    aria-label="Rotate right"
-                    title="Rotate right"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        ><polyline points="23 4 23 10 17 10"></polyline><path
-                            d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="office-toolbar__group">
-                <button
-                    class="office-toolbar__btn office-toolbar__btn--toggle"
-                    id="btn-view-toggle"
-                    aria-label="Toggle 2D/3D"
-                    title="Switch view"
-                >
-                    <span class="toggle-label" id="view-label">3D</span>
-                </button>
-            </div>
-            <div class="office-toolbar__group">
-                <button
-                    class="office-toolbar__btn office-toolbar__btn--toggle"
-                    id="btn-tod-cycle"
-                    aria-label="Cycle time of day"
-                    title="Switch time of day"
-                >
-                    <span id="tod-icon">☀️</span>
-                    <span class="toggle-label" id="tod-label">Day</span>
-                </button>
-            </div>
-            <div class="office-toolbar__group">
-                <button
-                    class="office-toolbar__btn"
-                    id="btn-reset"
-                    aria-label="Reset view"
-                    title="Reset view"
-                >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        ><path
-                            d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
-                        ></path><path d="M3 3v5h5"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Agent info panel (shows on agent click) -->
-        <div class="office-agent-panel" id="agent-panel">
-            <button
-                class="office-agent-panel__close"
-                id="panel-close"
-                aria-label="Close">✕</button
-            >
-            <div class="office-agent-panel__avatar" id="panel-avatar"></div>
-            <h3 class="office-agent-panel__name" id="panel-name"></h3>
-            <span class="office-agent-panel__role" id="panel-role"></span>
-            <div class="office-agent-panel__status" id="panel-status"></div>
-            <div class="office-agent-panel__traits" id="panel-traits"></div>
-        </div>
-
-        <!-- Main office canvas -->
-        <canvas id="office-canvas"></canvas>
-
-        <!-- Load office scripts -->
-        <script is:inline src="/office/office-sprites.js" defer></script>
-        <script is:inline src="/office/office-status.js" defer></script>
-        <script is:inline src="/office/office-renderer.js" defer></script>
     </body>
 </html>
