@@ -2,18 +2,17 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
     workflows,
+    getWorkflowBySlug,
     type Workflow,
     type WorkflowStep,
 } from "../../data/workflows";
 
-export function getStaticPaths() {
-    return workflows.map((w) => ({
-        params: { slug: w.slug },
-        props: { workflow: w },
-    }));
-}
+const { slug } = Astro.params;
+const workflow = getWorkflowBySlug(slug ?? "");
 
-const { workflow } = Astro.props as { workflow: Workflow };
+if (!workflow) {
+    return Astro.redirect("/workflows");
+}
 
 // JSON-LD HowTo schema
 const howToJsonLd = {
