@@ -1,0 +1,905 @@
+---
+import "../../styles/global.css";
+import "../../styles/office-upgrades.css";
+import SEO from "../../components/SEO.astro";
+import ThemeToggle from "../../components/ThemeToggle.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import MiniPlayer from "../../components/MiniPlayer.astro";
+import { ViewTransitions } from "astro:transitions";
+import {
+    deskUpgrades,
+    chairUpgrades,
+    furnitureUpgrades,
+    buildingUpgrade,
+} from "../../data/office-upgrades";
+
+// Merge desk + chair per agent for combined cards
+const agents = deskUpgrades.map((desk) => {
+    const chair = chairUpgrades.find((c) => c.agentId === desk.agentId);
+    return {
+        desk,
+        chair,
+        name: desk.shortName,
+        avatar: desk.avatar!,
+        color: desk.color!,
+    };
+});
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script is:inline>
+            (function () {
+                const t = localStorage.getItem("theme") || "system";
+                const d = window.matchMedia(
+                    "(prefers-color-scheme: dark)"
+                ).matches;
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    t === "system" ? (d ? "dark" : "light") : t
+                );
+            })();
+        </script>
+        <SEO
+            title="Level Up the Office — Aleister"
+            description="Fund upgrades for Aleister's pixel office: desks, chairs, furniture, and the building itself. Every contribution is reflected live in the interactive office."
+            image="/api/og/upgrades"
+        />
+        <script is:inline type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+            }
+        }
+        </script>
+        <ViewTransitions />
+        <script is:inline>
+          document.addEventListener("astro:before-swap", function (e) {
+            var theme = document.documentElement.getAttribute("data-theme");
+            if (theme)
+              e.newDocument.documentElement.setAttribute("data-theme", theme);
+          });
+        </script>
+    </head>
+    <body>
+        <Header />
+        <ThemeToggle />
+
+        <main class="upgrades-page">
+            <!-- Back link -->
+            <a href="/office" class="upgrades-back">&larr; Back to Office</a>
+
+            <!-- Hero -->
+            <section class="upgrades-hero">
+                <h1 class="upgrades-hero__title">Level Up the Office</h1>
+                <p class="upgrades-hero__sub">
+                    Fund real upgrades for Aleister's pixel office. Every dollar
+                    is reflected live — better desks, premium chairs, new
+                    furniture, and eventually a whole new building.
+                </p>
+                <div class="upgrades-hero__stats">
+                    <div class="upgrades-hero__stat">
+                        <div class="upgrades-hero__stat-value" id="stat-raised">
+                            $0
+                        </div>
+                        <div class="upgrades-hero__stat-label">
+                            Total Raised
+                        </div>
+                    </div>
+                    <div class="upgrades-hero__stat">
+                        <div
+                            class="upgrades-hero__stat-value"
+                            id="stat-upgrades"
+                        >
+                            0
+                        </div>
+                        <div class="upgrades-hero__stat-label">
+                            Upgrades Funded
+                        </div>
+                    </div>
+                    <div class="upgrades-hero__stat">
+                        <div
+                            class="upgrades-hero__stat-value"
+                            id="stat-building"
+                        >
+                            0%
+                        </div>
+                        <div class="upgrades-hero__stat-label">
+                            Building Goal
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ Building Upgrade ═══ -->
+            <section class="building-card" id="building-section">
+                <div class="building-card__layout">
+                    <div class="building-card__renders">
+                        <div class="building-card__render">
+                            <img
+                                src="/upgrades/renders/building-current.png"
+                                alt="Current office"
+                            />
+                            <div class="building-card__render-label">
+                                Current
+                            </div>
+                        </div>
+                        <span class="building-card__arrow">→</span>
+                        <div class="building-card__render">
+                            <img
+                                src="/upgrades/renders/building-l1.png"
+                                alt="Upgraded office"
+                            />
+                            <div class="building-card__render-label">
+                                Level 1
+                            </div>
+                        </div>
+                    </div>
+                    <div class="building-card__info">
+                        <h2 class="building-card__title">
+                            Office Building Level-Up
+                        </h2>
+                        <p class="building-card__desc">
+                            {buildingUpgrade.levels[0].description}. When we hit
+                            the $5,000 goal, the entire office sprite gets
+                            upgraded to a new, bigger building with expanded
+                            rooms and premium finishes.
+                        </p>
+                        <div class="building-card__progress">
+                            <div class="building-card__progress-header">
+                                <span
+                                    class="building-card__progress-amount"
+                                    id="building-raised">$0</span
+                                >
+                                <span class="building-card__progress-goal"
+                                    >of $5,000</span
+                                >
+                            </div>
+                            <div class="building-card__progress-bar">
+                                <div
+                                    class="building-card__progress-fill"
+                                    id="building-fill"
+                                    style="width: 0%"
+                                >
+                                </div>
+                            </div>
+                            <div class="building-card__progress-meta">
+                                <span id="building-pct">0% funded</span>
+                                <span id="building-contributors"
+                                    >0 contributors</span
+                                >
+                            </div>
+                        </div>
+                        <div class="building-card__actions">
+                            <span class="promote-label">Contribute</span>
+                            <div class="promote-grid">
+                                {[4, 8, 15, 16, 23, 42].map(amt => (
+                                    <button class="promote-btn" data-amount={amt} data-slug="building">
+                                        ${amt}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ Agent Desks & Chairs (hidden for now) ═══
+            <section class="upgrades-section">
+                <div class="upgrades-section__header">
+                    <h2 class="upgrades-section__title">Agent Workstations</h2>
+                    <span class="upgrades-section__count"
+                        >{agents.length} agents</span
+                    >
+                </div>
+                <div class="agent-upgrade-grid" id="agent-grid">
+                    {
+                        agents.map((agent) => (
+                            <div
+                                class="agent-upgrade-card"
+                                data-agent={agent.desk.agentId}
+                            >
+                                <img
+                                    class="agent-upgrade-card__avatar"
+                                    src={agent.avatar}
+                                    alt={agent.name}
+                                    style={`border-color: ${agent.color}`}
+                                />
+                                <div class="agent-upgrade-card__info">
+                                    <h3
+                                        class="agent-upgrade-card__name"
+                                        style={`color: ${agent.color}`}
+                                    >
+                                        {agent.name}
+                                    </h3>
+                                    <div class="agent-upgrade-card__levels">
+                                        <div class="agent-upgrade-card__level-row">
+                                            <div class="agent-upgrade-card__level-info">
+                                                <span class="agent-upgrade-card__level-type">
+                                                    Desk
+                                                </span>
+                                            </div>
+                                            <button
+                                                class="btn-upgrade btn-upgrade--small btn-upgrade--secondary"
+                                                data-action="upgrade"
+                                                data-slug={agent.desk.slug}
+                                            >
+                                                Upgrade
+                                            </button>
+                                        </div>
+                                        {agent.chair && (
+                                            <div class="agent-upgrade-card__level-row">
+                                                <div class="agent-upgrade-card__level-info">
+                                                    <span class="agent-upgrade-card__level-type">
+                                                        Chair
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    class="btn-upgrade btn-upgrade--small btn-upgrade--secondary"
+                                                    data-action="upgrade"
+                                                    data-slug={agent.chair.slug}
+                                                >
+                                                    Upgrade
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+            -->
+
+            <!-- ═══ Furniture Store ═══ -->
+            <section class="upgrades-section">
+                <div class="upgrades-section__header">
+                    <h2 class="upgrades-section__title">Furniture Store</h2>
+                    <span class="upgrades-section__count"
+                        >{furnitureUpgrades.length} items</span
+                    >
+                </div>
+                <div class="furniture-grid" id="furniture-grid">
+                    {
+                        furnitureUpgrades.map((item) => {
+                            const nextLevel = item.levels[0];
+                            return (
+                                <a
+                                    href={`/office/upgrades/${item.slug}`}
+                                    class="furniture-card"
+                                    data-slug={item.slug}
+                                    style="text-decoration:none;color:inherit;position:relative;"
+                                >
+                                    {item.meshPath && (
+                                        <span class="furniture-card__3d-badge">
+                                            3D
+                                        </span>
+                                    )}
+                                    <div class="furniture-card__render-wrap">
+                                        {item.meshPath ? (
+                                            <canvas
+                                                class="furniture-card__render furniture-card__canvas"
+                                                data-mesh={item.meshPath}
+                                                width="400"
+                                                height="400"
+                                            />
+                                        ) : (
+                                            <img
+                                                class="furniture-card__render"
+                                                src={nextLevel.renderImage}
+                                                alt={item.name}
+                                                loading="lazy"
+                                                onerror="this.style.display='none'"
+                                            />
+                                        )}
+                                    </div>
+                                    <div class="furniture-card__body">
+                                        <h3 class="furniture-card__name">
+                                            {item.name}
+                                        </h3>
+                                        <p class="furniture-card__desc">
+                                            {item.description}
+                                        </p>
+                                        <div class="furniture-card__level-row">
+                                            <div
+                                                class="furniture-card__dots"
+                                                data-slug={item.slug}
+                                            >
+                                                {item.levels.map(() => (
+                                                    <span class="furniture-card__dot" />
+                                                ))}
+                                            </div>
+                                            <span
+                                                class="furniture-card__price"
+                                                data-slug={item.slug}
+                                            >
+                                                ${nextLevel.price}
+                                            </span>
+                                        </div>
+                                        <div class="progress-bar" data-progress-slug={item.slug}>
+                                            <div class="progress-bar__track">
+                                                <div class="progress-bar__fill" style="width: 0%"></div>
+                                            </div>
+                                            <span class="progress-bar__text">$0 of ${nextLevel.price} raised</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            );
+                        })
+                    }
+                </div>
+            </section>
+        </main>
+
+        <!-- Upgrade Modal -->
+        <div class="upgrade-modal-overlay" id="upgrade-modal">
+            <div class="upgrade-modal">
+                <button class="upgrade-modal__close" id="modal-close"
+                    >&times;</button
+                >
+                <h3 class="upgrade-modal__title" id="modal-title"></h3>
+                <img
+                    class="upgrade-modal__render"
+                    id="modal-render"
+                    src=""
+                    alt=""
+                />
+                <div class="upgrade-modal__level-name" id="modal-level-name">
+                </div>
+                <p class="upgrade-modal__level-desc" id="modal-level-desc"></p>
+                <div class="upgrade-modal__price" id="modal-price"></div>
+                <div class="upgrade-modal__actions">
+                    <button
+                        class="btn-upgrade btn-upgrade--primary"
+                        id="modal-buy"
+                    >
+                        Pay &amp; Upgrade
+                    </button>
+                    <button
+                        class="btn-upgrade btn-upgrade--secondary"
+                        id="modal-cancel"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thank-you receipt card (building contributions land here) -->
+        <div class="thankyou-card" id="thankyou-card" style="display:none">
+            <div class="thankyou-card__header">
+                <div class="thankyou-card__icon">🎉</div>
+                <div>
+                    <h2 class="thankyou-card__title">Thank you for your contribution!</h2>
+                    <p class="thankyou-card__subtitle">Your donation is helping level up the office.</p>
+                </div>
+            </div>
+            <div class="thankyou-card__body">
+                <div class="thankyou-card__details" id="thankyou-details">
+                    <div class="thankyou-card__row">
+                        <span class="thankyou-card__label">Item</span>
+                        <span class="thankyou-card__value" id="thankyou-item">—</span>
+                    </div>
+                    <div class="thankyou-card__row">
+                        <span class="thankyou-card__label">Amount</span>
+                        <span class="thankyou-card__value thankyou-card__value--amount" id="thankyou-amount">—</span>
+                    </div>
+                    <div class="thankyou-card__row" id="thankyou-email-row" style="display:none">
+                        <span class="thankyou-card__label">Receipt sent to</span>
+                        <span class="thankyou-card__value" id="thankyou-email">—</span>
+                    </div>
+                </div>
+                <div class="thankyou-card__actions">
+                    <a href="#" id="thankyou-receipt-link" class="thankyou-card__receipt-btn" target="_blank" rel="noopener" style="display:none">
+                        View Stripe Receipt →
+                    </a>
+                    <a href="/office/upgrades" class="thankyou-card__back-btn">
+                        Continue Browsing
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <Footer />
+
+        <script is:inline>
+            (async function () {
+                "use strict";
+
+                // ── Upgrade catalog (mirrored from data — need it client-side) ──
+                const CATALOG = {};
+                document.querySelectorAll("[data-slug]").forEach((el) => {
+                    CATALOG[el.dataset.slug] = true;
+                });
+
+                // ── Full catalog data embedded from server ──
+                const ITEMS = JSON.parse(
+                    document.getElementById("catalog-json")?.textContent || "{}"
+                );
+
+                let levelsData = {
+                    items: {},
+                    building: {
+                        currentAmount: 0,
+                        goalAmount: 5000,
+                        percentage: 0,
+                        contributors: 0,
+                    },
+                    totalRaised: 0,
+                    upgradeCount: 0,
+                };
+
+                // ── Load current levels from API ──
+                async function loadLevels() {
+                    try {
+                        const res = await fetch("/api/office-levels.json");
+                        const data = await res.json();
+                        if (data.success !== false) levelsData = data;
+                    } catch (e) {
+                        console.warn("Could not load office levels:", e);
+                    }
+                    renderLevels();
+                }
+
+                function renderLevels() {
+                    // Hero stats
+                    document.getElementById("stat-raised").textContent =
+                        "$" + fmtNum(levelsData.totalRaised);
+                    document.getElementById("stat-upgrades").textContent =
+                        levelsData.upgradeCount;
+                    document.getElementById("stat-building").textContent =
+                        levelsData.building.percentage + "%";
+
+                    // Building progress
+                    document.getElementById("building-raised").textContent =
+                        "$" + fmtNum(levelsData.building.currentAmount);
+                    document.getElementById("building-fill").style.width =
+                        levelsData.building.percentage + "%";
+                    document.getElementById("building-pct").textContent =
+                        levelsData.building.percentage + "% funded";
+                    document.getElementById(
+                        "building-contributors"
+                    ).textContent =
+                        levelsData.building.contributors + " contributors";
+
+                    // Agent desk/chair dots
+                    for (const [slug, info] of Object.entries(
+                        levelsData.items
+                    )) {
+                        const dotsContainer = document.querySelector(
+                            `.agent-upgrade-card__level-dots[data-slug="${slug}"]`
+                        );
+                        if (dotsContainer) {
+                            const dots = dotsContainer.querySelectorAll(
+                                ".agent-upgrade-card__level-dot"
+                            );
+                            dots.forEach((dot, i) => {
+                                dot.classList.toggle(
+                                    "agent-upgrade-card__level-dot--filled",
+                                    i < info.currentLevel
+                                );
+                            });
+
+                            // Update upgrade button
+                            const btn = document.querySelector(
+                                `[data-action="upgrade"][data-slug="${slug}"]`
+                            );
+                            if (btn) {
+                                if (info.isMaxed) {
+                                    btn.textContent = "Maxed";
+                                    btn.classList.add("btn-upgrade--maxed");
+                                    btn.classList.remove(
+                                        "btn-upgrade--secondary"
+                                    );
+                                    btn.disabled = true;
+                                } else if (info.nextLevel) {
+                                    btn.textContent =
+                                        "$" + info.nextLevel.price;
+                                }
+                            }
+                        }
+
+                        // Furniture dots
+                        const furnitureDots = document.querySelector(
+                            `.furniture-card__dots[data-slug="${slug}"]`
+                        );
+                        if (furnitureDots) {
+                            const dots = furnitureDots.querySelectorAll(
+                                ".furniture-card__dot"
+                            );
+                            dots.forEach((dot, i) => {
+                                dot.classList.toggle(
+                                    "furniture-card__dot--filled",
+                                    i < info.currentLevel
+                                );
+                            });
+
+                            // Update price button
+                            const btn = furnitureDots
+                                .closest(".furniture-card")
+                                ?.querySelector(
+                                    `[data-action="upgrade"][data-slug="${slug}"]`
+                                );
+                            if (btn) {
+                                if (info.isMaxed) {
+                                    btn.textContent = "Maxed";
+                                    btn.classList.add("btn-upgrade--maxed");
+                                    btn.classList.remove(
+                                        "btn-upgrade--primary"
+                                    );
+                                    btn.disabled = true;
+                                } else if (info.nextLevel) {
+                                    btn.textContent =
+                                        "$" + info.nextLevel.price;
+                                }
+                            }
+                        }
+
+                        // Progress bar
+                        const progressEl = document.querySelector(`[data-progress-slug="${slug}"]`);
+                        if (progressEl) {
+                            const fill = progressEl.querySelector('.progress-bar__fill');
+                            const text = progressEl.querySelector('.progress-bar__text');
+                            const goal = info.nextLevel ? (info.cumulativeSpent + info.nextLevel.price) : info.totalRaised;
+                            const pct = goal > 0 ? Math.min(100, parseFloat(((info.totalRaised / goal) * 100).toFixed(2))) : 0;
+                            if (fill) fill.style.width = pct + '%';
+                            if (text) {
+                                const contribs = info.contributions || 0;
+                                text.textContent = `$${Math.round(info.totalRaised)} of $${Math.round(goal)} raised · ${contribs} contribution${contribs !== 1 ? 's' : ''}`;
+                            }
+                        }
+                    }
+                }
+
+                function fmtNum(n) {
+                    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+                    if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+                    return String(Math.round(n));
+                }
+
+                // ── Upgrade modal ──
+                const modal = document.getElementById("upgrade-modal");
+                const modalTitle = document.getElementById("modal-title");
+                const modalRender = document.getElementById("modal-render");
+                const modalLevelName =
+                    document.getElementById("modal-level-name");
+                const modalLevelDesc =
+                    document.getElementById("modal-level-desc");
+                const modalPrice = document.getElementById("modal-price");
+                let currentUpgradeSlug = null;
+                let currentUpgradeLevel = null;
+
+                function openModal(slug) {
+                    const info = levelsData.items[slug];
+                    const item = ITEMS[slug];
+                    if (!item) return;
+
+                    const nextLevel = info?.nextLevel || item.levels[0];
+                    if (!nextLevel) return;
+
+                    currentUpgradeSlug = slug;
+                    currentUpgradeLevel = nextLevel.level;
+
+                    modalTitle.textContent = item.name;
+                    modalRender.src = nextLevel.renderImage;
+                    modalRender.alt = nextLevel.name;
+                    modalLevelName.textContent =
+                        "Level " + nextLevel.level + ": " + nextLevel.name;
+                    modalLevelDesc.textContent = nextLevel.description;
+                    modalPrice.textContent = "$" + nextLevel.price;
+
+                    modal.classList.add("upgrade-modal-overlay--visible");
+                }
+
+                function closeModal() {
+                    modal.classList.remove("upgrade-modal-overlay--visible");
+                    currentUpgradeSlug = null;
+                    currentUpgradeLevel = null;
+                }
+
+                document
+                    .getElementById("modal-close")
+                    .addEventListener("click", closeModal);
+                document
+                    .getElementById("modal-cancel")
+                    .addEventListener("click", closeModal);
+                modal.addEventListener("click", (e) => {
+                    if (e.target === modal) closeModal();
+                });
+
+                // ── Buy handler (creates Stripe checkout session) ──
+                async function startCheckout(slug, opts = {}) {
+                    const body = { slug, ...opts };
+                    try {
+                        const res = await fetch("/api/create-upgrade-session", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(body),
+                        });
+                        const data = await res.json();
+                        if (data.url) {
+                            window.location.href = data.url;
+                        } else {
+                            console.error("No checkout URL:", data);
+                            alert(
+                                "Could not create checkout session. Please try again."
+                            );
+                        }
+                    } catch (e) {
+                        console.error("Checkout error:", e);
+                        alert("Something went wrong. Please try again.");
+                    }
+                }
+
+                document
+                    .getElementById("modal-buy")
+                    .addEventListener("click", () => {
+                        if (!currentUpgradeSlug) return;
+                        const btn = document.getElementById("modal-buy");
+                        btn.classList.add("btn-upgrade--loading");
+                        btn.textContent = "Redirecting...";
+                        startCheckout(currentUpgradeSlug, {
+                            levelTarget: currentUpgradeLevel,
+                        });
+                    });
+
+                // ── Upgrade button clicks ──
+                document
+                    .querySelectorAll('[data-action="upgrade"]')
+                    .forEach((btn) => {
+                        btn.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            const slug = btn.dataset.slug;
+                            const info = levelsData.items[slug];
+                            if (info?.isMaxed) return;
+                            openModal(slug);
+                        });
+                    });
+
+                // ── Contribute buttons (building + furniture) ──
+                document.addEventListener('click', async (e) => {
+                    const btn = e.target.closest('.promote-btn');
+                    if (!btn || btn.disabled) return;
+                    const amount = parseInt(btn.dataset.amount, 10);
+                    const slug = btn.dataset.slug;
+                    btn.textContent = '...';
+                    btn.disabled = true;
+                    try {
+                        await startCheckout(slug, { customAmount: amount });
+                    } catch (err) {
+                        btn.textContent = '$' + amount;
+                        btn.disabled = false;
+                    }
+                });
+
+                // ── Furniture card click ──
+                document.querySelectorAll(".furniture-card").forEach((card) => {
+                    card.addEventListener("click", () => {
+                        const slug = card.dataset.slug;
+                        const info = levelsData.items[slug];
+                        if (info?.isMaxed) return;
+                        openModal(slug);
+                    });
+                });
+
+                // ── Success — show thank-you card ──
+                const params = new URLSearchParams(window.location.search);
+                if (params.get("success") === "1" && params.get("session_id")) {
+                    const card = document.getElementById("thankyou-card");
+                    card.style.display = "";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    try {
+                        const res = await fetch(`/api/checkout-session.json?session_id=${encodeURIComponent(params.get("session_id"))}`);
+                        const data = await res.json();
+                        if (data.success) {
+                            document.getElementById("thankyou-item").textContent = data.itemName;
+                            document.getElementById("thankyou-amount").textContent = `$${data.amount}`;
+                            if (data.email) {
+                                document.getElementById("thankyou-email").textContent = data.email;
+                                document.getElementById("thankyou-email-row").style.display = "";
+                            }
+                            if (data.receiptUrl) {
+                                const link = document.getElementById("thankyou-receipt-link");
+                                link.href = data.receiptUrl;
+                                link.style.display = "";
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Could not fetch session:', e);
+                    }
+
+                    window.history.replaceState({}, "", "/office/upgrades");
+                }
+
+                // ── Init ──
+                loadLevels();
+            })();
+        </script>
+
+        <!-- GLB Sprite Renderer — renders 3D models once on card canvases -->
+        <script is:inline type="module">
+            import * as THREE from 'three';
+            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+            const canvases = document.querySelectorAll('canvas[data-mesh]');
+            if (canvases.length > 0) {
+                const loader = new GLTFLoader();
+
+                async function renderToCanvas(canvas) {
+                    const meshPath = canvas.dataset.mesh;
+                    if (!meshPath) return;
+                    const w = canvas.width;
+                    const h = canvas.height;
+
+                    try {
+                        // Each canvas gets its own renderer (lightweight, rendered once)
+                        const renderer = new THREE.WebGLRenderer({
+                            canvas: canvas,
+                            alpha: false,
+                            antialias: true,
+                        });
+                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        renderer.setSize(w, h, false);
+                        renderer.outputColorSpace = THREE.SRGBColorSpace;
+                        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                        renderer.toneMappingExposure = 1.2;
+
+                        const scene = new THREE.Scene();
+
+                        // Night-sky background with stars (matching office building images)
+                        const bgCanvas = document.createElement('canvas');
+                        const bgS = 512;
+                        bgCanvas.width = bgS;
+                        bgCanvas.height = bgS;
+                        const bgCtx = bgCanvas.getContext('2d');
+
+                        // Gradient sky
+                        const grad = bgCtx.createLinearGradient(0, 0, 0, bgS);
+                        grad.addColorStop(0, '#070a12');
+                        grad.addColorStop(0.3, '#0a0e18');
+                        grad.addColorStop(0.6, '#090c14');
+                        grad.addColorStop(0.85, '#070a10');
+                        grad.addColorStop(1.0, '#050710');
+                        bgCtx.fillStyle = grad;
+                        bgCtx.fillRect(0, 0, bgS, bgS);
+
+                        // Seeded random per card (unique star pattern)
+                        const cardIdx = Array.from(canvases).indexOf(canvas);
+                        let seed = cardIdx * 1337 + 42;
+                        const rand = () => { seed = (seed * 16807 + 0) % 2147483647; return seed / 2147483647; };
+
+                        // Stars (only in upper 70% of sky)
+                        for (let s = 0; s < 60; s++) {
+                            const sx = rand() * bgS;
+                            const sy = rand() * bgS * 0.7;
+                            const sr = rand() * 1.5 + 0.3;
+                            const alpha = rand() * 0.6 + 0.2;
+                            bgCtx.beginPath();
+                            bgCtx.arc(sx, sy, sr, 0, Math.PI * 2);
+                            bgCtx.fillStyle = `rgba(255,255,255,${alpha})`;
+                            bgCtx.fill();
+                        }
+
+                        // Small constellation (4-6 connected stars)
+                        const cStars = [];
+                        const cx0 = bgS * 0.3 + rand() * bgS * 0.4;
+                        const cy0 = bgS * 0.1 + rand() * bgS * 0.25;
+                        for (let c = 0; c < 4 + Math.floor(rand() * 3); c++) {
+                            cStars.push({ x: cx0 + (rand() - 0.5) * 120, y: cy0 + (rand() - 0.5) * 80 });
+                        }
+                        bgCtx.strokeStyle = 'rgba(255,255,255,0.12)';
+                        bgCtx.lineWidth = 0.8;
+                        bgCtx.beginPath();
+                        cStars.forEach((p, i) => { i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y); });
+                        bgCtx.stroke();
+                        cStars.forEach(p => {
+                            bgCtx.beginPath();
+                            bgCtx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+                            bgCtx.fillStyle = 'rgba(255,255,255,0.7)';
+                            bgCtx.fill();
+                        });
+
+                        const bgTexture = new THREE.CanvasTexture(bgCanvas);
+                        scene.background = bgTexture;
+
+                        const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 100);
+
+                        // Studio lighting
+                        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                        const key = new THREE.DirectionalLight(0xffffff, 1.2);
+                        key.position.set(3, 5, 4);
+                        scene.add(key);
+                        const fill = new THREE.DirectionalLight(0xc8d0ff, 0.5);
+                        fill.position.set(-3, 2, 3);
+                        scene.add(fill);
+                        const rim = new THREE.DirectionalLight(0xffffff, 0.3);
+                        rim.position.set(0, 3, -4);
+                        scene.add(rim);
+
+                        // Load model
+                        const gltf = await new Promise((res, rej) =>
+                            loader.load(meshPath, res, undefined, rej)
+                        );
+                        const model = gltf.scene;
+
+                        // Auto-center & auto-frame
+                        const box = new THREE.Box3().setFromObject(model);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        model.position.sub(center);
+
+                        const maxDim = Math.max(size.x, size.y, size.z);
+                        const fov = THREE.MathUtils.degToRad(camera.fov);
+                        const dist = (maxDim / 2 / Math.tan(fov / 2)) * 1.4;
+
+                        camera.position.set(dist * 0.6, dist * 0.35, dist * 0.6);
+                        camera.lookAt(0, 0, 0);
+                        camera.updateProjectionMatrix();
+
+                        scene.add(model);
+
+                        // Render ONE frame directly to the canvas
+                        renderer.render(scene, camera);
+
+                        // Cleanup — dispose renderer & geometry
+                        renderer.dispose();
+                        model.traverse((o) => {
+                            if (o.isMesh) {
+                                o.geometry?.dispose();
+                                if (o.material) {
+                                    if (Array.isArray(o.material)) o.material.forEach(m => m.dispose());
+                                    else o.material.dispose();
+                                }
+                            }
+                        });
+                    } catch (err) {
+                        console.warn('GLB card render failed:', meshPath, err);
+                        canvas.style.display = 'none';
+                    }
+                }
+
+                // Lazy-load with IntersectionObserver
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            renderToCanvas(entry.target);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { rootMargin: '200px' });
+
+                canvases.forEach(c => observer.observe(c));
+            }
+        </script>
+
+        <script
+            is:inline
+            id="catalog-json"
+            type="application/json"
+            set:html={JSON.stringify(
+                Object.fromEntries(
+                    [
+                        ...deskUpgrades,
+                        ...chairUpgrades,
+                        ...furnitureUpgrades,
+                        buildingUpgrade,
+                    ].map((item) => [
+                        item.slug,
+                        {
+                            name: item.name,
+                            category: item.category,
+                            meshPath: item.meshPath || null,
+                            levels: item.levels,
+                        },
+                    ])
+                )
+            )}
+        ></script>
+        <MiniPlayer transition:persist="mini-player" />
+    </body>
+</html>

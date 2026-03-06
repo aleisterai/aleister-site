@@ -22,6 +22,7 @@ export interface Song {
     genre: string;
     artwork: string;
     audioSrc?: string;
+    releaseId?: string;
     status: SongStatus;
     stores: string[];
     platformLinks?: PlatformLink[];
@@ -45,6 +46,7 @@ export const songs: Song[] = [
         genre: "R&B",
         artwork: "/music/artwork/backseat-halo.jpg",
         audioSrc: "/music/audio/backseat-halo.mp3",
+        releaseId: "4454029",
         status: "shipped",
         stores: [
             "Spotify",

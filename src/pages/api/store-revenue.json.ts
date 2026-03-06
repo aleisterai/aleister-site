@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 
 const STRIPE_API = 'https://api.stripe.com/v1';

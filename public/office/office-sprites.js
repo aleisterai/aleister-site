@@ -375,5 +375,11 @@ window.OfficeSprites = (function () {
         ctx.textAlign = 'start';
     }
 
-    return { AGENTS, FRAME_DURATION, drawAgent, drawStatusDot, drawNameLabel, hexToRgb, darken, lighten };
+    // ─── Layout constants (shared with thumbnail preview) ────────
+    const WORLD_COLS = 40;
+    const WORLD_ROWS = 34;
+    const TILE = 36;
+    const BLD = { x: 8, y: 6, w: 24, h: 18 };
+
+    return { AGENTS, FRAME_DURATION, drawAgent, drawStatusDot, drawNameLabel, hexToRgb, darken, lighten, WORLD_COLS, WORLD_ROWS, TILE, BLD };
 })();

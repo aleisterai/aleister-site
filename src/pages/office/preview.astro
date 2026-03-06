@@ -1,0 +1,70 @@
+---
+/**
+ * Minimal office preview — just the building, no chrome.
+ * Used as an iframe source for the dashboard thumbnail.
+ */
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex" />
+        <title>Office Preview</title>
+        <link rel="stylesheet" href="/styles/theme.css" />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background: var(--bg-primary, #0a0a1a);
+            }
+            #office-canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="office-canvas"></canvas>
+
+        <!-- Hidden elements the renderer references (avoids null errors) -->
+        <div id="agent-panel" style="display:none">
+            <div id="panel-avatar"></div>
+            <div id="panel-name"></div>
+            <div id="panel-role"></div>
+            <div id="panel-status"></div>
+            <div id="panel-traits"></div>
+            <button id="panel-close"></button>
+        </div>
+        <div style="display:none">
+            <button id="btn-zoom-in"></button>
+            <button id="btn-zoom-out"></button>
+            <button id="btn-rotate-left"></button>
+            <button id="btn-rotate-right"></button>
+            <button id="btn-view-toggle"><span id="view-label"></span></button>
+            <button id="btn-reset"></button>
+            <button id="btn-tod-cycle"
+                ><span id="tod-icon"></span><span id="tod-label"></span>
+            </button>
+        </div>
+
+        <script is:inline>
+            window.__officePreview = true;
+        </script>
+        <script is:inline src="/office/office-sprites.js"></script>
+        <script is:inline src="/office/office-status.js"></script>
+        <script is:inline src="/office/office-renderer.js"></script>
+    </body>
+</html>

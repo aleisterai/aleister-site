@@ -213,7 +213,7 @@ code,
 }
 
 .section {
-  padding: 6rem 0;
+  padding: 3rem 0 6rem;
   position: relative;
 }
 
@@ -227,6 +227,32 @@ code,
   max-width: 600px;
   margin: 0 auto 3rem;
   color: var(--text-secondary);
+}
+
+/* ---------- Page Header (standard for all inner pages) ---------- */
+.page-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.page-header__title {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.page-header__subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 640px;
 }
 
 /* ---------- Grid ---------- */
@@ -553,8 +579,7 @@ body::before {
 }
 
 /* ensure page content sits above the grid */
-body > * {
+body>* {
   position: relative;
   z-index: 1;
 }
-

@@ -13,16 +13,16 @@ const OPENCLAW_STATUS_URL = import.meta.env.OPENCLAW_STATUS_URL || process.env.O
 
 // Agent definitions matching office-status.js
 const AGENTS = [
-    { id: 'aleister', name: 'Aleister', role: 'Lead Agent', emoji: '🤖', color: '#6c5ce7' },
-    { id: 'cipher', name: 'Cipher', role: 'Code Engineer', emoji: '💻', color: '#00b894' },
-    { id: 'sage', name: 'Sage', role: 'Research Analyst', emoji: '🔬', color: '#0984e3' },
-    { id: 'quill', name: 'Quill', role: 'Content Writer', emoji: '✍️', color: '#fdcb6e' },
-    { id: 'rally', name: 'Rally', role: 'Sprint Manager', emoji: '📋', color: '#e17055' },
-    { id: 'echo', name: 'Echo', role: 'Social & X Engagement', emoji: '📢', color: '#a29bfe' },
-    { id: 'pixel', name: 'Pixel', role: 'UI/UX Designer', emoji: '🎨', color: '#fd79a8' },
-    { id: 'forge', name: 'Forge', role: 'DevOps & Infra', emoji: '🔧', color: '#636e72' },
-    { id: 'prism', name: 'Prism', role: 'Analytics', emoji: '📊', color: '#00cec9' },
-    { id: 'lyra', name: 'Lyra', role: 'Music Producer', emoji: '🎵', color: '#e84393' },
+    { id: 'aleister', name: 'Aleister', role: 'Lead Agent', avatar: '/avatars/hero-avatar.gif', color: '#6c5ce7' },
+    { id: 'cipher', name: 'Cipher', role: 'Code Engineer', avatar: '/avatars/cipher.png', color: '#00b894' },
+    { id: 'sage', name: 'Sage', role: 'Research Analyst', avatar: '/avatars/sage.png', color: '#0984e3' },
+    { id: 'quill', name: 'Quill', role: 'Content Writer', avatar: '/avatars/quill.png', color: '#fdcb6e' },
+    { id: 'rally', name: 'Rally', role: 'Sprint Manager', avatar: '/avatars/rally.png', color: '#e17055' },
+    { id: 'echo', name: 'Echo', role: 'Social & X Engagement', avatar: '/avatars/echo.png', color: '#a29bfe' },
+    { id: 'pixel', name: 'Pixel', role: 'UI/UX Designer', avatar: '/avatars/pixel.png', color: '#fd79a8' },
+    { id: 'forge', name: 'Forge', role: 'DevOps & Infra', avatar: '/avatars/forge.png', color: '#636e72' },
+    { id: 'prism', name: 'Prism', role: 'Analytics', avatar: '/avatars/prism.png', color: '#00cec9' },
+    { id: 'lyra', name: 'Lyra', role: 'Music Producer', avatar: '/avatars/lyra.png', color: '#e84393' },
 ];
 
 const WORK_SCHEDULES: Record<string, { startHour: number; endHour: number; workSlots: number; label: string }> = {

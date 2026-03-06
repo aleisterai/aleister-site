@@ -1,0 +1,388 @@
+---
+/**
+ * MiniPlayer — persistent snackbar at top of page.
+ * Uses transition:persist in BaseLayout so it survives Astro View Transitions.
+ * Controlled via window.__aleisterPlayer global API set up in the inline script.
+ */
+---
+
+<div id="mini-player" class="mini-player" style="display:none">
+    <div class="mini-player__inner">
+        <img
+            id="mp-artwork"
+            class="mini-player__artwork"
+            src=""
+            alt=""
+            width="36"
+            height="36"
+        />
+        <div class="mini-player__info">
+            <span id="mp-title" class="mini-player__title">—</span>
+            <div class="mini-player__progress">
+                <div class="mini-player__progress-bar" id="mp-progress-bar">
+                    <div
+                        class="mini-player__progress-fill"
+                        id="mp-progress-fill"
+                    >
+                    </div>
+                </div>
+                <span class="mini-player__time" id="mp-time">0:00</span>
+            </div>
+        </div>
+        <button
+            id="mp-play-btn"
+            class="mini-player__play"
+            aria-label="Play/Pause"
+        >
+            <svg
+                id="mp-icon-play"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="20"
+                height="20"
+            >
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+            <svg
+                id="mp-icon-pause"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="20"
+                height="20"
+                style="display:none"
+            >
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+            </svg>
+        </button>
+        <button
+            id="mp-close-btn"
+            class="mini-player__close"
+            aria-label="Close player">✕</button
+        >
+    </div>
+</div>
+
+<script is:inline>
+    (function () {
+        // ── Global player API ─────────────────────────────────────────────
+        // Persists across View Transitions via transition:persist on the component.
+
+        if (window.__aleisterPlayer) return; // already initialised
+
+        let audio = null;
+        let raf = null;
+        let currentSrc = null;
+        let currentTitle = null;
+        let currentArtwork = null;
+
+        const el = {
+            root: () => document.getElementById("mini-player"),
+            artwork: () => document.getElementById("mp-artwork"),
+            title: () => document.getElementById("mp-title"),
+            playBtn: () => document.getElementById("mp-play-btn"),
+            iconPlay: () => document.getElementById("mp-icon-play"),
+            iconPause: () => document.getElementById("mp-icon-pause"),
+            progressFill: () => document.getElementById("mp-progress-fill"),
+            progressBar: () => document.getElementById("mp-progress-bar"),
+            time: () => document.getElementById("mp-time"),
+            closeBtn: () => document.getElementById("mp-close-btn"),
+        };
+
+        function fmt(s) {
+            if (!s || isNaN(s)) return "0:00";
+            var m = Math.floor(s / 60);
+            var sec = Math.floor(s % 60);
+            return m + ":" + (sec < 10 ? "0" : "") + sec;
+        }
+
+        function tick() {
+            if (!audio) return;
+            var fill = el.progressFill();
+            var time = el.time();
+            if (fill)
+                fill.style.width =
+                    (audio.currentTime / audio.duration) * 100 + "%";
+            if (time)
+                time.textContent =
+                    fmt(audio.currentTime) + " / " + fmt(audio.duration);
+            raf = requestAnimationFrame(tick);
+        }
+
+        function isOnMusicPage() {
+            return window.location.pathname.startsWith("/music");
+        }
+
+        function showUI() {
+            if (isOnMusicPage()) return; // don't show on the music page itself
+            var root = el.root();
+            if (root) root.style.display = "";
+        }
+
+        function hideUI() {
+            var root = el.root();
+            if (root) root.style.display = "none";
+        }
+
+        function syncIcons(playing) {
+            var ip = el.iconPlay();
+            var ips = el.iconPause();
+            if (ip) ip.style.display = playing ? "none" : "";
+            if (ips) ips.style.display = playing ? "" : "none";
+        }
+
+        function stop() {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+                audio = null;
+            }
+            if (raf) {
+                cancelAnimationFrame(raf);
+                raf = null;
+            }
+            currentSrc = null;
+            currentTitle = null;
+            currentArtwork = null;
+            hideUI();
+            syncIcons(false);
+        }
+
+        window.__aleisterPlayer = {
+            play: function (src, title, artwork) {
+                // If same source, toggle
+                if (audio && currentSrc === src) {
+                    if (audio.paused) {
+                        audio.play();
+                        syncIcons(true);
+                        raf = requestAnimationFrame(tick);
+                    } else {
+                        audio.pause();
+                        syncIcons(false);
+                        cancelAnimationFrame(raf);
+                    }
+                    return;
+                }
+                // New track
+                if (audio) {
+                    audio.pause();
+                    cancelAnimationFrame(raf);
+                }
+                audio = new Audio(src);
+                currentSrc = src;
+                currentTitle = title;
+                currentArtwork = artwork;
+                var titleEl = el.title();
+                var artEl = el.artwork();
+                if (titleEl) titleEl.textContent = title || "—";
+                if (artEl) {
+                    artEl.src = artwork || "";
+                    artEl.alt = title || "";
+                }
+                syncIcons(true);
+                if (!isOnMusicPage()) showUI();
+                audio.play().catch(function () {
+                    stop();
+                });
+                audio.addEventListener("ended", function () {
+                    stop();
+                });
+                raf = requestAnimationFrame(tick);
+            },
+
+            toggle: function () {
+                if (!audio) return;
+                if (audio.paused) {
+                    audio.play();
+                    syncIcons(true);
+                    raf = requestAnimationFrame(tick);
+                } else {
+                    audio.pause();
+                    syncIcons(false);
+                    cancelAnimationFrame(raf);
+                }
+            },
+
+            stop: stop,
+
+            isPlaying: function () {
+                return audio && !audio.paused;
+            },
+            currentSrc: function () {
+                return currentSrc;
+            },
+            getAudio: function () {
+                return audio;
+            },
+        };
+
+        // Wire up persistent buttons (event delegation so it works across navigations)
+        document.addEventListener("click", function (e) {
+            if (e.target.closest("#mp-play-btn")) {
+                window.__aleisterPlayer.toggle();
+            }
+            if (e.target.closest("#mp-close-btn")) {
+                window.__aleisterPlayer.stop();
+            }
+        });
+
+        // Progress bar seeking
+        document.addEventListener("click", function (e) {
+            var bar = e.target.closest("#mp-progress-bar");
+            if (!bar || !audio) return;
+            var rect = bar.getBoundingClientRect();
+            var pct = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = pct * audio.duration;
+        });
+
+        // On page navigation: restore mini-player state
+        document.addEventListener("astro:page-load", function () {
+            if (!audio || !currentSrc) return;
+            // Restore metadata on DOM (in case View Transition reset elements)
+            var titleEl = el.title();
+            var artEl = el.artwork();
+            if (titleEl) titleEl.textContent = currentTitle || "—";
+            if (artEl && currentArtwork) {
+                artEl.src = currentArtwork;
+                artEl.alt = currentTitle || "";
+            }
+            syncIcons(!audio.paused);
+            // Show/hide based on current page
+            if (isOnMusicPage()) {
+                hideUI();
+            } else if (!audio.paused) {
+                showUI();
+                raf = requestAnimationFrame(tick);
+            }
+        });
+    })();
+</script>
+
+<style>
+    .mini-player {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        z-index: 10000;
+        background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-subtle);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        animation: mp-slide-in 0.3s ease;
+    }
+
+    @keyframes mp-slide-in {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .mini-player__inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.45rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .mini-player__artwork {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .mini-player__info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .mini-player__title {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mini-player__progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .mini-player__progress-bar {
+        flex: 1;
+        height: 3px;
+        background: var(--bg-tertiary);
+        border-radius: 2px;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .mini-player__progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(
+            90deg,
+            var(--accent-start),
+            var(--accent-mid)
+        );
+        border-radius: 2px;
+        transition: width 0.1s linear;
+    }
+
+    .mini-player__time {
+        font-size: 0.6rem;
+        color: var(--text-tertiary);
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+        white-space: nowrap;
+        min-width: 5rem;
+        text-align: right;
+    }
+
+    .mini-player__play,
+    .mini-player__close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s, background 0.15s;
+        flex-shrink: 0;
+    }
+
+    .mini-player__play:hover,
+    .mini-player__close:hover {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+    }
+
+    .mini-player__close {
+        font-size: 0.85rem;
+        width: 28px;
+        height: 28px;
+    }
+
+    @media (max-width: 480px) {
+        .mini-player__time {
+            display: none;
+        }
+    }
+</style>

@@ -348,3 +348,18 @@
         height: 32px;
     }
 }
+
+/* ---------- Preview mode (embedded thumbnail) ---------- */
+.office-preview .office-toolbar,
+.office-preview .office-agent-panel,
+.office-preview .office-topbar__actions {
+    display: none !important;
+}
+
+.office-preview #office-canvas {
+    top: 0;
+}
+
+.office-preview {
+    cursor: default;
+}

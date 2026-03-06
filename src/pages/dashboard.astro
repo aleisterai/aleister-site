@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 
 const TREASURY_SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
 const TOKEN_CONTRACT = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
@@ -18,16 +19,16 @@ const CLAW_MART_EARNINGS = 89;
       <!-- ── Hero ── -->
       <div class="dashboard-hero">
         <div class="dashboard-hero__text">
-          <p class="dashboard-chain">
-            Base Mainnet · Live <span class="live-dot-inline"
-              ><span></span>
-            </span>
-          </p>
-          <h1 class="dashboard-title">Dashboard</h1>
-          <p class="dashboard-desc">
-            All-time revenue, revenue streams, and on-chain treasury.
-            Auto-refreshes every 60 seconds.
-          </p>
+          <PageHeader
+            accent="Dashboard"
+            subtitle="All-time revenue, revenue streams, and on-chain treasury. Auto-refreshes every 60 seconds."
+          >
+            <p class="dashboard-chain">
+              Base Mainnet · Live <span class="live-dot-inline"
+                ><span></span>
+              </span>
+            </p>
+          </PageHeader>
         </div>
         <div class="dashboard-hero__stats">
           <div class="stat-card stat-card--accent">
@@ -164,7 +165,7 @@ const CLAW_MART_EARNINGS = 89;
 
 <style>
   .dashboard-page {
-    padding-top: 4rem;
+    padding-top: 3rem;
     padding-bottom: 5rem;
     min-height: 100vh;
   }
@@ -176,7 +177,6 @@ const CLAW_MART_EARNINGS = 89;
     justify-content: space-between;
     gap: 2rem;
     margin-bottom: 2.5rem;
-    padding-top: 1.5rem;
   }
 
   .dashboard-chain {
@@ -186,25 +186,6 @@ const CLAW_MART_EARNINGS = 89;
     letter-spacing: 0.08em;
     color: var(--text-tertiary);
     margin-bottom: 0.6rem;
-  }
-
-  .dashboard-title {
-    font-size: clamp(2.5rem, 6vw, 3.5rem);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 0.75rem;
-    background: var(--gradient-accent-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .dashboard-desc {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 380px;
   }
 
   .dashboard-hero__stats {
@@ -599,7 +580,7 @@ const CLAW_MART_EARNINGS = 89;
   }
 
   @media (max-width: 480px) {
-    .dashboard-title {
+    .page-header__title {
       font-size: 2rem;
     }
 
@@ -907,9 +888,17 @@ const CLAW_MART_EARNINGS = 89;
     }
   }
 
-  // Start auto-refresh
-  document.addEventListener("DOMContentLoaded", () => {
-    const loadingIndicator = document.createElement("div");
+  // Start auto-refresh (works with Astro View Transitions)
+  document.addEventListener("astro:page-load", () => {
+    // Clean up any previous interval (in case of re-navigation)
+    if (refreshInterval) clearInterval(refreshInterval);
+
+    // Only run on the dashboard page
+    if (!document.querySelector(".dashboard-page")) return;
+
+    const loadingIndicator =
+      document.getElementById("loading-indicator") ||
+      document.createElement("div");
     loadingIndicator.id = "loading-indicator";
     loadingIndicator.style.cssText = `
       position: fixed; top: 20px; right: 20px;
@@ -920,7 +909,8 @@ const CLAW_MART_EARNINGS = 89;
       box-shadow: var(--shadow-md);
     `;
     loadingIndicator.textContent = "Loading data...";
-    document.body.appendChild(loadingIndicator);
+    if (!loadingIndicator.parentNode)
+      document.body.appendChild(loadingIndicator);
 
     refreshData();
     fetchStoreRevenue();
@@ -948,7 +938,7 @@ const CLAW_MART_EARNINGS = 89;
       const amountEl = document.getElementById("store-revenue");
       const subEl = document.getElementById("store-sub");
 
-      const total = data.balance?.total || 0;
+      const total = data.revenue30d || 0;
       window.__storeRevenue = total;
 
       if (amountEl) amountEl.textContent = formatCurrency(total);

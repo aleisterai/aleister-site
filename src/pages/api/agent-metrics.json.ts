@@ -3,17 +3,51 @@ import type { APIRoute } from 'astro';
 const GITHUB_TOKEN = import.meta.env.GITHUB_TOKEN || process.env.GITHUB_TOKEN || '';
 const GITHUB_USER = 'aleisterai';
 
+// All repos that should be counted for commit metrics
+const TRACKED_REPOS = [
+    'aleisterai/aleister-site',
+    'aleisterai/aleister-md',
+    'aleisterai/aleister-agent',
+    'aleisterai/obsidian-docs',
+    'FundlyHub/fundlyhub',
+];
+
+const GH_HEADERS = {
+    'Authorization': `token ${GITHUB_TOKEN}`,
+    'Accept': 'application/json',
+    'User-Agent': 'AleisterDashboard/1.0',
+};
+
+async function fetchRepoCommitCount(repo: string): Promise<number> {
+    // Use the contributors endpoint — sums all contributors' commit counts
+    try {
+        const res = await fetch(
+            `https://api.github.com/repos/${repo}/contributors?per_page=100&anon=true`,
+            { headers: GH_HEADERS, signal: AbortSignal.timeout(8000) }
+        );
+        if (res.ok) {
+            const contributors = await res.json();
+            if (Array.isArray(contributors)) {
+                return contributors.reduce((sum: number, c: any) => sum + (c.contributions || 0), 0);
+            }
+        }
+    } catch (_) { }
+    return 0;
+}
+
 async function fetchGitHubCommits(): Promise<number> {
+    if (!GITHUB_TOKEN) return 0;
+    const counts = await Promise.all(TRACKED_REPOS.map(fetchRepoCommitCount));
+    return counts.reduce((a, b) => a + b, 0);
+}
+
+async function fetchIssuesClosed(since: string): Promise<number> {
     if (!GITHUB_TOKEN) return 0;
     try {
         const res = await fetch(
-            `https://api.github.com/search/commits?q=author:${GITHUB_USER}`,
+            `https://api.github.com/search/issues?q=assignee:${GITHUB_USER}+is:issue+is:closed+closed:>=${since}`,
             {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.cloak-preview+json',
-                    'User-Agent': 'AleisterDashboard/1.0',
-                },
+                headers: GH_HEADERS,
                 signal: AbortSignal.timeout(8000),
             }
         );
@@ -25,19 +59,14 @@ async function fetchGitHubCommits(): Promise<number> {
     return 0;
 }
 
-async function fetchIssuesClosed(since: string): Promise<number> {
+async function fetchAllClosedIssues(): Promise<number> {
     if (!GITHUB_TOKEN) return 0;
+    // Single search query across all repos (avoids rate-limit hit from 5 separate calls)
+    const repoQuery = TRACKED_REPOS.map(r => `repo:${r}`).join('+');
     try {
         const res = await fetch(
-            `https://api.github.com/search/issues?q=assignee:${GITHUB_USER}+is:issue+is:closed+closed:>=${since}`,
-            {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/json',
-                    'User-Agent': 'AleisterDashboard/1.0',
-                },
-                signal: AbortSignal.timeout(8000),
-            }
+            `https://api.github.com/search/issues?q=is:issue+is:closed+${repoQuery}`,
+            { headers: GH_HEADERS, signal: AbortSignal.timeout(8000) }
         );
         if (res.ok) {
             const data = await res.json();
@@ -53,11 +82,7 @@ async function fetchRepoStats(): Promise<{ linesChanged: number; repos: number }
         const res = await fetch(
             `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&type=all`,
             {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/json',
-                    'User-Agent': 'AleisterDashboard/1.0',
-                },
+                headers: GH_HEADERS,
                 signal: AbortSignal.timeout(8000),
             }
         );
@@ -79,11 +104,13 @@ export const GET: APIRoute = async () => {
             commits,
             issuesClosedWeek,
             issuesClosedMonth,
+            allClosedIssues,
             repoStats,
         ] = await Promise.all([
             fetchGitHubCommits(),
             fetchIssuesClosed(weekAgo),
             fetchIssuesClosed(monthAgo),
+            fetchAllClosedIssues(),
             fetchRepoStats(),
         ]);
 
@@ -94,13 +121,10 @@ export const GET: APIRoute = async () => {
                 issuesClosed: {
                     week: issuesClosedWeek,
                     month: issuesClosedMonth,
+                    allTime: allClosedIssues,
                     label: 'Issues Closed',
                 },
                 repos: { total: repoStats.repos, label: 'Repositories' },
-                // These metrics come from other API routes (client aggregates them):
-                // - cost/tokens: /api/agent-status.json (proxied from cost-ledger)
-                // - treasury: /api/treasury-balances.json
-                // - tweets: /api/agent-status.json (proxied from twitter-state)
             },
             timestamp: new Date().toISOString(),
         }), {

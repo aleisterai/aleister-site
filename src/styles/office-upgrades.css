@@ -1,0 +1,1516 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Office Upgrades — Level-Up Store
+   ══════════════════════════════════════════════════════════════════════ */
+
+.upgrades-page {
+    padding: 6rem 2rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+/* ── Hero Header ──────────────────────────────────────────────────── */
+.upgrades-hero {
+    text-align: left;
+    margin-bottom: 3rem;
+}
+
+.upgrades-hero__badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(108, 92, 231, 0.12);
+    border: 1px solid rgba(108, 92, 231, 0.25);
+    margin-bottom: 1rem;
+}
+
+.upgrades-hero__title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.75rem;
+    background: var(--gradient-accent-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.upgrades-hero__sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem;
+    max-width: 560px;
+    line-height: 1.5;
+}
+
+.upgrades-hero__stats {
+    display: flex;
+    justify-content: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.upgrades-hero__stat {
+    text-align: left;
+}
+
+.upgrades-hero__stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.upgrades-hero__stat-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.15rem;
+}
+
+/* ── Building Upgrade Hero Card ──────────────────────────────────── */
+.building-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.building-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.building-card__layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.building-card__renders {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.building-card__render {
+    position: relative;
+    text-align: center;
+}
+
+.building-card__render img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.building-card__render-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.5rem;
+}
+
+.building-card__arrow {
+    font-size: 1.5rem;
+    color: var(--accent);
+    align-self: center;
+}
+
+.building-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.building-card__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.building-card__desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.building-card__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.building-card__progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.building-card__progress-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.building-card__progress-goal {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+.building-card__progress-bar {
+    height: 10px;
+    background: var(--bg-progress-track, rgba(0, 0, 0, 0.1));
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+
+:root[data-theme="dark"] .building-card__progress-bar,
+[data-theme="dark"] .building-card__progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.building-card__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #a29bfe);
+    border-radius: 999px;
+    transition: width 1s ease;
+    min-width: 6px;
+}
+
+.building-card__progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+}
+
+.building-card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.building-card__input {
+    width: 100px;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+}
+
+.building-card__input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+}
+
+/* ── Section headings ────────────────────────────────────────────── */
+.upgrades-section {
+    margin-bottom: 3rem;
+}
+
+.upgrades-section__header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.upgrades-section__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.upgrades-section__count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+}
+
+/* ── Agent Upgrade Grid ──────────────────────────────────────────── */
+.agent-upgrade-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+.agent-upgrade-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 1.2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: all 0.2s ease;
+}
+
+.agent-upgrade-card:hover {
+    border-color: var(--border-accent);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.agent-upgrade-card__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--border-subtle);
+}
+
+.agent-upgrade-card__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.agent-upgrade-card__name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.4rem;
+}
+
+.agent-upgrade-card__levels {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.agent-upgrade-card__level-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.agent-upgrade-card__level-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.agent-upgrade-card__level-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    width: 42px;
+}
+
+.agent-upgrade-card__level-dots {
+    display: flex;
+    gap: 3px;
+}
+
+.agent-upgrade-card__level-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.agent-upgrade-card__level-dot--filled {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 6px rgba(108, 92, 231, 0.4);
+}
+
+.agent-upgrade-card__level-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}
+
+/* ── Furniture Grid ──────────────────────────────────────────────── */
+.furniture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.furniture-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.furniture-card:hover {
+    border-color: var(--border-accent);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.furniture-card__render {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-subtle);
+    background: radial-gradient(ellipse at 50% 100%, #1a1830 0%, #111422 40%, #0a0d16 70%, #070a12 100%);
+}
+
+.furniture-card__canvas {
+    background: radial-gradient(ellipse at 50% 40%, #0f1623 0%, #0b1019 40%, #070a12 100%) !important;
+}
+
+.furniture-card__body {
+    padding: 1rem;
+}
+
+.furniture-card__name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.3rem;
+}
+
+.furniture-card__desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.6rem;
+    line-height: 1.4;
+}
+
+.furniture-card__level-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.furniture-card__dots {
+    display: flex;
+    gap: 3px;
+}
+
+.furniture-card__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.furniture-card__dot--filled {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 6px rgba(108, 92, 231, 0.4);
+}
+
+.furniture-card__price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* ── Shared Button Styles ────────────────────────────────────────── */
+.btn-upgrade {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-upgrade--primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-upgrade--primary:hover {
+    background: var(--accent-hover, #5a4bd4);
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.35);
+}
+
+.btn-upgrade--secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+}
+
+.btn-upgrade--secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.btn-upgrade--small {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.72rem;
+}
+
+.btn-upgrade--maxed {
+    background: rgba(0, 206, 201, 0.12);
+    color: #00cec9;
+    border: 1px solid rgba(0, 206, 201, 0.25);
+    cursor: default;
+}
+
+.btn-upgrade--loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ── Success Toast ─────────────────────────────────────────────── */
+.upgrade-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 206, 201, 0.3);
+    color: #00cec9;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 9999;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.upgrade-toast--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/* ── Thank-you Receipt Banner (full-width, top of page) ──────────── */
+.thankyou-card {
+    width: 100%;
+    margin: 0 0 1.5rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, #22c55e 30%, var(--border-subtle));
+    background: color-mix(in srgb, #22c55e 6%, var(--bg-card));
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.thankyou-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.thankyou-card__icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.thankyou-card__title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #22c55e;
+    margin: 0;
+}
+
+.thankyou-card__subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.thankyou-card__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.thankyou-card__details {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.thankyou-card__row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+}
+
+.thankyou-card__label {
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.thankyou-card__value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.thankyou-card__value--amount {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #22c55e;
+}
+
+.thankyou-card__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.thankyou-card__receipt-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    background: #22c55e;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.15s, transform 0.15s;
+    white-space: nowrap;
+}
+
+.thankyou-card__receipt-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.thankyou-card__back-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.15s;
+    white-space: nowrap;
+}
+
+.thankyou-card__back-btn:hover {
+    border-color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+    .thankyou-card__body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .thankyou-card__details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+
+    .thankyou-card__actions {
+        width: 100%;
+    }
+
+    .thankyou-card__receipt-btn,
+    .thankyou-card__back-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* ── Upgrade Modal/Flyout ────────────────────────────────────────── */
+.upgrade-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.upgrade-modal-overlay--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.upgrade-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.upgrade-modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.3rem;
+    line-height: 1;
+}
+
+.upgrade-modal__close:hover {
+    color: var(--text-primary);
+}
+
+.upgrade-modal__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+}
+
+.upgrade-modal__render {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+}
+
+.upgrade-modal__level-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 0 0 0.3rem;
+}
+
+.upgrade-modal__level-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    line-height: 1.4;
+}
+
+.upgrade-modal__price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+}
+
+.upgrade-modal__actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+/* ── Back link ─────────────────────────────────────────────────── */
+.upgrades-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+}
+
+.upgrades-back:hover {
+    color: var(--accent);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .upgrades-page {
+        padding: 5rem 1rem 3rem;
+    }
+
+    .building-card__layout {
+        grid-template-columns: 1fr;
+    }
+
+    .building-card__renders {
+        order: -1;
+    }
+
+    .building-card__render img {
+        width: 140px;
+        height: 140px;
+    }
+
+    .agent-upgrade-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .furniture-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .upgrades-hero__title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .furniture-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Upgrade Detail Page — /office/upgrades/[slug]
+   ══════════════════════════════════════════════════════════════════════ */
+.upgrade-detail {
+    padding: 6rem 2rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+/* ── 3D Canvas / Render Hero ─────────────────────────────────────── */
+.upgrade-detail__hero {
+    margin-bottom: 2rem;
+}
+
+.upgrade-detail__canvas-wrap {
+    position: relative;
+    width: 100%;
+    background: radial-gradient(ellipse at 50% 40%, #0f1623 0%, #0b1019 40%, #070a12 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.upgrade-detail__canvas-wrap canvas {
+    display: block;
+    width: 100% !important;
+}
+
+.upgrade-detail__canvas-hint {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    letter-spacing: 0.04em;
+}
+
+.upgrade-detail__render-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.upgrade-detail__render-img {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    border: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* ── Item Info Section ───────────────────────────────────────────── */
+.upgrade-detail__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.upgrade-detail__category {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(108, 92, 231, 0.12);
+    border: 1px solid rgba(108, 92, 231, 0.25);
+    align-self: flex-start;
+}
+
+.upgrade-detail__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.upgrade-detail__desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Level Progression ───────────────────────────────────────────── */
+.upgrade-detail__levels {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.upgrade-detail__level {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.upgrade-detail__level:hover {
+    border-color: var(--border-accent, rgba(108, 92, 231, 0.4));
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.upgrade-detail__level--completed {
+    border-color: rgba(0, 206, 201, 0.3);
+    background: rgba(0, 206, 201, 0.04);
+}
+
+.upgrade-detail__level--next {
+    border-color: rgba(108, 92, 231, 0.4);
+    background: rgba(108, 92, 231, 0.06);
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
+}
+
+.upgrade-detail__level-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.upgrade-detail__level-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.upgrade-detail__level-badge--done {
+    background: rgba(0, 206, 201, 0.15);
+    color: #00cec9;
+    border-color: rgba(0, 206, 201, 0.3);
+}
+
+.upgrade-detail__level-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    flex: 1;
+}
+
+.upgrade-detail__level-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.upgrade-detail__level-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin: 0.4rem 0 0;
+    padding-left: 38px;
+    line-height: 1.4;
+}
+
+.upgrade-detail__level-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-top: 0.6rem;
+    margin-left: 38px;
+    border: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.upgrade-detail__level-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.75rem;
+    margin-left: 38px;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent, #6c5ce7);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upgrade-detail__level-btn:hover {
+    background: var(--accent-hover, #5a4bd4);
+    box-shadow: 0 4px 12px rgba(108, 92, 231, 0.35);
+    transform: translateY(-1px);
+}
+
+.upgrade-detail__level-btn:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ── Actions / Pay ───────────────────────────────────────────────── */
+.upgrade-detail__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.btn-upgrade--large {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+/* ── Contribution Buttons ───────────────────────────────────────── */
+.promote-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin: 0 0 0.6rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.promote-grid {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.promote-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent, #6c5ce7);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+    min-width: 60px;
+}
+
+.promote-btn:hover:not(:disabled) {
+    background: var(--accent-hover, #5a4bd4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(108, 92, 231, 0.4);
+}
+
+.promote-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(108, 92, 231, 0.25);
+}
+
+.promote-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Floating bar variant */
+.promote-grid--bar {
+    margin-bottom: 0;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+    flex: 1;
+}
+
+.promote-btn--bar {
+    font-size: 0.82rem;
+    padding: 0.55rem 0;
+    border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+    .promote-grid--bar {
+        flex-wrap: wrap;
+    }
+
+    .promote-btn--bar {
+        flex: 1 1 calc(33.33% - 0.3rem);
+        min-width: 0;
+        font-size: 0.85rem;
+        padding: 0.65rem 0;
+    }
+
+    .upgrade-bar__top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .upgrade-bar__progress {
+        width: 100%;
+    }
+}
+
+/* ── Funding Progress Bar ───────────────────────────────────────── */
+.progress-bar {
+    margin-top: 0.5rem;
+}
+
+.progress-bar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.3rem;
+}
+
+.progress-bar__raised {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-accent);
+}
+
+.progress-bar__goal {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+}
+
+.progress-bar__track {
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+[data-theme="light"] .progress-bar__track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar__fill {
+    height: 100%;
+    min-width: 6px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--accent, #6c5ce7), var(--text-accent, #00d4ff));
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-bar__text {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.62rem;
+    color: var(--text-tertiary);
+    margin-top: 0.25rem;
+}
+
+/* Detail page — larger progress bar with card background */
+.progress-bar--large {
+    margin: 0 0 1.25rem 0;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+}
+
+[data-theme="light"] .progress-bar--large {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.progress-bar--large .progress-bar__raised {
+    font-size: 1rem;
+}
+
+.progress-bar--large .progress-bar__goal {
+    font-size: 0.78rem;
+}
+
+.progress-bar--large .progress-bar__track {
+    height: 8px;
+    border-radius: 8px;
+}
+
+.progress-bar--large .progress-bar__fill {
+    border-radius: 8px;
+}
+
+.progress-bar--large .progress-bar__text {
+    font-size: 0.72rem;
+    margin-top: 0.4rem;
+}
+
+.upgrade-detail__disclaimer {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ── Furniture Card 3D Badge ─────────────────────────────────────── */
+.furniture-card__3d-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(108, 92, 231, 0.8);
+    color: #fff;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+}
+
+/* ── Detail Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .upgrade-detail {
+        padding: 5rem 1rem 3rem;
+    }
+
+    .upgrade-detail__title {
+        font-size: 1.5rem;
+    }
+
+    .upgrade-detail__level-thumb {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* ── Floating Upgrade Bar ────────────────────────────────────────── */
+.upgrade-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--bg-primary, #0d0d12) 80%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--accent, #6c5ce7) 25%, var(--border-subtle));
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+}
+
+.upgrade-bar__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.upgrade-bar__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.upgrade-bar__name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.upgrade-bar__sub {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+}
+
+/* Stacked layout for bar with progress + buttons */
+.upgrade-bar__inner--stacked {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+}
+
+.upgrade-bar__top {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    width: 100%;
+}
+
+.upgrade-bar__progress {
+    flex: 1;
+    min-width: 0;
+}
+
+.upgrade-bar__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.upgrade-bar__cta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.upgrade-bar__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background: var(--accent, #6c5ce7);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--accent, #6c5ce7) 40%, transparent);
+}
+
+.upgrade-bar__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.upgrade-bar__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Ensure content doesn't hide behind floating bar */
+.upgrade-detail {
+    padding-bottom: 100px !important;
+}
+
+@media (max-width: 600px) {
+    .upgrade-bar__info {
+        display: none;
+    }
+
+    .upgrade-bar__btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .upgrade-bar__inner {
+        padding: 0.65rem 1rem;
+    }
+}
+
+/* ── Card Backlight Glow ─────────────────────────────────────────── */
+@keyframes cardGlow {
+    0% {
+        box-shadow: inset 0 0 30px 8px rgba(108, 92, 231, 0.15), 0 0 15px 2px rgba(108, 92, 231, 0.1);
+    }
+
+    30% {
+        box-shadow: inset 0 0 50px 15px rgba(108, 92, 231, 0.3), 0 0 25px 5px rgba(108, 92, 231, 0.2);
+    }
+
+    50% {
+        box-shadow: inset 0 0 35px 10px rgba(108, 92, 231, 0.2), 0 0 18px 3px rgba(108, 92, 231, 0.12);
+    }
+
+    70% {
+        box-shadow: inset 0 0 45px 12px rgba(108, 92, 231, 0.28), 0 0 22px 4px rgba(108, 92, 231, 0.18);
+    }
+
+    100% {
+        box-shadow: inset 0 0 30px 8px rgba(108, 92, 231, 0.15), 0 0 15px 2px rgba(108, 92, 231, 0.1);
+    }
+}
+
+.furniture-card {
+    position: relative;
+}
+
+.furniture-card__render-wrap {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-bottom: 1px solid var(--border-subtle);
+    background: radial-gradient(ellipse at 50% 100%, #1a1830 0%, #111422 40%, #0a0d16 70%, #070a12 100%);
+    animation: cardGlow 5s ease-in-out infinite;
+}
+
+.furniture-card__render-wrap .furniture-card__render {
+    position: relative;
+    z-index: 1;
+    border-bottom: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Stagger glow per card */
+.furniture-card:nth-child(2) .furniture-card__render-wrap {
+    animation-delay: -1.5s;
+}
+
+.furniture-card:nth-child(3) .furniture-card__render-wrap {
+    animation-delay: -3s;
+}
+
+.furniture-card:nth-child(4) .furniture-card__render-wrap {
+    animation-delay: -0.8s;
+}
+
+.furniture-card:nth-child(5) .furniture-card__render-wrap {
+    animation-delay: -2.5s;
+}
+
+.furniture-card:nth-child(6) .furniture-card__render-wrap {
+    animation-delay: -4s;
+}
+
+.furniture-card:nth-child(7) .furniture-card__render-wrap {
+    animation-delay: -1s;
+}
+
+.furniture-card:nth-child(8) .furniture-card__render-wrap {
+    animation-delay: -3.5s;
+}
+
+.furniture-card:nth-child(9) .furniture-card__render-wrap {
+    animation-delay: -2s;
+}
+
+.furniture-card:nth-child(10) .furniture-card__render-wrap {
+    animation-delay: -4.5s;
+}
+
+.furniture-card:nth-child(11) .furniture-card__render-wrap {
+    animation-delay: -0.5s;
+}

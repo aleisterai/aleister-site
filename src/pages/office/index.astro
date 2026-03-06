@@ -1,10 +1,13 @@
 ---
 import "../../styles/global.css";
 import "../../styles/office-dashboard.css";
+import PageHeader from "../../components/PageHeader.astro";
 import SEO from "../../components/SEO.astro";
 import ThemeToggle from "../../components/ThemeToggle.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import MiniPlayer from "../../components/MiniPlayer.astro";
+import { ViewTransitions } from "astro:transitions";
 ---
 
 <!DOCTYPE html>
@@ -25,26 +28,58 @@ import Footer from "../../components/Footer.astro";
         <SEO
             title="Aleister — Operations Center"
             description="Live operational dashboard: agent status, task ledger, and project metrics for the Aleister AI agent system."
-            image="/images/og/aleister-hq-office.png"
+            image="/api/og/office"
         />
+        <ViewTransitions />
+        <script is:inline>
+            document.addEventListener("astro:before-swap", function (e) {
+                var theme = document.documentElement.getAttribute("data-theme");
+                if (theme)
+                    e.newDocument.documentElement.setAttribute(
+                        "data-theme",
+                        theme
+                    );
+            });
+        </script>
     </head>
     <body>
         <Header />
         <main class="ops-dashboard">
-            <!-- ── Top Row: Office Preview + Agent Summary ──────────────── -->
+            <!-- ── Hero ──────────────────────────────────────────────── -->
+            <div class="ops-hero">
+                <div class="ops-hero__text">
+                    <PageHeader
+                        title="Aleister"
+                        accent="HQ"
+                        subtitle="Live operational dashboard: agent status, task ledger, and project metrics."
+                    >
+                        <p class="ops-hero__chain">
+                            Operations Center · Live <span
+                                class="live-dot-inline"
+                                ><span></span>
+                            </span>
+                        </p>
+                    </PageHeader>
+                    <a href="/office/upgrades" class="btn btn-primary">
+                        🚀 Level Up Office →
+                    </a>
+                </div>
+            </div>
+
+            <!-- ── Top Row: Office Preview + Info Cards ──────────────── -->
             <section class="ops-top-row">
-                <!-- Office Preview Card -->
+                <!-- Interactive Office Preview -->
                 <a
                     href="/office/interactive"
                     class="ops-office-card"
                     title="View Interactive Pixel Office"
                 >
-                    <img
-                        src="/images/og/aleister-hq-office.png"
-                        alt="Pixel Office"
+                    <iframe
+                        src="/office/preview"
                         class="ops-office-thumb"
                         loading="lazy"
-                    />
+                        tabindex="-1"
+                        aria-hidden="true"></iframe>
                     <div class="ops-office-card__overlay">
                         <span class="ops-office-card__label"
                             >Interactive Office →</span
@@ -56,48 +91,70 @@ import Footer from "../../components/Footer.astro";
                     </div>
                 </a>
 
-                <!-- Agent Status Summary -->
-                <div class="ops-agent-summary">
-                    <h2 class="ops-section-title">Agent Status</h2>
-                    <div class="ops-badges" id="status-badges">
-                        <span class="ops-badge ops-badge--loading"
-                            >Loading...</span
-                        >
-                    </div>
-                    <div class="ops-agent-grid" id="agent-grid">
-                        <!-- Filled by JS -->
+                <!-- Consolidated Info Cards -->
+                <div class="ops-info-panel" id="info-panel">
+                    <div class="ops-info-grid" id="info-grid">
+                        <div class="ops-info-card">
+                            <span class="ops-info-card__value" id="info-agents"
+                                >—</span
+                            >
+                            <span class="ops-info-card__label">Agents</span>
+                        </div>
+                        <div class="ops-info-card">
+                            <span class="ops-info-card__value" id="info-working"
+                                >—</span
+                            >
+                            <span class="ops-info-card__label">Working</span>
+                        </div>
+                        <div class="ops-info-card">
+                            <span class="ops-info-card__value" id="info-idle"
+                                >—</span
+                            >
+                            <span class="ops-info-card__label">Idle</span>
+                        </div>
+                        <div class="ops-info-card">
+                            <span class="ops-info-card__value" id="info-tokens"
+                                >—</span
+                            >
+                            <span class="ops-info-card__label">Tokens</span>
+                        </div>
+                        <div class="ops-info-card">
+                            <span class="ops-info-card__value" id="info-commits"
+                                >—</span
+                            >
+                            <span class="ops-info-card__label">Commits</span>
+                        </div>
+                        <div class="ops-info-card">
+                            <span class="ops-info-card__value" id="info-tasks"
+                                >—</span
+                            >
+                            <span class="ops-info-card__label">Tasks Done</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- ── Metrics Row ──────────────────────────────────────────── -->
-            <section class="ops-metrics-section">
-                <h2 class="ops-section-title">Metrics</h2>
-                <div class="ops-metrics-row" id="metrics-row">
-                    <div class="ops-metric-card ops-metric--skeleton">
-                        <span class="ops-metric__value">—</span><span
-                            class="ops-metric__label">Total Cost</span>
-                    </div>
-                    <div class="ops-metric-card ops-metric--skeleton">
-                        <span class="ops-metric__value">—</span><span
-                            class="ops-metric__label">Tokens</span>
-                    </div>
-                    <div class="ops-metric-card ops-metric--skeleton">
-                        <span class="ops-metric__value">—</span><span
-                            class="ops-metric__label">Commits</span>
-                    </div>
-                    <div class="ops-metric-card ops-metric--skeleton">
-                        <span class="ops-metric__value">—</span><span
-                            class="ops-metric__label">Tasks Done</span>
-                    </div>
-                    <div class="ops-metric-card ops-metric--skeleton">
-                        <span class="ops-metric__value">—</span><span
-                            class="ops-metric__label">Issues Closed</span>
-                    </div>
-                    <div class="ops-metric-card ops-metric--skeleton">
-                        <span class="ops-metric__value">—</span><span
-                            class="ops-metric__label">Treasury</span>
-                    </div>
+            <!-- ── Agent Roster ────────────────────────────────────────── -->
+            <section class="ops-roster-section">
+                <h2 class="ops-section-title">Agent Roster</h2>
+                <div class="ops-table-wrapper">
+                    <table class="ops-table ops-roster-table" id="agent-roster">
+                        <thead>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Current Task</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roster-tbody">
+                            <tr
+                                ><td colspan="4" class="ops-table__loading"
+                                    >Loading agents...</td
+                                >
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -122,7 +179,6 @@ import Footer from "../../components/Footer.astro";
                             <option value="In Progress">In Progress</option>
                             <option value="To Do">To Do</option>
                             <option value="Done">Done</option>
-                            <option value="Backlog">Backlog</option>
                         </select>
                     </div>
                 </div>
@@ -152,8 +208,26 @@ import Footer from "../../components/Footer.astro";
             <!-- ── Backlog Queue ────────────────────────────────────────── -->
             <section class="ops-backlog-section">
                 <h2 class="ops-section-title">Backlog Queue</h2>
-                <div class="ops-backlog-list" id="backlog-list">
-                    <div class="ops-table__loading">Loading backlog...</div>
+                <div class="ops-table-wrapper">
+                    <table class="ops-table" id="backlog-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Board</th>
+                                <th>Assigned</th>
+                                <th>Status</th>
+                                <th>Labels</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="backlog-tbody">
+                            <tr
+                                ><td colspan="6" class="ops-table__loading"
+                                    >Loading backlog...</td
+                                >
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>
@@ -210,7 +284,7 @@ import Footer from "../../components/Footer.astro";
                     }
                 }
 
-                // ── Agent Status ───────────────────────────────────────────
+                // ── Agent Status + Info Cards ──────────────────────────────
                 async function loadAgentStatus() {
                     try {
                         const res = await fetch("/api/agent-status.json");
@@ -218,37 +292,39 @@ import Footer from "../../components/Footer.astro";
                         if (!data.success) return;
 
                         const s = data.summary;
-                        const badgesEl = $("#status-badges");
-                        badgesEl.innerHTML = `
-                        <span class="ops-badge ops-badge--online">${
-                            s.online
-                        } Online</span>
-                        <span class="ops-badge ops-badge--working">${
-                            s.working
-                        } Working</span>
-                        <span class="ops-badge ops-badge--idle">${
-                            s.idle
-                        } Idle</span>
-                        ${
-                            s.offline > 0
-                                ? `<span class="ops-badge ops-badge--offline">${s.offline} Offline</span>`
-                                : ""
-                        }
-                    `;
 
-                        const gridEl = $("#agent-grid");
-                        gridEl.innerHTML = data.agents
+                        // Populate info cards
+                        $("#info-agents").textContent = s.online;
+                        $("#info-working").textContent = s.working;
+                        $("#info-idle").textContent = s.idle;
+
+                        // Agent roster table
+                        const tbody = $("#roster-tbody");
+                        tbody.innerHTML = data.agents
                             .map(
                                 (a) => `
-                        <div class="ops-agent-card" style="--agent-color: ${a.color}">
-                            <span class="ops-agent-card__emoji">${a.emoji}</span>
-                            <div class="ops-agent-card__info">
-                                <span class="ops-agent-card__name">${a.name}</span>
-                                <span class="ops-agent-card__role">${a.role}</span>
-                            </div>
-                            <span class="ops-agent-card__dot ops-agent-card__dot--${a.status}" title="${a.activity}"></span>
-                        </div>
-                    `
+                            <tr class="ops-roster-row">
+                                <td class="ops-roster__agent">
+                                    <img class="ops-roster__avatar" src="${
+                                        a.avatar
+                                    }" alt="${a.name}" loading="lazy" />
+                                    <span class="ops-roster__name" style="color: ${
+                                        a.color
+                                    }">${a.name}</span>
+                                </td>
+                                <td class="ops-roster__role">${a.role}</td>
+                                <td>
+                                    <span class="ops-roster__status ops-roster__status--${
+                                        a.status
+                                    }">${
+                                    a.status === "working" ? "Working" : "Idle"
+                                }</span>
+                                </td>
+                                <td class="ops-roster__task">${
+                                    a.status === "working" ? a.activity : "—"
+                                }</td>
+                            </tr>
+                        `
                             )
                             .join("");
 
@@ -266,89 +342,76 @@ import Footer from "../../components/Footer.astro";
                     }
                 }
 
-                // ── Metrics ────────────────────────────────────────────────
+                // ── Assignee Avatar Mapping ───────────────────────────────
+                const ASSIGNEE_MAP = {
+                    vrusavuk: {
+                        name: "Aleister",
+                        avatar: "/avatars/hero-avatar.gif",
+                    },
+                    aleisterai: {
+                        name: "Aleister",
+                        avatar: "/avatars/hero-avatar.gif",
+                    },
+                    aleister: {
+                        name: "Aleister",
+                        avatar: "/avatars/hero-avatar.gif",
+                    },
+                    cipher: { name: "Cipher", avatar: "/avatars/cipher.png" },
+                    sage: { name: "Sage", avatar: "/avatars/sage.png" },
+                    quill: { name: "Quill", avatar: "/avatars/quill.png" },
+                    rally: { name: "Rally", avatar: "/avatars/rally.png" },
+                    echo: { name: "Echo", avatar: "/avatars/echo.png" },
+                    pixel: { name: "Pixel", avatar: "/avatars/pixel.png" },
+                    forge: { name: "Forge", avatar: "/avatars/forge.png" },
+                    prism: { name: "Prism", avatar: "/avatars/prism.png" },
+                    lyra: { name: "Lyra", avatar: "/avatars/lyra.png" },
+                };
+
+                function renderAssignee(task) {
+                    const raw =
+                        task.assignedAgent ||
+                        (task.assignees && task.assignees[0]) ||
+                        "";
+                    if (!raw) return "\u2014";
+                    const key = raw.toLowerCase().trim();
+                    const mapped = ASSIGNEE_MAP[key];
+                    if (mapped) {
+                        return `<img class="ops-table__avatar" src="${mapped.avatar}" alt="${mapped.name}" title="${mapped.name}" loading="lazy" />`;
+                    }
+                    return raw;
+                }
+
+                // ── Metrics (populates info cards) ────────────────────────
+                function fmtNum(n) {
+                    if (n >= 1e9) return (n / 1e9).toFixed(1) + "B";
+                    if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+                    if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+                    return n.toLocaleString();
+                }
+
                 async function loadMetrics() {
                     try {
-                        const [metricsRes, treasuryRes, boardRes] =
-                            await Promise.all([
-                                fetch("/api/agent-metrics.json"),
-                                fetch("/api/treasury-balances.json"),
-                                fetch("/api/project-board.json"),
-                            ]);
+                        const [metricsRes, ideRes] = await Promise.all([
+                            fetch("/api/agent-metrics.json"),
+                            fetch("/api/ide-usage.json"),
+                        ]);
                         const metrics = await metricsRes.json();
-                        const treasury = await treasuryRes.json();
-                        const board = await boardRes.json();
-
-                        // Calculate treasury total
-                        let treasuryTotal = 0;
-                        if (treasury.balances) {
-                            // We need prices — fetch separately
-                            try {
-                                const pricesRes = await fetch(
-                                    "/api/token-prices.json"
-                                );
-                                const prices = await pricesRes.json();
-                                for (const t of treasury.balances) {
-                                    let price = 0;
-                                    if (t.symbol === "ETH")
-                                        price = prices.ethereum?.usd || 0;
-                                    else if (t.symbol === "$ALEISTER")
-                                        price = prices.aleister?.usd || 0;
-                                    else if (t.symbol === "USDC")
-                                        price = prices["usd-coin"]?.usd || 1;
-                                    treasuryTotal += t.balance * price;
-                                }
-                            } catch (_) {}
-                        }
-
-                        const doneCount = board.summary?.done || 0;
+                        const ide = await ideRes.json();
                         const m = metrics.metrics || {};
 
-                        const cards = [
-                            {
-                                value: "$" + (170.54).toLocaleString(),
-                                label: "Total Cost",
-                                icon: "💰",
-                            },
-                            {
-                                value: (20218).toLocaleString(),
-                                label: "API Requests",
-                                icon: "🔢",
-                            },
-                            {
-                                value: (m.commits?.total || 0).toLocaleString(),
-                                label: "All-Time Commits",
-                                icon: "📝",
-                            },
-                            {
-                                value: doneCount.toString(),
-                                label: "Tasks Done",
-                                icon: "✅",
-                            },
-                            {
-                                value: (m.issuesClosed?.month || 0).toString(),
-                                label: "Issues Closed (30d)",
-                                icon: "🎯",
-                            },
-                            {
-                                value: "$" + treasuryTotal.toFixed(0),
-                                label: "Treasury",
-                                icon: "🏦",
-                            },
-                        ];
+                        const tokensOut = 3220132;
+                        const apiRequests = 20218;
+                        const ideTokens = ide.usage?.totalTokens || 0;
+                        const totalTokens = tokensOut + ideTokens;
 
-                        const row = $("#metrics-row");
-                        row.innerHTML = cards
-                            .map(
-                                (c) => `
-                        <div class="ops-metric-card">
-                            <span class="ops-metric__icon">${c.icon}</span>
-                            <span class="ops-metric__value">${c.value}</span>
-                            <span class="ops-metric__label">${c.label}</span>
-                        </div>
-                    `
-                            )
-                            .join("");
+                        // Populate info cards
+                        $("#info-tokens").textContent = fmtNum(totalTokens);
+                        $("#info-commits").textContent = (
+                            m.commits?.total || 0
+                        ).toLocaleString();
+                        $("#info-tasks").textContent = (
+                            m.issuesClosed?.allTime || 0
+                        ).toLocaleString();
                     } catch (e) {
                         console.error("Metrics error:", e);
                     }
@@ -428,10 +491,6 @@ import Footer from "../../components/Footer.astro";
                                         `<span class="ops-label" style="--label-color: #${l.color}">${l.name}</span>`
                                 )
                                 .join("");
-                            const assigned =
-                                t.assignedAgent ||
-                                t.assignees?.join(", ") ||
-                                "—";
                             const statusClass = statusBadgeClass(t.status);
                             const isPrivate = t.isPrivate;
                             const clickAttr = isPrivate
@@ -448,7 +507,7 @@ import Footer from "../../components/Footer.astro";
                             return `<tr style="${cursor}" ${clickAttr}>
                         <td class="ops-table__title">${lockIcon}${t.title}</td>
                         <td class="ops-table__board">${t.board}</td>
-                        <td>${assigned}</td>
+                        <td>${renderAssignee(t)}</td>
                         <td><span class="ops-status ${statusClass}">${
                                 t.status
                             }</span></td>
@@ -463,42 +522,44 @@ import Footer from "../../components/Footer.astro";
                     const backlog = allTasks.filter(
                         (t) => t.status === "Backlog"
                     );
-                    const list = $("#backlog-list");
+                    const tbody = $("#backlog-tbody");
 
                     if (backlog.length === 0) {
-                        list.innerHTML =
-                            '<div class="ops-backlog__empty">No items in backlog</div>';
+                        tbody.innerHTML =
+                            '<tr><td colspan="6" class="ops-table__empty">No items in backlog</td></tr>';
                         return;
                     }
 
-                    list.innerHTML = backlog
+                    tbody.innerHTML = backlog
                         .map((t) => {
+                            const labels = (t.labels || [])
+                                .map(
+                                    (l) =>
+                                        `<span class="ops-label" style="--label-color: #${l.color}">${l.name}</span>`
+                                )
+                                .join("");
                             const isPrivate = t.isPrivate;
                             const clickAttr = isPrivate
-                                ? `onclick="window.__opsToast('This task resides on a private board')"`
+                                ? `onclick="event.preventDefault(); window.__opsToast('This task resides on a private board')"`
                                 : t.url
                                 ? `onclick="window.open('${t.url}', '_blank')"`
                                 : "";
+                            const cursor =
+                                isPrivate || t.url ? "cursor: pointer;" : "";
                             const lockIcon = isPrivate
-                                ? '<span class="ops-lock">🔒</span>'
+                                ? '<span class="ops-lock" title="Private board">\ud83d\udd12</span>'
                                 : "";
-                            const labels = (t.labels || [])
-                                .slice(0, 2)
-                                .map(
-                                    (l) =>
-                                        `<span class="ops-label ops-label--sm" style="--label-color: #${l.color}">${l.name}</span>`
-                                )
-                                .join("");
 
-                            return `<div class="ops-backlog-item" ${clickAttr}>
-                        <span class="ops-backlog-item__title">${lockIcon}${
-                                t.title
-                            }</span>
-                        <span class="ops-backlog-item__meta">${
-                            t.board
-                        } · ${timeAgo(t.createdAt)}</span>
-                        <span class="ops-backlog-item__labels">${labels}</span>
-                    </div>`;
+                            return `<tr style="${cursor}" ${clickAttr}>
+                        <td class="ops-table__title">${lockIcon}${t.title}</td>
+                        <td class="ops-table__board">${t.board}</td>
+                        <td>${renderAssignee(t)}</td>
+                        <td><span class="ops-status ops-status--backlog">${
+                            t.status
+                        }</span></td>
+                        <td>${labels || "\u2014"}</td>
+                        <td class="ops-table__time">${timeAgo(t.createdAt)}</td>
+                    </tr>`;
                         })
                         .join("");
                 }
@@ -527,5 +588,6 @@ import Footer from "../../components/Footer.astro";
                 setInterval(loadTasks, 120000);
             })();
         </script>
+        <MiniPlayer transition:persist="mini-player" />
     </body>
 </html>

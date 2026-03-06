@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
 import { songs, STATUS_CONFIG } from "../../data/music";
 
 const siteUrl = "https://thealeister.com";
@@ -37,17 +38,11 @@ const musicJsonLd = [
 >
   <section class="music section">
     <div class="container">
-      <!-- Header -->
-      <div class="music__header">
-        <div class="music__badge">🎵 Music Distribution</div>
-        <h1 class="music__title">
-          Music <span class="text-gradient">Distribution</span>
-        </h1>
-        <p class="music__subtitle">
-          Track songs from studio to streaming platforms. Every release, every
-          status, every store — in one place.
-        </p>
-      </div>
+      <PageHeader
+        title="Music"
+        accent="Distribution"
+        subtitle="Track songs from studio to streaming platforms. Every release, every status, every store — in one place."
+      />
 
       <!-- Song list -->
       <div class="song-list">
@@ -90,6 +85,9 @@ const musicJsonLd = [
                 </div>
 
                 <span class="song-row__genre">{song.genre}</span>
+                {song.releaseId && (
+                  <span class="song-row__release-id">Release #{song.releaseId}</span>
+                )}
 
                 {/* Audio progress bar */}
                 {song.audioSrc && (
@@ -155,144 +153,96 @@ const musicJsonLd = [
   </section>
 </BaseLayout>
 
-<!-- Audio Player Script -->
+<!-- Audio Player Script (delegates to global MiniPlayer) -->
 <script is:inline>
-(function () {
-  let currentAudio = null;
-  let currentBtn = null;
-  let currentRow = null;
-  let animFrame = null;
+document.addEventListener('astro:page-load', function () {
+  var player = window.__aleisterPlayer;
+  if (!player) return;
 
   function formatTime(s) {
-    if (!s || isNaN(s)) return "0:00";
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return m + ":" + (sec < 10 ? "0" : "") + sec;
+    if (!s || isNaN(s)) return '0:00';
+    var m = Math.floor(s / 60);
+    var sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
   }
 
-  function stopCurrent() {
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
-    }
-    if (currentBtn) {
-      currentBtn.querySelector(".play-icon").style.display = "";
-      currentBtn.querySelector(".pause-icon").style.display = "none";
-      currentBtn.classList.remove("playing");
-      currentBtn = null;
-    }
-    if (currentRow) {
-      var progress = currentRow.querySelector("[data-progress-for]");
-      if (progress) progress.style.display = "none";
-      currentRow = null;
-    }
-    if (animFrame) {
-      cancelAnimationFrame(animFrame);
-      animFrame = null;
-    }
+  // Sync inline play buttons with global player state
+  function syncButtons() {
+    document.querySelectorAll('.song-row__play-btn').forEach(function (btn) {
+      var src = btn.dataset.audio;
+      var isActive = player.currentSrc() === src;
+      var isPlaying = isActive && player.isPlaying();
+      btn.querySelector('.play-icon').style.display = isPlaying ? 'none' : '';
+      btn.querySelector('.pause-icon').style.display = isPlaying ? '' : 'none';
+      btn.classList.toggle('playing', isPlaying);
+      var row = btn.closest('.song-row');
+      var progress = row.querySelector('[data-progress-for]');
+      if (progress) progress.style.display = isActive ? '' : 'none';
+    });
   }
 
-  function updateProgress() {
-    if (!currentAudio || !currentRow) return;
-    var progress = currentRow.querySelector("[data-progress-for]");
-    if (!progress) return;
-    var fill = progress.querySelector(".progress-bar__fill");
-    var cur = progress.querySelector(".progress-time__current");
-    var dur = progress.querySelector(".progress-time__duration");
-    if (fill) fill.style.width = ((currentAudio.currentTime / currentAudio.duration) * 100) + "%";
-    if (cur) cur.textContent = formatTime(currentAudio.currentTime);
-    if (dur) dur.textContent = formatTime(currentAudio.duration);
-    animFrame = requestAnimationFrame(updateProgress);
+  // Update inline progress bars
+  var inlineRaf = null;
+  function updateInlineProgress() {
+    var audio = player.getAudio();
+    if (!audio) { inlineRaf = null; return; }
+    var src = player.currentSrc();
+    document.querySelectorAll('.song-row__play-btn').forEach(function (btn) {
+      if (btn.dataset.audio !== src) return;
+      var row = btn.closest('.song-row');
+      var progress = row.querySelector('[data-progress-for]');
+      if (!progress) return;
+      var fill = progress.querySelector('.progress-bar__fill');
+      var cur = progress.querySelector('.progress-time__current');
+      var dur = progress.querySelector('.progress-time__duration');
+      if (fill) fill.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+      if (cur) cur.textContent = formatTime(audio.currentTime);
+      if (dur) dur.textContent = formatTime(audio.duration);
+    });
+    if (player.isPlaying()) inlineRaf = requestAnimationFrame(updateInlineProgress);
   }
 
-  document.querySelectorAll(".song-row__play-btn").forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
+  // Bind play buttons
+  document.querySelectorAll('.song-row__play-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      var audioSrc = btn.dataset.audio;
-      var row = btn.closest(".song-row");
-
-      if (currentBtn === btn && currentAudio && !currentAudio.paused) {
-        currentAudio.pause();
-        btn.querySelector(".play-icon").style.display = "";
-        btn.querySelector(".pause-icon").style.display = "none";
-        btn.classList.remove("playing");
-        cancelAnimationFrame(animFrame);
-        return;
-      }
-
-      if (currentBtn === btn && currentAudio && currentAudio.paused) {
-        currentAudio.play();
-        btn.querySelector(".play-icon").style.display = "none";
-        btn.querySelector(".pause-icon").style.display = "";
-        btn.classList.add("playing");
-        animFrame = requestAnimationFrame(updateProgress);
-        return;
-      }
-
-      stopCurrent();
-      currentAudio = new Audio(audioSrc);
-      currentBtn = btn;
-      currentRow = row;
-
-      var progress = row.querySelector("[data-progress-for]");
-      if (progress) progress.style.display = "";
-
-      btn.querySelector(".play-icon").style.display = "none";
-      btn.querySelector(".pause-icon").style.display = "";
-      btn.classList.add("playing");
-
-      currentAudio.play().catch(function () { stopCurrent(); });
-      currentAudio.addEventListener("ended", function () { stopCurrent(); });
-      animFrame = requestAnimationFrame(updateProgress);
+      var src = btn.dataset.audio;
+      var title = btn.dataset.title;
+      var row = btn.closest('.song-row');
+      var artwork = row.querySelector('.song-row__artwork');
+      var artworkSrc = artwork ? artwork.src : '';
+      player.play(src, title, artworkSrc);
+      syncButtons();
+      if (inlineRaf) cancelAnimationFrame(inlineRaf);
+      inlineRaf = requestAnimationFrame(updateInlineProgress);
     });
   });
 
-  document.querySelectorAll(".progress-bar").forEach(function (bar) {
-    bar.addEventListener("click", function (e) {
-      if (!currentAudio) return;
+  // Seek on inline progress bar click
+  document.querySelectorAll('.progress-bar').forEach(function (bar) {
+    bar.addEventListener('click', function (e) {
+      var audio = player.getAudio();
+      if (!audio) return;
       var rect = bar.getBoundingClientRect();
       var pct = (e.clientX - rect.left) / rect.width;
-      currentAudio.currentTime = pct * currentAudio.duration;
+      audio.currentTime = pct * audio.duration;
     });
   });
-})();
+
+  // Initial sync (in case we navigated back while music was playing)
+  syncButtons();
+  if (player.isPlaying()) {
+    inlineRaf = requestAnimationFrame(updateInlineProgress);
+  }
+});
 </script>
 
 <style>
   .music {
-    padding: 6rem 0 4rem;
+    padding-bottom: 4rem;
   }
 
-  .music__header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
 
-  .music__badge {
-    display: inline-block;
-    padding: 0.4rem 1rem;
-    border-radius: 9999px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.25rem;
-    backdrop-filter: blur(8px);
-  }
-
-  .music__title {
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    margin-bottom: 1rem;
-  }
-
-  .music__subtitle {
-    max-width: 580px;
-    margin: 0 auto;
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.6;
-  }
 
   /* ── Legend ── */
   .music__legend {
@@ -359,10 +309,7 @@ const musicJsonLd = [
     object-fit: cover;
   }
 
-  .song-row:hover .song-row__artwork-wrap {
-    width: 160px;
-    height: 160px;
-  }
+
 
   .song-row__play-btn {
     position: absolute;
@@ -420,6 +367,19 @@ const musicJsonLd = [
     border: 1px solid var(--border-subtle);
     color: var(--text-tertiary);
     margin-top: 0.35rem;
+  }
+
+  .song-row__release-id {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-tertiary);
+    margin-top: 0.35rem;
+    margin-left: 0.25rem;
   }
 
   /* Progress */
@@ -546,7 +506,6 @@ const musicJsonLd = [
       padding: 4rem 0 3rem;
     }
 
-    /* Disable hover-expand on touch devices */
     .song-row:hover .song-row__artwork-wrap {
       width: 100px;
       height: 100px;

@@ -44,7 +44,7 @@ async function callRpc(method: string, params: any[]): Promise<any> {
         params
       })
     });
-    
+
     const data = await response.json();
     return data.result;
   } catch (error) {
@@ -61,33 +61,45 @@ async function getEthBalance(address: string): Promise<string> {
 async function getTokenBalance(tokenAddress: string, walletAddress: string): Promise<string> {
   // Encode the balanceOf call: balanceOf(address)
   const data = '0x70a08231000000000000000000000000' + walletAddress.slice(2);
-  
+
   const result = await callRpc('eth_call', [{
     to: tokenAddress,
     data: data
   }, 'latest']);
-  
+
   return result || '0';
 }
 
 function formatBalance(rawBalance: string, decimals: number): number {
-  if (!rawBalance || rawBalance === '0x') return 0;
-  const balance = parseInt(rawBalance, 16) / Math.pow(10, decimals);
-  return balance;
+  if (!rawBalance || rawBalance === '0x' || rawBalance === '0x0') return 0;
+  try {
+    const raw = BigInt(rawBalance);
+    // Split into whole and fractional parts to avoid Number precision loss
+    const divisor = BigInt(10) ** BigInt(decimals);
+    const whole = raw / divisor;
+    const remainder = raw % divisor;
+    // Convert fractional part: pad to `decimals` digits, then parse as float
+    const fracStr = remainder.toString().padStart(decimals, '0');
+    return Number(whole) + Number(`0.${fracStr}`);
+  } catch {
+    // Fallback for malformed hex
+    const balance = parseInt(rawBalance, 16) / Math.pow(10, decimals);
+    return balance;
+  }
 }
 
 export const GET: APIRoute = async () => {
   try {
     const balances = [];
-    
+
     // Fetch native ETH balance
     const ethRawBalance = await getEthBalance(TREASURY_SAFE);
     const ethBalance = formatBalance(ethRawBalance, TOKENS.ETH.decimals);
-    
+
     // Fetch WETH balance
     const wethRawBalance = await getTokenBalance(TOKENS.WETH.address, TREASURY_SAFE);
     const wethBalance = formatBalance(wethRawBalance, TOKENS.WETH.decimals);
-    
+
     // Combine ETH and WETH into single ETH balance
     const totalEthBalance = ethBalance + wethBalance;
     balances.push({
@@ -104,7 +116,7 @@ export const GET: APIRoute = async () => {
         wrapped: wethBalance
       }
     });
-    
+
     // Fetch ALEISTER balance
     const aleisterRawBalance = await getTokenBalance(TOKENS.ALEISTER.address, TREASURY_SAFE);
     const aleisterBalance = formatBalance(aleisterRawBalance, TOKENS.ALEISTER.decimals);
@@ -116,7 +128,7 @@ export const GET: APIRoute = async () => {
       address: TOKENS.ALEISTER.address,
       type: 'erc20'
     });
-    
+
     // Fetch USDC balance
     const usdcRawBalance = await getTokenBalance(TOKENS.USDC.address, TREASURY_SAFE);
     const usdcBalance = formatBalance(usdcRawBalance, TOKENS.USDC.decimals);
@@ -128,7 +140,7 @@ export const GET: APIRoute = async () => {
       address: TOKENS.USDC.address,
       type: 'erc20'
     });
-    
+
     return new Response(JSON.stringify({
       success: true,
       treasuryAddress: TREASURY_SAFE,
@@ -139,19 +151,19 @@ export const GET: APIRoute = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
+        'Cache-Control': 'public, max-age=60' // Cache for 1 minute — keep treasury values fresh
       }
     });
   } catch (error) {
     console.error('Error fetching treasury balances:', error);
-    
+
     // Return fallback data with realistic values
     const fallbackData = {
       success: false,
       treasuryAddress: TREASURY_SAFE,
       balances: [
-        { 
-          symbol: 'ETH', 
+        {
+          symbol: 'ETH',
           balance: 0.3340255931893871, // Combined ETH + WETH
           type: 'combined',
           decimals: 18,
@@ -160,23 +172,23 @@ export const GET: APIRoute = async () => {
             wrapped: 0.3289429631893871
           }
         },
-        { 
-          symbol: '$ALEISTER', 
-          balance: 0, 
-          type: 'erc20', 
-          decimals: 18 
+        {
+          symbol: '$ALEISTER',
+          balance: 0,
+          type: 'erc20',
+          decimals: 18
         },
-        { 
-          symbol: 'USDC', 
-          balance: 10, 
-          type: 'erc20', 
-          decimals: 6 
+        {
+          symbol: 'USDC',
+          balance: 10,
+          type: 'erc20',
+          decimals: 6
         }
       ],
       timestamp: new Date().toISOString(),
       error: 'Using fallback data'
     };
-    
+
     return new Response(JSON.stringify(fallbackData), {
       status: 200,
       headers: {

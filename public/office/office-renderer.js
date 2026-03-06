@@ -280,7 +280,25 @@
         canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
         canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
         ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-        if (camera.x === 0 && camera.y === 0) centerCamera();
+        if (window.__officePreview) {
+            zoomToBuilding();
+        } else if (camera.x === 0 && camera.y === 0) {
+            centerCamera();
+        }
+    }
+
+    function zoomToBuilding() {
+        // Calculate zoom to fit just the building with minimal margin
+        var margin = 0.25; // small margin around building
+        var bldPxW = (BLD.w + margin * 2) * TILE;
+        var bldPxH = (BLD.h + margin * 2) * TILE;
+        camera.zoom = Math.min(W / bldPxW, H / bldPxH);
+        camera.targetZoom = camera.zoom;
+        // Center on building
+        var bldCenterX = (BLD.x + BLD.w / 2) * TILE * camera.zoom;
+        var bldCenterY = (BLD.y + BLD.h / 2) * TILE * camera.zoom;
+        camera.x = W / 2 - bldCenterX;
+        camera.y = H / 2 - bldCenterY;
     }
 
     function getWorldBounds() {
@@ -1601,18 +1619,7 @@
 
     function inR(gx, gy, r) { return gx >= r.x && gx < r.x + r.w && gy >= r.y && gy < r.y + r.h; }
 
-    // ─── Input ───────────────────────────────────────────────────
-    canvas.addEventListener('wheel', e => { e.preventDefault(); camera.targetZoom = Math.max(getMinZoom(), Math.min(3, camera.targetZoom + (e.deltaY > 0 ? -0.1 : 0.1))); clampCamera(); }, { passive: false });
-    canvas.addEventListener('mousedown', e => { if (e.button === 0) { camera.isDragging = true; camera.wasDragging = false; camera.dragStartX = e.clientX; camera.dragStartY = e.clientY; camera.dragStartCamX = camera.x; camera.dragStartCamY = camera.y; } });
-    window.addEventListener('mousemove', e => { if (camera.isDragging) { const dx = e.clientX - camera.dragStartX, dy = e.clientY - camera.dragStartY; if (Math.abs(dx) > 3 || Math.abs(dy) > 3) camera.wasDragging = true; camera.x = camera.dragStartCamX + dx; camera.y = camera.dragStartCamY + dy; clampCamera(); } });
-    window.addEventListener('mouseup', () => { camera.isDragging = false; });
-    let touches = [];
-    canvas.addEventListener('touchstart', e => { e.preventDefault(); touches = [...e.touches]; if (touches.length === 1) { camera.isDragging = true; camera.wasDragging = false; camera.dragStartX = touches[0].clientX; camera.dragStartY = touches[0].clientY; camera.dragStartCamX = camera.x; camera.dragStartCamY = camera.y; } else if (touches.length === 2) { camera.isDragging = false; camera.pinchStartDist = Math.hypot(touches[1].clientX - touches[0].clientX, touches[1].clientY - touches[0].clientY); camera.pinchStartZoom = camera.targetZoom; } }, { passive: false });
-    canvas.addEventListener('touchmove', e => { e.preventDefault(); const nt = [...e.touches]; if (nt.length === 1 && camera.isDragging) { const dx = nt[0].clientX - camera.dragStartX, dy = nt[0].clientY - camera.dragStartY; if (Math.abs(dx) > 3 || Math.abs(dy) > 3) camera.wasDragging = true; camera.x = camera.dragStartCamX + dx; camera.y = camera.dragStartCamY + dy; clampCamera(); } else if (nt.length === 2) { const dist = Math.hypot(nt[1].clientX - nt[0].clientX, nt[1].clientY - nt[0].clientY); camera.targetZoom = Math.max(getMinZoom(), Math.min(3, camera.pinchStartZoom * (dist / camera.pinchStartDist))); } }, { passive: false });
-    canvas.addEventListener('touchend', () => { camera.isDragging = false; });
-    canvas.addEventListener('click', e => { if (camera.wasDragging) return; const r = canvas.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top; for (const ap of agentPositions) { if (mx > ap.x - ap.w / 2 && mx < ap.x + ap.w / 2 && my > ap.y - ap.h / 2 && my < ap.y + ap.h / 2) { showPanel(ap.agent, ap.state); return; } } hidePanel(); });
-
-    // ─── Panel ───────────────────────────────────────────────────
+    // ─── Input (disabled in preview mode) ────────────────────────
     function showPanel(agent, state) {
         const p = document.getElementById('agent-panel');
         document.getElementById('panel-avatar').innerHTML = `<img src="${agent.avatar}" alt="${agent.name}" onerror="this.style.display='none'"/>`;
@@ -1627,34 +1634,50 @@
         ).join('');
         p.classList.add('visible');
     }
-    function hidePanel() { document.getElementById('agent-panel').classList.remove('visible'); }
+    function hidePanel() { document.getElementById('agent-panel')?.classList.remove('visible'); }
 
-    // ─── Toolbar ─────────────────────────────────────────────────
-    document.getElementById('btn-zoom-in').addEventListener('click', () => { camera.targetZoom = Math.min(3, camera.targetZoom + 0.2); });
-    document.getElementById('btn-zoom-out').addEventListener('click', () => { camera.targetZoom = Math.max(getMinZoom(), camera.targetZoom - 0.2); });
-    document.getElementById('btn-rotate-left').addEventListener('click', () => { if (camera.is3D) camera.targetRotation -= 15; });
-    document.getElementById('btn-rotate-right').addEventListener('click', () => { if (camera.is3D) camera.targetRotation += 15; });
-    document.getElementById('btn-view-toggle').addEventListener('click', () => {
-        camera.is3D = !camera.is3D;
-        document.getElementById('view-label').textContent = camera.is3D ? '3D' : '2D';
-        document.getElementById('btn-view-toggle').classList.toggle('active', camera.is3D);
-        setTimeout(centerCamera, 50);
-    });
-    document.getElementById('btn-reset').addEventListener('click', () => { camera.targetZoom = 0.85; camera.targetRotation = 0; centerCamera(); });
-    // Time-of-day cycle
-    document.getElementById('btn-tod-cycle').addEventListener('click', () => {
-        const idx = (TOD_MODES.indexOf(timeOfDay) + 1) % TOD_MODES.length;
-        timeOfDay = TOD_MODES[idx];
+    if (!window.__officePreview) {
+        canvas.addEventListener('wheel', e => { e.preventDefault(); camera.targetZoom = Math.max(getMinZoom(), Math.min(3, camera.targetZoom + (e.deltaY > 0 ? -0.1 : 0.1))); clampCamera(); }, { passive: false });
+        canvas.addEventListener('mousedown', e => { if (e.button === 0) { camera.isDragging = true; camera.wasDragging = false; camera.dragStartX = e.clientX; camera.dragStartY = e.clientY; camera.dragStartCamX = camera.x; camera.dragStartCamY = camera.y; } });
+        window.addEventListener('mousemove', e => { if (camera.isDragging) { const dx = e.clientX - camera.dragStartX, dy = e.clientY - camera.dragStartY; if (Math.abs(dx) > 3 || Math.abs(dy) > 3) camera.wasDragging = true; camera.x = camera.dragStartCamX + dx; camera.y = camera.dragStartCamY + dy; clampCamera(); } });
+        window.addEventListener('mouseup', () => { camera.isDragging = false; });
+        let touches = [];
+        canvas.addEventListener('touchstart', e => { e.preventDefault(); touches = [...e.touches]; if (touches.length === 1) { camera.isDragging = true; camera.wasDragging = false; camera.dragStartX = touches[0].clientX; camera.dragStartY = touches[0].clientY; camera.dragStartCamX = camera.x; camera.dragStartCamY = camera.y; } else if (touches.length === 2) { camera.isDragging = false; camera.pinchStartDist = Math.hypot(touches[1].clientX - touches[0].clientX, touches[1].clientY - touches[0].clientY); camera.pinchStartZoom = camera.targetZoom; } }, { passive: false });
+        canvas.addEventListener('touchmove', e => { e.preventDefault(); const nt = [...e.touches]; if (nt.length === 1 && camera.isDragging) { const dx = nt[0].clientX - camera.dragStartX, dy = nt[0].clientY - camera.dragStartY; if (Math.abs(dx) > 3 || Math.abs(dy) > 3) camera.wasDragging = true; camera.x = camera.dragStartCamX + dx; camera.y = camera.dragStartCamY + dy; clampCamera(); } else if (nt.length === 2) { const dist = Math.hypot(nt[1].clientX - nt[0].clientX, nt[1].clientY - nt[0].clientY); camera.targetZoom = Math.max(getMinZoom(), Math.min(3, camera.pinchStartZoom * (dist / camera.pinchStartDist))); } }, { passive: false });
+        canvas.addEventListener('touchend', () => { camera.isDragging = false; });
+        canvas.addEventListener('click', e => { if (camera.wasDragging) return; const r = canvas.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top; for (const ap of agentPositions) { if (mx > ap.x - ap.w / 2 && mx < ap.x + ap.w / 2 && my > ap.y - ap.h / 2 && my < ap.y + ap.h / 2) { showPanel(ap.agent, ap.state); return; } } hidePanel(); });
+
+        // ─── Panel ───────────────────────────────────────────────────
+        document.getElementById('panel-close').addEventListener('click', hidePanel);
+
+        // ─── Toolbar ─────────────────────────────────────────────────
+        document.getElementById('btn-zoom-in').addEventListener('click', () => { camera.targetZoom = Math.min(3, camera.targetZoom + 0.2); });
+        document.getElementById('btn-zoom-out').addEventListener('click', () => { camera.targetZoom = Math.max(getMinZoom(), camera.targetZoom - 0.2); });
+        document.getElementById('btn-rotate-left').addEventListener('click', () => { if (camera.is3D) camera.targetRotation -= 15; });
+        document.getElementById('btn-rotate-right').addEventListener('click', () => { if (camera.is3D) camera.targetRotation += 15; });
+        document.getElementById('btn-view-toggle').addEventListener('click', () => {
+            camera.is3D = !camera.is3D;
+            document.getElementById('view-label').textContent = camera.is3D ? '3D' : '2D';
+            document.getElementById('btn-view-toggle').classList.toggle('active', camera.is3D);
+            setTimeout(centerCamera, 50);
+        });
+        document.getElementById('btn-reset').addEventListener('click', () => { camera.targetZoom = 0.85; camera.targetRotation = 0; centerCamera(); });
+        // Time-of-day cycle
+        document.getElementById('btn-tod-cycle').addEventListener('click', () => {
+            const idx = (TOD_MODES.indexOf(timeOfDay) + 1) % TOD_MODES.length;
+            timeOfDay = TOD_MODES[idx];
+            document.getElementById('tod-icon').textContent = TOD_ICONS[timeOfDay];
+            document.getElementById('tod-label').textContent = TOD_LABELS[timeOfDay];
+        });
+
+        // ─── Init toolbar labels ────────────────────────────────────
+        document.getElementById('view-label').textContent = '2D';
+        document.getElementById('btn-view-toggle').classList.remove('active');
         document.getElementById('tod-icon').textContent = TOD_ICONS[timeOfDay];
         document.getElementById('tod-label').textContent = TOD_LABELS[timeOfDay];
-    });
-    document.getElementById('panel-close').addEventListener('click', hidePanel);
+    }
 
     // ─── Init ────────────────────────────────────────────────────
-    document.getElementById('view-label').textContent = '2D';
-    document.getElementById('btn-view-toggle').classList.remove('active');
-    document.getElementById('tod-icon').textContent = TOD_ICONS[timeOfDay];
-    document.getElementById('tod-label').textContent = TOD_LABELS[timeOfDay];
     window.addEventListener('resize', resize);
     resize();
     requestAnimationFrame(render);

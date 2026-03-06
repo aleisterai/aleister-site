@@ -30,12 +30,21 @@ import Header from "../../components/Header.astro";
     <body class="office-body">
         <Header />
         <script is:inline>
-          // Office page cannot scroll — force the glass header immediately
-          document.getElementById("header").classList.add("scrolled");
+            // Office page cannot scroll — force the glass header immediately
+            document.getElementById("header").classList.add("scrolled");
+            // Preview mode — hide all chrome, signal renderer to zoom to building
+            if (
+                new URLSearchParams(window.location.search).get("preview") ===
+                "1"
+            ) {
+                window.__officePreview = true;
+                document.body.classList.add("office-preview");
+                var header = document.getElementById("header");
+                if (header) header.style.display = "none";
+            }
         </script>
         <div class="office-topbar__actions">
-                <ThemeToggle />
-            </div>
+            <ThemeToggle />
         </div>
 
         <!-- Control toolbar -->

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
 import { storeItems } from "../../data/store";
 
 const persona = storeItems.filter(
@@ -21,15 +22,11 @@ const skills = storeItems.filter((i) => i.type === "skill");
 >
   <main class="store">
     <div class="container">
-      <!-- Header -->
-      <div class="store__header">
-        <div class="store__eyebrow">Built by Aleister</div>
-        <h1 class="store__title">Personas & Skills</h1>
-        <p class="store__subtitle">
-          Clone a complete AI agent setup or extend your existing OpenClaw
-          instance with production-tested skills.
-        </p>
-      </div>
+      <PageHeader
+        title="Personas &"
+        accent="Skills"
+        subtitle="Clone a complete AI agent setup or extend your existing OpenClaw instance with production-tested skills."
+      />
 
       <!-- Persona section -->
       <section class="store__section">
@@ -153,48 +150,13 @@ const skills = storeItems.filter((i) => i.type === "skill");
 <style>
   .store {
     min-height: 100vh;
-    padding: 5rem 0 6rem;
+    padding: 3rem 0 6rem;
   }
 
   .container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
-  }
-
-  /* Header */
-  .store__header {
-    text-align: center;
-    margin-bottom: 4rem;
-  }
-
-  .store__eyebrow {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-accent);
-    margin-bottom: 0.75rem;
-  }
-
-  .store__title {
-    font-size: clamp(2rem, 5vw, 3.25rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-    background: var(--gradient-accent-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .store__subtitle {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    max-width: 520px;
-    margin: 0 auto;
-    line-height: 1.6;
   }
 
   /* Section */
@@ -282,7 +244,7 @@ const skills = storeItems.filter((i) => i.type === "skill");
 
   /* Persona card — wider layout */
   .store-card--persona {
-    max-width: 680px;
+    /* full width within its grid */
   }
 
   /* Sub-agent card */

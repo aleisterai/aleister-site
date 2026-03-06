@@ -1,0 +1,70 @@
+---
+/**
+ * PageHeader — single source of truth for every page title.
+ *
+ * Usage:
+ *   <PageHeader title="The" accent="Team" subtitle="..." />
+ *   <PageHeader title="" accent="Dashboard" subtitle="..." />
+ *   <PageHeader title="" accent="$ALEISTER" subtitle="..." />
+ *
+ * Props
+ *   title    — plain-text portion of the heading (before the gradient word)
+ *   accent   — gradient-highlighted word(s)
+ *   subtitle — one-liner below the title
+ */
+interface Props {
+    title?: string;
+    accent: string;
+    subtitle?: string;
+}
+
+const { title = "", accent, subtitle } = Astro.props;
+---
+
+<div class="ph">
+    <h1 class="ph__title">
+        {title && <span>{title} </span>}<span class="ph__accent">{accent}</span>
+    </h1>
+    {subtitle && <p class="ph__subtitle">{subtitle}</p>}
+    <slot />
+</div>
+
+<style>
+    .ph {
+        margin-bottom: 2.5rem;
+    }
+
+    .ph__title {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+            sans-serif;
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin: 0 0 0.75rem;
+        color: var(--text-primary);
+    }
+
+    .ph__accent {
+        background: var(--gradient-accent-text);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .ph__subtitle {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+            sans-serif;
+        font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+        color: var(--text-secondary);
+        line-height: 1.6;
+        max-width: 640px;
+        margin: 0;
+    }
+
+    @media (max-width: 480px) {
+        .ph__title {
+            font-size: 2rem;
+        }
+    }
+</style>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 
 const TOKEN = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 const SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
@@ -23,12 +24,13 @@ const OKX =
       <!-- ── Zone 1: Hero + CTAs ── -->
       <div class="tr-hero">
         <div class="tr-hero__text">
-          <p class="tr-chain">Base Mainnet · Chain ID 8453</p>
-          <p class="tr-mcap" id="tr-mcap" aria-live="polite"></p>
-          <h1 class="tr-title">$ALEISTER</h1>
-          <p class="tr-desc">
-            One canonical source of truth. All addresses verifiable on-chain.
-          </p>
+          <PageHeader
+            accent="$ALEISTER"
+            subtitle="One canonical source of truth. All addresses verifiable on-chain."
+          >
+            <p class="tr-chain">Base Mainnet · Chain ID 8453</p>
+            <p class="tr-mcap" id="tr-mcap" aria-live="polite"></p>
+          </PageHeader>
         </div>
         <div class="tr-hero__ctas">
           <a
@@ -206,7 +208,7 @@ const OKX =
 
 <style>
   .tr-page {
-    padding-top: 5rem;
+    padding-top: 3rem;
     padding-bottom: 5rem;
     min-height: 100vh;
   }
@@ -218,7 +220,6 @@ const OKX =
     justify-content: space-between;
     gap: 2rem;
     margin-bottom: 1.5rem;
-    padding-top: 2rem;
   }
 
   .tr-chain {
@@ -228,25 +229,6 @@ const OKX =
     letter-spacing: 0.08em;
     color: var(--text-tertiary);
     margin-bottom: 0.6rem;
-  }
-
-  .tr-title {
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 0.75rem;
-    background: var(--gradient-accent-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .tr-desc {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 380px;
   }
 
   .tr-hero__ctas {
