@@ -60,7 +60,10 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Build the origin for success/cancel URLs
-    const origin = new URL(request.url).origin;
+    // request.url on Vercel SSR resolves to localhost — use Host header instead
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'thealeister.com';
+    const proto = request.headers.get('x-forwarded-proto') || 'https';
+    const origin = `${proto}://${host}`;
     const returnPath = item.slug === 'building' ? '/office/upgrades' : `/office/upgrades/${item.slug}`;
 
     try {
