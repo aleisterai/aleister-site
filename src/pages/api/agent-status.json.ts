@@ -48,7 +48,9 @@ function simpleHash(str: string): number {
 
 function isWorkingSimulated(agentId: string): boolean {
     const now = new Date();
-    const hour = now.getUTCHours();
+    // Use Pacific time (Mac Mini is in El Dorado Hills, CA)
+    const pacificTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+    const hour = pacificTime.getHours();
     const schedule = WORK_SCHEDULES[agentId];
     if (!schedule) return false;
     if (hour < schedule.startHour || hour >= schedule.endHour) return false;
