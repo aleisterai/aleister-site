@@ -451,15 +451,24 @@ const hasMesh = !!item.meshPath;
                         if (!o.isMesh) return;
                         o.castShadow = true;
                         o.receiveShadow = true;
-                        if (o.material) {
-                            // Don't manually set envMap — scene.environment handles this
-                            o.material.envMapIntensity = 1.0;
-                            if (o.material.map) {
-                                o.material.map.colorSpace = THREE.SRGBColorSpace;
-                                o.material.map.anisotropy = 8;
+                        const mats = Array.isArray(o.material) ? o.material : [o.material];
+                        mats.forEach((mat, i) => {
+                            console.log(`[3D] Mesh "${o.name}" mat[${i}]:`, {
+                                type: mat.type,
+                                hasMap: !!mat.map,
+                                color: mat.color?.getHexString(),
+                                metalness: mat.metalness,
+                                roughness: mat.roughness,
+                            });
+                            mat.envMapIntensity = 1.0;
+                            if (mat.map) {
+                                mat.map.colorSpace = THREE.SRGBColorSpace;
+                                mat.map.flipY = false;
+                                mat.map.anisotropy = 8;
+                                mat.map.needsUpdate = true;
                             }
-                            o.material.needsUpdate = true;
-                        }
+                            mat.needsUpdate = true;
+                        });
                     });
 
                     scene.add(model);
