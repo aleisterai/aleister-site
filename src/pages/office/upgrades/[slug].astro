@@ -342,7 +342,6 @@ const hasMesh = !!item.meshPath;
                     hdr.dispose();
                     pmrem.dispose();
                 }
-                const modelEnvMap = scene.environment;  // alias for model material override
 
                 // --- Camera ---
                 const camera = new THREE.PerspectiveCamera(
@@ -453,9 +452,13 @@ const hasMesh = !!item.meshPath;
                         o.castShadow = true;
                         o.receiveShadow = true;
                         if (o.material) {
-                            o.material.envMap = modelEnvMap;
+                            // Don't manually set envMap — scene.environment handles this
                             o.material.envMapIntensity = 1.0;
-                            if (o.material.map) o.material.map.anisotropy = 8;
+                            if (o.material.map) {
+                                o.material.map.colorSpace = THREE.SRGBColorSpace;
+                                o.material.map.anisotropy = 8;
+                            }
+                            o.material.needsUpdate = true;
                         }
                     });
 
