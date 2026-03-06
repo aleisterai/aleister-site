@@ -294,11 +294,14 @@ const hasMesh = !!item.meshPath;
 
         <!-- Three.js 3D Viewer (only loaded if item has a mesh) -->
         {hasMesh && (
-            <script type="module" define:vars={{ meshPath: item.meshPath }}>
-                import * as THREE from 'three';
-                import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-                import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-                import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+            <script is:inline type="module">
+                import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js';
+                import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/loaders/GLTFLoader.js';
+                import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/controls/OrbitControls.js';
+                import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/loaders/RGBELoader.js';
+
+                const meshPath = JSON.parse(document.getElementById('item-data')?.textContent || '{}').meshPath;
+                if (!meshPath) { console.error('No meshPath'); throw new Error('No meshPath'); }
 
                 const wrap = document.getElementById('canvas-wrap');
                 if (!wrap) throw new Error('Canvas wrap not found');

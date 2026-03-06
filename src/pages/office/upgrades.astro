@@ -280,13 +280,24 @@ const agents = deskUpgrades.map((desk) => {
                                         </span>
                                     )}
                                     <div class="furniture-card__render-wrap">
-                                        <img
-                                            class="furniture-card__render"
-                                            src={nextLevel.renderImage}
-                                            alt={item.name}
-                                            loading="lazy"
-                                            onerror="this.style.display='none'"
-                                        />
+                                        {item.meshPath ? (
+                                            <canvas
+                                                class="furniture-card__render furniture-card__canvas"
+                                                data-mesh={item.meshPath}
+                                                data-fallback={nextLevel.renderImage}
+                                                width="400"
+                                                height="400"
+                                                style={`background: url(${nextLevel.renderImage}) center/cover no-repeat;`}
+                                            />
+                                        ) : (
+                                            <img
+                                                class="furniture-card__render"
+                                                src={nextLevel.renderImage}
+                                                alt={item.name}
+                                                loading="lazy"
+                                                onerror="this.style.display='none'"
+                                            />
+                                        )}
                                     </div>
                                     <div class="furniture-card__body">
                                         <h3 class="furniture-card__name">
@@ -714,8 +725,8 @@ const agents = deskUpgrades.map((desk) => {
 
         <!-- GLB Sprite Renderer — renders 3D models once on card canvases -->
         <script is:inline type="module">
-            import * as THREE from 'three';
-            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+            import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js';
+            import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/loaders/GLTFLoader.js';
 
             const canvases = document.querySelectorAll('canvas[data-mesh]');
             if (canvases.length > 0) {
