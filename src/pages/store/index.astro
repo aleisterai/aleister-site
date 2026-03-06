@@ -444,7 +444,7 @@ const skills = storeItems.filter((i) => i.type === "skill");
     }
   }
   .sold-badge {
-    display: none;
+    display: inline-block;
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0.15rem 0.55rem;
@@ -454,10 +454,6 @@ const skills = storeItems.filter((i) => i.type === "skill");
     margin-left: 0.5rem;
     vertical-align: middle;
     letter-spacing: 0.02em;
-  }
-
-  .sold-badge.visible {
-    display: inline-block;
   }
 </style>
 
@@ -476,9 +472,8 @@ const skills = storeItems.filter((i) => i.type === "skill");
 
       map.forEach(({ id, count, label }) => {
         const el = document.getElementById(id);
-        if (el && count > 0) {
+        if (el) {
           el.textContent = `${count} ${label}`;
-          el.classList.add("visible");
         }
       });
     } catch (err) {
