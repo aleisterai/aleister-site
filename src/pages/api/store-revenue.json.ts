@@ -1,7 +1,6 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { storeItems } from '../../data/store';
 
 const STRIPE_API = 'https://api.stripe.com/v1';
 
@@ -11,35 +10,31 @@ function stripeAuth(): string {
 }
 
 /**
- * Classify a Stripe charge description into a product category.
- * Stripe Payment Link charges include the product name in `description`.
+ * Classify a Stripe charge into a product category.
+ * Payment Link charges have null description and empty metadata,
+ * so we classify by amount. Upgrade session charges have metadata.
  */
 function classifyCharge(charge: any): { category: string; productSlug: string | null } {
-    const desc = (charge.description || '').toLowerCase();
     const meta = charge.metadata || {};
+    const amountCents = charge.amount || 0;
 
-    // Check metadata first (for upgrade session charges)
+    // Skip FundlyHub donations (they have donation_amount in metadata)
+    if (meta.donation_amount) {
+        return { category: 'other', productSlug: null };
+    }
+
+    // Upgrade session charges have upgrade_slug metadata
     if (meta.upgrade_slug) {
         return { category: 'upgrade', productSlug: meta.upgrade_slug };
     }
 
-    // Match against store items by name
-    for (const item of storeItems) {
-        if (desc.includes(item.name.toLowerCase())) {
-            if (item.type === 'persona') {
-                return {
-                    category: item.category === 'Persona' ? 'agent' : 'subagent',
-                    productSlug: item.slug,
-                };
-            }
-            return { category: 'skill', productSlug: item.slug };
-        }
-    }
-
-    // Fallback heuristics
-    if (desc.includes('persona') || desc.includes('aleister')) return { category: 'agent', productSlug: null };
-    if (desc.includes('sub-agent') || desc.includes('subagent')) return { category: 'subagent', productSlug: null };
-    if (desc.includes('skill') || desc.includes('humanizer') || desc.includes('coding')) return { category: 'skill', productSlug: null };
+    // Payment Link charges: classify by price (in cents)
+    // $89 (8900c) = Aleister Persona
+    // $39 (3900c) = Sub-Agent
+    // $1  (100c)  = Skill
+    if (amountCents === 8900) return { category: 'agent', productSlug: 'aleister-persona' };
+    if (amountCents === 3900) return { category: 'subagent', productSlug: null };
+    if (amountCents === 100) return { category: 'skill', productSlug: null };
 
     return { category: 'other', productSlug: null };
 }
