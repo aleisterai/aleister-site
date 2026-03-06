@@ -45,7 +45,14 @@ const CLAW_MART_EARNINGS = 89;
 
       <!-- ── Revenue Streams ── -->
       <div class="dashboard-section">
-        <h2 class="section-title">Revenue Streams</h2>
+        <h2 class="section-title">
+          Revenue Streams <a
+            href="https://trustmrr.com/startup/aleister"
+            target="_blank"
+            rel="noopener"
+            class="section-title__link">TrustMRR ↗</a
+          >
+        </h2>
         <div class="revenue-grid">
           <a
             class="revenue-card"
@@ -310,6 +317,21 @@ const CLAW_MART_EARNINGS = 89;
     color: var(--text-tertiary);
     margin-bottom: 1.25rem;
     text-align: left;
+  }
+
+  .section-title__link {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--accent, #6c5ce7);
+    text-decoration: none;
+    opacity: 0.7;
+    margin-left: 0.5rem;
+    transition: opacity 0.2s;
+  }
+
+  .section-title__link:hover {
+    opacity: 1;
+    text-decoration: underline;
   }
 
   /* ──── Revenue Grid ──── */
