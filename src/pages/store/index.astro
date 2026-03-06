@@ -33,6 +33,7 @@ const skills = storeItems.filter((i) => i.type === "skill");
         <h2 class="store__section-title">
           <span class="section-dot persona-dot"></span>
           Personas
+          <span class="sold-badge" id="sold-persona"></span>
         </h2>
         <div class="store__grid store__grid--persona">
           {
@@ -81,6 +82,7 @@ const skills = storeItems.filter((i) => i.type === "skill");
           <span class="section-count"
             >{subagents.length} available · $39 each</span
           >
+          <span class="sold-badge" id="sold-subagent"></span>
         </h2>
         <div class="store__grid store__grid--subagents">
           {
@@ -121,6 +123,7 @@ const skills = storeItems.filter((i) => i.type === "skill");
           <span class="section-dot skill-dot"></span>
           Skills
           <span class="section-count">{skills.length} available</span>
+          <span class="sold-badge" id="sold-skill"></span>
         </h2>
         <div class="store__grid store__grid--skills">
           {
@@ -440,4 +443,48 @@ const skills = storeItems.filter((i) => i.type === "skill");
       grid-template-columns: 1fr;
     }
   }
+  .sold-badge {
+    display: none;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 99px;
+    background: linear-gradient(135deg, #6c5ce7, #a855f7);
+    color: #fff;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+
+  .sold-badge.visible {
+    display: inline-block;
+  }
 </style>
+
+<script>
+  async function loadSoldCounts() {
+    try {
+      const res = await fetch("/api/store-revenue.json");
+      const data = await res.json();
+      const sales = data.productSales || {};
+
+      const map = [
+        { id: "sold-persona", count: sales.agent || 0, label: "sold" },
+        { id: "sold-subagent", count: sales.subagent || 0, label: "sold" },
+        { id: "sold-skill", count: sales.skill || 0, label: "sold" },
+      ];
+
+      map.forEach(({ id, count, label }) => {
+        const el = document.getElementById(id);
+        if (el && count > 0) {
+          el.textContent = `${count} ${label}`;
+          el.classList.add("visible");
+        }
+      });
+    } catch (err) {
+      console.error("Failed to load sold counts:", err);
+    }
+  }
+
+  loadSoldCounts();
+</script>

@@ -82,23 +82,6 @@ const CLAW_MART_EARNINGS = 89;
               <div class="revenue-card__sub" id="store-sub">
                 Loading from Stripe...
               </div>
-              <div class="revenue-card__sales" id="store-sales">
-                <span
-                  class="sale-pill"
-                  id="sales-agent"
-                  title="Agent personas sold"
-                  >🤖 <b>—</b>
-                </span>
-                <span
-                  class="sale-pill"
-                  id="sales-subagent"
-                  title="Sub-agents sold"
-                  >🧩 <b>—</b>
-                </span>
-                <span class="sale-pill" id="sales-skill" title="Skills sold"
-                  >⚡ <b>—</b>
-                </span>
-              </div>
             </div>
           </a>
           <a
@@ -185,786 +168,785 @@ const CLAW_MART_EARNINGS = 89;
       </div>
     </div>
   </div>
-</BaseLayout>
 
-<style>
-  .dashboard-page {
-    padding-top: 3rem;
-    padding-bottom: 5rem;
-    min-height: 100vh;
-  }
-
-  /* ──── Hero ──── */
-  .dashboard-hero {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .dashboard-chain {
-    font-size: 0.72rem;
-    font-family: "JetBrains Mono", monospace;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-tertiary);
-    margin-bottom: 0.6rem;
-  }
-
-  .dashboard-hero__stats {
-    display: flex;
-    gap: 1.5rem;
-    flex-shrink: 0;
-    align-items: flex-end;
-  }
-
-  .refresh-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.25rem;
-    border-radius: 10px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    height: fit-content;
-    margin-bottom: 0.1rem;
-  }
-
-  .refresh-btn:hover:not(:disabled) {
-    border-color: var(--text-accent);
-    background: color-mix(in srgb, var(--text-accent) 8%, var(--bg-glass));
-    transform: translateY(-1px);
-  }
-
-  .refresh-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .refresh-btn svg {
-    transition: transform 0.3s ease;
-  }
-
-  .refresh-btn:active:not(:disabled) svg {
-    transform: rotate(180deg);
-  }
-
-  .stat-card {
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 14px;
-    padding: 1.25rem 1.5rem;
-    min-width: 180px;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-value {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-
-  .stat-change {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
-  }
-
-  .stat-change.change-up {
-    color: #10b981;
-  }
-
-  .stat-change.change-down {
-    color: #ef4444;
-  }
-
-  .stat-card--accent {
-    border-color: color-mix(in srgb, #10b981 30%, var(--border-glass));
-    background: color-mix(in srgb, #10b981 5%, var(--bg-glass));
-  }
-
-  /* ──── Sections ──── */
-  .dashboard-section {
-    margin-bottom: 2.5rem;
-  }
-
-  .dashboard-section--muted {
-    background: transparent;
-    border: 1px dashed var(--border-subtle);
-    border-radius: 14px;
-    padding: 1.5rem;
-  }
-
-  .section-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-tertiary);
-    margin-bottom: 1.25rem;
-    text-align: left;
-  }
-
-  .section-title__link {
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: var(--accent, #6c5ce7);
-    text-decoration: none;
-    opacity: 0.7;
-    margin-left: 0.5rem;
-    transition: opacity 0.2s;
-  }
-
-  .section-title__link:hover {
-    opacity: 1;
-    text-decoration: underline;
-  }
-
-  /* ──── Revenue Grid ──── */
-  .revenue-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
-  }
-
-  .revenue-card {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 12px;
-    padding: 1.25rem;
-    transition: border-color 0.2s ease;
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .revenue-card:hover {
-    border-color: var(--border-subtle);
-  }
-
-  .revenue-card__icon {
-    font-size: 1.6rem;
-    line-height: 1;
-    flex-shrink: 0;
-    padding-top: 0.1rem;
-  }
-
-  .revenue-card__body {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .revenue-card__name {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.35rem;
-  }
-
-  .revenue-card__amount {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-
-  .revenue-card__sub {
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
-    font-style: italic;
-  }
-
-  .revenue-card__sales {
-    display: flex;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .sale-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.7rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 99px;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    color: var(--text-secondary);
-    white-space: nowrap;
-  }
-
-  .sale-pill b {
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  /* ──── Treasury Grid ──── */
-  .treasury-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .treasury-card {
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    border-radius: 12px;
-    padding: 1.25rem;
-  }
-
-  .treasury-card__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-  }
-
-  .token-symbol {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  .token-change {
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-  }
-
-  .change-up {
-    background: color-mix(in srgb, #10b981 15%, transparent);
-    color: #10b981;
-  }
-
-  .change-down {
-    background: color-mix(in srgb, #ef4444 15%, transparent);
-    color: #ef4444;
-  }
-
-  .token-balance {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-
-  .token-value {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-  }
-
-  .token-breakdown {
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
-    margin-top: 0.25rem;
-    font-style: italic;
-  }
-
-  /* ──── Treasury Address ──── */
-  .treasury-address {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    padding: 1.25rem;
-  }
-
-  .address-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-  }
-
-  .address-value {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.78rem;
-    color: var(--text-primary);
-    word-break: break-all;
-    line-height: 1.6;
-    margin-bottom: 0.75rem;
-    display: block;
-  }
-
-  .address-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  /* ──── Copy Button ──── */
-  .copy-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.7rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-
-  .copy-btn:hover {
-    border-color: var(--text-accent);
-    color: var(--text-accent);
-  }
-
-  .copy-btn.copied {
-    border-color: #059669;
-    color: #059669;
-    background: color-mix(in srgb, #059669 10%, transparent);
-  }
-
-  /* ──── Badge ──── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.3rem 0.7rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: color-mix(in srgb, var(--text-accent) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-accent) 20%, transparent);
-    color: var(--text-accent);
-    text-decoration: none;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-  }
-
-  .badge:hover {
-    background: color-mix(in srgb, var(--text-accent) 18%, transparent);
-  }
-
-  /* ──── Live Dot ──── */
-  .live-dot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-  }
-
-  .live-dot span {
-    display: block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #10b981;
-    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-dot {
-    0%,
-    100% {
-      opacity: 1;
-      box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+  <style>
+    .dashboard-page {
+      padding-top: 3rem;
+      padding-bottom: 5rem;
+      min-height: 100vh;
     }
-    50% {
-      opacity: 0.5;
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
-    }
-  }
 
-  .live-dot-inline {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 0.35rem;
-    vertical-align: middle;
-  }
-
-  .live-dot-inline span {
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #10b981;
-    box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  /* ──── Disclaimer ──── */
-  .dashboard-disclaimer {
-    margin-top: 2rem;
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    line-height: 1.65;
-    border-left: 2px solid var(--border-subtle);
-    padding-left: 1rem;
-  }
-
-  /* ──── Responsive ──── */
-  @media (max-width: 768px) {
+    /* ──── Hero ──── */
     .dashboard-hero {
-      flex-direction: column;
-      align-items: flex-start;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .dashboard-chain {
+      font-size: 0.72rem;
+      font-family: "JetBrains Mono", monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 0.6rem;
     }
 
     .dashboard-hero__stats {
-      width: 100%;
-      flex-direction: column;
+      display: flex;
+      gap: 1.5rem;
+      flex-shrink: 0;
+      align-items: flex-end;
+    }
+
+    .refresh-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: fit-content;
+      margin-bottom: 0.1rem;
+    }
+
+    .refresh-btn:hover:not(:disabled) {
+      border-color: var(--text-accent);
+      background: color-mix(in srgb, var(--text-accent) 8%, var(--bg-glass));
+      transform: translateY(-1px);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .refresh-btn svg {
+      transition: transform 0.3s ease;
+    }
+
+    .refresh-btn:active:not(:disabled) svg {
+      transform: rotate(180deg);
     }
 
     .stat-card {
-      width: 100%;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      min-width: 180px;
     }
 
-    .revenue-grid,
-    .treasury-grid,
-    .steps-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .page-header__title {
-      font-size: 2rem;
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
     }
 
     .stat-value {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
     }
-  }
-</style>
 
-<script>
-  // Copy to clipboard functionality
-  document.querySelectorAll(".copy-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const text = btn.dataset.copy ?? "";
+    .stat-change {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+    }
+
+    .stat-change.change-up {
+      color: #10b981;
+    }
+
+    .stat-change.change-down {
+      color: #ef4444;
+    }
+
+    .stat-card--accent {
+      border-color: color-mix(in srgb, #10b981 30%, var(--border-glass));
+      background: color-mix(in srgb, #10b981 5%, var(--bg-glass));
+    }
+
+    /* ──── Sections ──── */
+    .dashboard-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .dashboard-section--muted {
+      background: transparent;
+      border: 1px dashed var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .section-title__link {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--accent, #6c5ce7);
+      text-decoration: none;
+      opacity: 0.7;
+      margin-left: 0.5rem;
+      transition: opacity 0.2s;
+    }
+
+    .section-title__link:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    /* ──── Revenue Grid ──── */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .revenue-card {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .revenue-card:hover {
+      border-color: var(--border-subtle);
+    }
+
+    .revenue-card__icon {
+      font-size: 1.6rem;
+      line-height: 1;
+      flex-shrink: 0;
+      padding-top: 0.1rem;
+    }
+
+    .revenue-card__body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .revenue-card__name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .revenue-card__amount {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .revenue-card__sub {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      font-style: italic;
+    }
+
+    .revenue-card__sales {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sale-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 99px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .sale-pill b {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* ──── Treasury Grid ──── */
+    .treasury-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .treasury-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .treasury-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .token-symbol {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .token-change {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .change-up {
+      background: color-mix(in srgb, #10b981 15%, transparent);
+      color: #10b981;
+    }
+
+    .change-down {
+      background: color-mix(in srgb, #ef4444 15%, transparent);
+      color: #ef4444;
+    }
+
+    .token-balance {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .token-value {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .token-breakdown {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    /* ──── Treasury Address ──── */
+    .treasury-address {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .address-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .address-value {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--text-primary);
+      word-break: break-all;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .address-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ──── Copy Button ──── */
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--text-accent);
+      color: var(--text-accent);
+    }
+
+    .copy-btn.copied {
+      border-color: #059669;
+      color: #059669;
+      background: color-mix(in srgb, #059669 10%, transparent);
+    }
+
+    /* ──── Badge ──── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: color-mix(in srgb, var(--text-accent) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--text-accent) 20%, transparent);
+      color: var(--text-accent);
+      text-decoration: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .badge:hover {
+      background: color-mix(in srgb, var(--text-accent) 18%, transparent);
+    }
+
+    /* ──── Live Dot ──── */
+    .live-dot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+    }
+
+    .live-dot span {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+      }
+      50% {
+        opacity: 0.5;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+      }
+    }
+
+    .live-dot-inline {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 0.35rem;
+      vertical-align: middle;
+    }
+
+    .live-dot-inline span {
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    /* ──── Disclaimer ──── */
+    .dashboard-disclaimer {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      line-height: 1.65;
+      border-left: 2px solid var(--border-subtle);
+      padding-left: 1rem;
+    }
+
+    /* ──── Responsive ──── */
+    @media (max-width: 768px) {
+      .dashboard-hero {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .dashboard-hero__stats {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .stat-card {
+        width: 100%;
+      }
+
+      .revenue-grid,
+      .treasury-grid,
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header__title {
+        font-size: 2rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+
+  <script>
+    // Copy to clipboard functionality
+    document.querySelectorAll(".copy-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const text = btn.dataset.copy ?? "";
+        try {
+          await navigator.clipboard.writeText(text);
+          const textEl = btn.querySelector(".copy-text");
+          if (textEl) {
+            btn.classList.add("copied");
+            textEl.textContent = "Copied!";
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              textEl.textContent = "Copy";
+            }, 2000);
+          }
+        } catch {
+          // fallback
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+
+          const textEl = btn.querySelector(".copy-text");
+          if (textEl) {
+            btn.classList.add("copied");
+            textEl.textContent = "Copied!";
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              textEl.textContent = "Copy";
+            }, 2000);
+          }
+        }
+      });
+    });
+
+    // Configuration
+    const TREASURY_SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
+
+    // State
+    let refreshInterval;
+    let isLoading = false;
+
+    // Format numbers
+    function formatCurrency(amount) {
+      if (amount >= 1e6) return `$${(amount / 1e6).toFixed(2)}M`;
+      if (amount >= 1e3) return `$${(amount / 1e3).toFixed(1)}K`;
+      return `$${amount.toFixed(2)}`;
+    }
+
+    function formatNumber(num, decimals = 2) {
+      if (num >= 1e6) return (num / 1e6).toFixed(decimals) + "M";
+      if (num >= 1e3) return (num / 1e3).toFixed(decimals) + "K";
+      return num.toFixed(decimals);
+    }
+
+    // Fetch token prices from our server endpoint
+    async function fetchTokenPrices() {
       try {
-        await navigator.clipboard.writeText(text);
-        const textEl = btn.querySelector(".copy-text");
-        if (textEl) {
-          btn.classList.add("copied");
-          textEl.textContent = "Copied!";
-          setTimeout(() => {
-            btn.classList.remove("copied");
-            textEl.textContent = "Copy";
-          }, 2000);
-        }
-      } catch {
-        // fallback
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-
-        const textEl = btn.querySelector(".copy-text");
-        if (textEl) {
-          btn.classList.add("copied");
-          textEl.textContent = "Copied!";
-          setTimeout(() => {
-            btn.classList.remove("copied");
-            textEl.textContent = "Copy";
-          }, 2000);
-        }
+        const response = await fetch("/api/token-prices.json");
+        const data = await response.json();
+        return {
+          aleister: {
+            price: data.aleister?.usd || 0,
+            change24h: data.aleister?.usd_24h_change || 0,
+          },
+          ethereum: {
+            price: data.ethereum?.usd || 0,
+            change24h: data.ethereum?.usd_24h_change || 0,
+          },
+          "usd-coin": {
+            price: data["usd-coin"]?.usd || 1,
+            change24h: data["usd-coin"]?.usd_24h_change || 0,
+          },
+        };
+      } catch (error) {
+        console.error("Error fetching token prices:", error);
+        return {
+          aleister: { price: 0, change24h: 0 },
+          ethereum: { price: 0, change24h: 0 },
+          "usd-coin": { price: 1, change24h: 0 },
+        };
       }
-    });
-  });
-
-  // Configuration
-  const TREASURY_SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
-
-  // State
-  let refreshInterval;
-  let isLoading = false;
-
-  // Format numbers
-  function formatCurrency(amount) {
-    if (amount >= 1e6) return `$${(amount / 1e6).toFixed(2)}M`;
-    if (amount >= 1e3) return `$${(amount / 1e3).toFixed(1)}K`;
-    return `$${amount.toFixed(2)}`;
-  }
-
-  function formatNumber(num, decimals = 2) {
-    if (num >= 1e6) return (num / 1e6).toFixed(decimals) + "M";
-    if (num >= 1e3) return (num / 1e3).toFixed(decimals) + "K";
-    return num.toFixed(decimals);
-  }
-
-  // Fetch token prices from our server endpoint
-  async function fetchTokenPrices() {
-    try {
-      const response = await fetch("/api/token-prices.json");
-      const data = await response.json();
-      return {
-        aleister: {
-          price: data.aleister?.usd || 0,
-          change24h: data.aleister?.usd_24h_change || 0,
-        },
-        ethereum: {
-          price: data.ethereum?.usd || 0,
-          change24h: data.ethereum?.usd_24h_change || 0,
-        },
-        "usd-coin": {
-          price: data["usd-coin"]?.usd || 1,
-          change24h: data["usd-coin"]?.usd_24h_change || 0,
-        },
-      };
-    } catch (error) {
-      console.error("Error fetching token prices:", error);
-      return {
-        aleister: { price: 0, change24h: 0 },
-        ethereum: { price: 0, change24h: 0 },
-        "usd-coin": { price: 1, change24h: 0 },
-      };
     }
-  }
 
-  // Fetch treasury balances from our server endpoint
-  async function fetchTreasuryBalances() {
-    try {
-      const response = await fetch("/api/treasury-balances.json");
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching treasury balances:", error);
-      return {
-        success: false,
-        balances: [
-          { symbol: "ETH", balance: 0 },
-          { symbol: "ALEISTER", balance: 0 },
-          { symbol: "USDC", balance: 0 },
-        ],
-      };
+    // Fetch treasury balances from our server endpoint
+    async function fetchTreasuryBalances() {
+      try {
+        const response = await fetch("/api/treasury-balances.json");
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching treasury balances:", error);
+        return {
+          success: false,
+          balances: [
+            { symbol: "ETH", balance: 0 },
+            { symbol: "ALEISTER", balance: 0 },
+            { symbol: "USDC", balance: 0 },
+          ],
+        };
+      }
     }
-  }
 
-  // Fetch all treasury data
-  async function fetchTreasuryData() {
-    isLoading = true;
-    updateLoadingState(true);
+    // Fetch all treasury data
+    async function fetchTreasuryData() {
+      isLoading = true;
+      updateLoadingState(true);
 
-    try {
-      const [balancesData, pricesData] = await Promise.all([
-        fetchTreasuryBalances(),
-        fetchTokenPrices(),
-      ]);
+      try {
+        const [balancesData, pricesData] = await Promise.all([
+          fetchTreasuryBalances(),
+          fetchTokenPrices(),
+        ]);
 
-      const treasuryData = {
-        tokens: [],
-        totalValue: 0,
-      };
+        const treasuryData = {
+          tokens: [],
+          totalValue: 0,
+        };
 
-      // Process each token
-      balancesData.balances.forEach((tokenBalance) => {
-        const symbol = tokenBalance.symbol;
-        const balance = tokenBalance.balance;
+        // Process each token
+        balancesData.balances.forEach((tokenBalance) => {
+          const symbol = tokenBalance.symbol;
+          const balance = tokenBalance.balance;
 
-        let priceData;
-        switch (symbol) {
-          case "$ALEISTER":
-            priceData = pricesData.aleister;
-            break;
-          case "ETH": // Combined ETH + WETH
-            priceData = pricesData.ethereum;
-            break;
-          case "USDC":
-            priceData = pricesData["usd-coin"];
-            break;
-          default:
-            priceData = { price: 0, change24h: 0 };
-        }
+          let priceData;
+          switch (symbol) {
+            case "$ALEISTER":
+              priceData = pricesData.aleister;
+              break;
+            case "ETH": // Combined ETH + WETH
+              priceData = pricesData.ethereum;
+              break;
+            case "USDC":
+              priceData = pricesData["usd-coin"];
+              break;
+            default:
+              priceData = { price: 0, change24h: 0 };
+          }
 
-        const value = balance * priceData.price;
-        treasuryData.totalValue += value;
+          const value = balance * priceData.price;
+          treasuryData.totalValue += value;
 
-        treasuryData.tokens.push({
-          symbol,
-          balance,
-          value,
-          change24h: priceData.change24h,
-          breakdown: tokenBalance.breakdown,
+          treasuryData.tokens.push({
+            symbol,
+            balance,
+            value,
+            change24h: priceData.change24h,
+            breakdown: tokenBalance.breakdown,
+          });
         });
-      });
 
-      return treasuryData;
-    } catch (error) {
-      console.error("Error fetching treasury data:", error);
-      return {
-        tokens: [
-          {
-            symbol: "ETH",
-            balance: 0,
-            value: 0,
-            change24h: 0,
-            breakdown: { native: 0, wrapped: 0 },
-          },
-          {
-            symbol: "$ALEISTER",
-            balance: 0,
-            value: 0,
-            change24h: 0,
-          },
-          {
-            symbol: "USDC",
-            balance: 0,
-            value: 0,
-            change24h: 0,
-          },
-        ],
-        totalValue: 0,
-      };
-    } finally {
-      isLoading = false;
-      updateLoadingState(false);
-    }
-  }
-
-  // Fetch Claw Mart earnings (hardcoded for now, will integrate API later)
-  async function fetchClawMartEarnings() {
-    // TODO: Integrate with Claw Mart API
-    // For now, return hardcoded value as mentioned
-    return {
-      totalEarnings: 89.0,
-      currency: "USD",
-      lastUpdated: new Date().toISOString(),
-      topSkills: [
-        { skill: "Twitter Engagement", earnings: 45.0 },
-        { skill: "Research Assistant", earnings: 25.0 },
-        { skill: "Code Review", earnings: 19.0 },
-      ],
-    };
-  }
-
-  // Update UI with data
-  function updateUI(treasuryData, clawMartData) {
-    // Update token cards
-    treasuryData.tokens.forEach((token) => {
-      const card = document.querySelector(
-        `.treasury-card[data-token="${token.symbol}"]`
-      );
-      if (card) {
-        const changeEl = card.querySelector(".token-change");
-        const balanceEl = card.querySelector(".token-balance");
-        const valueEl = card.querySelector(".token-value");
-
-        if (changeEl) {
-          changeEl.textContent = `${
-            token.change24h >= 0 ? "+" : ""
-          }${token.change24h.toFixed(1)}%`;
-          changeEl.className = `token-change ${
-            token.change24h >= 0 ? "change-up" : "change-down"
-          }`;
-        }
-        if (balanceEl) balanceEl.textContent = formatNumber(token.balance, 2);
-        if (valueEl) valueEl.textContent = formatCurrency(token.value);
+        return treasuryData;
+      } catch (error) {
+        console.error("Error fetching treasury data:", error);
+        return {
+          tokens: [
+            {
+              symbol: "ETH",
+              balance: 0,
+              value: 0,
+              change24h: 0,
+              breakdown: { native: 0, wrapped: 0 },
+            },
+            {
+              symbol: "$ALEISTER",
+              balance: 0,
+              value: 0,
+              change24h: 0,
+            },
+            {
+              symbol: "USDC",
+              balance: 0,
+              value: 0,
+              change24h: 0,
+            },
+          ],
+          totalValue: 0,
+        };
+      } finally {
+        isLoading = false;
+        updateLoadingState(false);
       }
-    });
-
-    // Store treasury total for all-time calc
-    window.__treasuryValue = treasuryData.totalValue || 0;
-
-    // Token Fees = total USD value of all treasury holdings
-    const tokenFeesTotal = treasuryData.totalValue || 0;
-    const tokenFeesEl = document.getElementById("token-fees");
-    if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
-    window.__tokenFeesRevenue = tokenFeesTotal;
-
-    // Update Claw Mart revenue card
-    if (clawMartData && clawMartData.totalEarnings > 0) {
-      const earningsEl = document.getElementById("clawmart-earnings");
-      const subEl = document.getElementById("clawmart-sub");
-      if (earningsEl)
-        earningsEl.textContent = `$${clawMartData.totalEarnings.toFixed(2)}`;
-      if (subEl) subEl.textContent = "Product sales";
-      window.__clawmartRevenue = clawMartData.totalEarnings;
     }
 
-    // Update all-time revenue
-    updateAllTimeRevenue();
-  }
-
-  // Aggregate all revenue streams + treasury into hero card
-  function updateAllTimeRevenue() {
-    const clawmart = window.__clawmartRevenue || 89;
-    const store = window.__storeRevenue || 0;
-    const patreon = window.__patreonRevenue || 4;
-    const tokenFees = window.__tokenFeesRevenue || 0;
-    const total = clawmart + store + patreon + tokenFees;
-
-    const el = document.getElementById("all-time-revenue");
-    const changeEl = document.getElementById("all-time-change");
-    if (el) el.textContent = formatCurrency(total);
-    if (changeEl) {
-      changeEl.textContent = "4 revenue streams";
-      changeEl.className = "stat-change change-up";
+    // Fetch Claw Mart earnings (hardcoded for now, will integrate API later)
+    async function fetchClawMartEarnings() {
+      // TODO: Integrate with Claw Mart API
+      // For now, return hardcoded value as mentioned
+      return {
+        totalEarnings: 89.0,
+        currency: "USD",
+        lastUpdated: new Date().toISOString(),
+        topSkills: [
+          { skill: "Twitter Engagement", earnings: 45.0 },
+          { skill: "Research Assistant", earnings: 25.0 },
+          { skill: "Code Review", earnings: 19.0 },
+        ],
+      };
     }
-  }
 
-  // Update loading state
-  function updateLoadingState(loading) {
-    const loadingIndicator = document.getElementById("loading-indicator");
-    if (loadingIndicator) {
-      loadingIndicator.style.display = loading ? "block" : "none";
-    }
-    const refreshBtn = document.getElementById("refresh-btn");
-    if (refreshBtn) refreshBtn.disabled = loading;
-  }
+    // Update UI with data
+    function updateUI(treasuryData, clawMartData) {
+      // Update token cards
+      treasuryData.tokens.forEach((token) => {
+        const card = document.querySelector(
+          `.treasury-card[data-token="${token.symbol}"]`
+        );
+        if (card) {
+          const changeEl = card.querySelector(".token-change");
+          const balanceEl = card.querySelector(".token-balance");
+          const valueEl = card.querySelector(".token-value");
 
-  // Main refresh function
-  async function refreshData() {
-    if (isLoading) return;
-    console.log("Refreshing dashboard data...");
-    const treasuryData = await fetchTreasuryData();
-    const clawMartData = await fetchClawMartEarnings();
-    if (treasuryData) updateUI(treasuryData, clawMartData);
-  }
-
-  // Manual refresh button handler
-  function setupRefreshButton() {
-    const refreshBtn = document.getElementById("refresh-btn");
-    if (refreshBtn) {
-      refreshBtn.addEventListener("click", () => {
-        refreshData();
-        fetchStoreRevenue();
+          if (changeEl) {
+            changeEl.textContent = `${
+              token.change24h >= 0 ? "+" : ""
+            }${token.change24h.toFixed(1)}%`;
+            changeEl.className = `token-change ${
+              token.change24h >= 0 ? "change-up" : "change-down"
+            }`;
+          }
+          if (balanceEl) balanceEl.textContent = formatNumber(token.balance, 2);
+          if (valueEl) valueEl.textContent = formatCurrency(token.value);
+        }
       });
+
+      // Store treasury total for all-time calc
+      window.__treasuryValue = treasuryData.totalValue || 0;
+
+      // Token Fees = total USD value of all treasury holdings
+      const tokenFeesTotal = treasuryData.totalValue || 0;
+      const tokenFeesEl = document.getElementById("token-fees");
+      if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
+      window.__tokenFeesRevenue = tokenFeesTotal;
+
+      // Update Claw Mart revenue card
+      if (clawMartData && clawMartData.totalEarnings > 0) {
+        const earningsEl = document.getElementById("clawmart-earnings");
+        const subEl = document.getElementById("clawmart-sub");
+        if (earningsEl)
+          earningsEl.textContent = `$${clawMartData.totalEarnings.toFixed(2)}`;
+        if (subEl) subEl.textContent = "Product sales";
+        window.__clawmartRevenue = clawMartData.totalEarnings;
+      }
+
+      // Update all-time revenue
+      updateAllTimeRevenue();
     }
-  }
 
-  // Start auto-refresh (works with Astro View Transitions)
-  document.addEventListener("astro:page-load", () => {
-    // Clean up any previous interval (in case of re-navigation)
-    if (refreshInterval) clearInterval(refreshInterval);
+    // Aggregate all revenue streams + treasury into hero card
+    function updateAllTimeRevenue() {
+      const clawmart = window.__clawmartRevenue || 89;
+      const store = window.__storeRevenue || 0;
+      const patreon = window.__patreonRevenue || 4;
+      const tokenFees = window.__tokenFeesRevenue || 0;
+      const total = clawmart + store + patreon + tokenFees;
 
-    // Only run on the dashboard page
-    if (!document.querySelector(".dashboard-page")) return;
+      const el = document.getElementById("all-time-revenue");
+      const changeEl = document.getElementById("all-time-change");
+      if (el) el.textContent = formatCurrency(total);
+      if (changeEl) {
+        changeEl.textContent = "4 revenue streams";
+        changeEl.className = "stat-change change-up";
+      }
+    }
 
-    const loadingIndicator =
-      document.getElementById("loading-indicator") ||
-      document.createElement("div");
-    loadingIndicator.id = "loading-indicator";
-    loadingIndicator.style.cssText = `
+    // Update loading state
+    function updateLoadingState(loading) {
+      const loadingIndicator = document.getElementById("loading-indicator");
+      if (loadingIndicator) {
+        loadingIndicator.style.display = loading ? "block" : "none";
+      }
+      const refreshBtn = document.getElementById("refresh-btn");
+      if (refreshBtn) refreshBtn.disabled = loading;
+    }
+
+    // Main refresh function
+    async function refreshData() {
+      if (isLoading) return;
+      console.log("Refreshing dashboard data...");
+      const treasuryData = await fetchTreasuryData();
+      const clawMartData = await fetchClawMartEarnings();
+      if (treasuryData) updateUI(treasuryData, clawMartData);
+    }
+
+    // Manual refresh button handler
+    function setupRefreshButton() {
+      const refreshBtn = document.getElementById("refresh-btn");
+      if (refreshBtn) {
+        refreshBtn.addEventListener("click", () => {
+          refreshData();
+          fetchStoreRevenue();
+        });
+      }
+    }
+
+    // Start auto-refresh (works with Astro View Transitions)
+    document.addEventListener("astro:page-load", () => {
+      // Clean up any previous interval (in case of re-navigation)
+      if (refreshInterval) clearInterval(refreshInterval);
+
+      // Only run on the dashboard page
+      if (!document.querySelector(".dashboard-page")) return;
+
+      const loadingIndicator =
+        document.getElementById("loading-indicator") ||
+        document.createElement("div");
+      loadingIndicator.id = "loading-indicator";
+      loadingIndicator.style.cssText = `
       position: fixed; top: 20px; right: 20px;
       background: var(--gradient-accent); color: white;
       padding: 8px 16px; border-radius: 20px;
@@ -972,76 +954,68 @@ const CLAW_MART_EARNINGS = 89;
       z-index: 1000; display: none;
       box-shadow: var(--shadow-md);
     `;
-    loadingIndicator.textContent = "Loading data...";
-    if (!loadingIndicator.parentNode)
-      document.body.appendChild(loadingIndicator);
+      loadingIndicator.textContent = "Loading data...";
+      if (!loadingIndicator.parentNode)
+        document.body.appendChild(loadingIndicator);
 
-    refreshData();
-    fetchStoreRevenue();
-    fetchPatreonRevenue();
-
-    refreshInterval = setInterval(() => {
       refreshData();
       fetchStoreRevenue();
       fetchPatreonRevenue();
-    }, 60000);
 
-    setupRefreshButton();
+      refreshInterval = setInterval(() => {
+        refreshData();
+        fetchStoreRevenue();
+        fetchPatreonRevenue();
+      }, 60000);
 
-    window.addEventListener("beforeunload", () => {
-      clearInterval(refreshInterval);
+      setupRefreshButton();
+
+      window.addEventListener("beforeunload", () => {
+        clearInterval(refreshInterval);
+      });
     });
-  });
 
-  // ──── Stripe Store Revenue → Aleister Store card ────
-  async function fetchStoreRevenue() {
-    try {
-      const res = await fetch("/api/store-revenue.json");
-      const data = await res.json();
+    // ──── Stripe Store Revenue → Aleister Store card ────
+    async function fetchStoreRevenue() {
+      try {
+        const res = await fetch("/api/store-revenue.json");
+        const data = await res.json();
 
-      const amountEl = document.getElementById("store-revenue");
-      const subEl = document.getElementById("store-sub");
+        const amountEl = document.getElementById("store-revenue");
+        const subEl = document.getElementById("store-sub");
 
-      const total = data.revenue30d || 0;
-      window.__storeRevenue = total;
+        const total = data.revenue30d || 0;
+        window.__storeRevenue = total;
 
-      if (amountEl) amountEl.textContent = formatCurrency(total);
-      if (subEl) {
-        subEl.textContent = `${
-          data.chargeCount30d || 0
-        } charges last 30d · Stripe`;
+        if (amountEl) amountEl.textContent = formatCurrency(total);
+        if (subEl) {
+          subEl.textContent = `${
+            data.chargeCount30d || 0
+          } charges last 30d · Stripe`;
+        }
+
+        updateAllTimeRevenue();
+      } catch (err) {
+        console.error("Store revenue fetch error:", err);
       }
-
-      // Product sales breakdown
-      const sales = data.productSales || {};
-      const agentEl = document.querySelector("#sales-agent b");
-      const subagentEl = document.querySelector("#sales-subagent b");
-      const skillEl = document.querySelector("#sales-skill b");
-      if (agentEl) agentEl.textContent = String(sales.agent || 0);
-      if (subagentEl) subagentEl.textContent = String(sales.subagent || 0);
-      if (skillEl) skillEl.textContent = String(sales.skill || 0);
-
-      updateAllTimeRevenue();
-    } catch (err) {
-      console.error("Store revenue fetch error:", err);
     }
-  }
 
-  // ──── Patreon Revenue → Patreon card ────
-  async function fetchPatreonRevenue() {
-    try {
-      const res = await fetch("/api/patreon-revenue.json");
-      const data = await res.json();
+    // ──── Patreon Revenue → Patreon card ────
+    async function fetchPatreonRevenue() {
+      try {
+        const res = await fetch("/api/patreon-revenue.json");
+        const data = await res.json();
 
-      const amountEl = document.getElementById("patreon-revenue");
-      const revenue = data.monthlyRevenue || 0;
-      window.__patreonRevenue = revenue;
+        const amountEl = document.getElementById("patreon-revenue");
+        const revenue = data.monthlyRevenue || 0;
+        window.__patreonRevenue = revenue;
 
-      if (amountEl) amountEl.textContent = formatCurrency(revenue);
+        if (amountEl) amountEl.textContent = formatCurrency(revenue);
 
-      updateAllTimeRevenue();
-    } catch (err) {
-      console.error("Patreon revenue fetch error:", err);
+        updateAllTimeRevenue();
+      } catch (err) {
+        console.error("Patreon revenue fetch error:", err);
+      }
     }
-  }
-</script>
+  </script>
+</BaseLayout>
