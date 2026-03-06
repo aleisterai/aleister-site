@@ -280,22 +280,13 @@ const agents = deskUpgrades.map((desk) => {
                                         </span>
                                     )}
                                     <div class="furniture-card__render-wrap">
-                                        {item.meshPath ? (
-                                            <canvas
-                                                class="furniture-card__render furniture-card__canvas"
-                                                data-mesh={item.meshPath}
-                                                width="400"
-                                                height="400"
-                                            />
-                                        ) : (
-                                            <img
-                                                class="furniture-card__render"
-                                                src={nextLevel.renderImage}
-                                                alt={item.name}
-                                                loading="lazy"
-                                                onerror="this.style.display='none'"
-                                            />
-                                        )}
+                                        <img
+                                            class="furniture-card__render"
+                                            src={nextLevel.renderImage}
+                                            alt={item.name}
+                                            loading="lazy"
+                                            onerror="this.style.display='none'"
+                                        />
                                     </div>
                                     <div class="furniture-card__body">
                                         <h3 class="furniture-card__name">
