@@ -75,6 +75,23 @@ const CLAW_MART_EARNINGS = 89;
               <div class="revenue-card__sub" id="store-sub">
                 Loading from Stripe...
               </div>
+              <div class="revenue-card__sales" id="store-sales">
+                <span
+                  class="sale-pill"
+                  id="sales-agent"
+                  title="Agent personas sold"
+                  >🤖 <b>—</b>
+                </span>
+                <span
+                  class="sale-pill"
+                  id="sales-subagent"
+                  title="Sub-agents sold"
+                  >🧩 <b>—</b>
+                </span>
+                <span class="sale-pill" id="sales-skill" title="Skills sold"
+                  >⚡ <b>—</b>
+                </span>
+              </div>
             </div>
           </a>
           <a
@@ -351,6 +368,31 @@ const CLAW_MART_EARNINGS = 89;
     font-size: 0.7rem;
     color: var(--text-tertiary);
     font-style: italic;
+  }
+
+  .revenue-card__sales {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .sale-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .sale-pill b {
+    font-weight: 700;
+    color: var(--text-primary);
   }
 
   /* ──── Treasury Grid ──── */
@@ -947,6 +989,15 @@ const CLAW_MART_EARNINGS = 89;
           data.chargeCount30d || 0
         } charges last 30d · Stripe`;
       }
+
+      // Product sales breakdown
+      const sales = data.productSales || {};
+      const agentEl = document.querySelector("#sales-agent b");
+      const subagentEl = document.querySelector("#sales-subagent b");
+      const skillEl = document.querySelector("#sales-skill b");
+      if (agentEl) agentEl.textContent = String(sales.agent || 0);
+      if (subagentEl) subagentEl.textContent = String(sales.subagent || 0);
+      if (skillEl) skillEl.textContent = String(sales.skill || 0);
 
       updateAllTimeRevenue();
     } catch (err) {

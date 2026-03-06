@@ -1,6 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { storeItems } from '../../data/store';
 
 const STRIPE_API = 'https://api.stripe.com/v1';
 
@@ -9,19 +10,55 @@ function stripeAuth(): string {
     return `Basic ${Buffer.from(key + ':').toString('base64')}`;
 }
 
+/**
+ * Classify a Stripe charge description into a product category.
+ * Stripe Payment Link charges include the product name in `description`.
+ */
+function classifyCharge(charge: any): { category: string; productSlug: string | null } {
+    const desc = (charge.description || '').toLowerCase();
+    const meta = charge.metadata || {};
+
+    // Check metadata first (for upgrade session charges)
+    if (meta.upgrade_slug) {
+        return { category: 'upgrade', productSlug: meta.upgrade_slug };
+    }
+
+    // Match against store items by name
+    for (const item of storeItems) {
+        if (desc.includes(item.name.toLowerCase())) {
+            if (item.type === 'persona') {
+                return {
+                    category: item.category === 'Persona' ? 'agent' : 'subagent',
+                    productSlug: item.slug,
+                };
+            }
+            return { category: 'skill', productSlug: item.slug };
+        }
+    }
+
+    // Fallback heuristics
+    if (desc.includes('persona') || desc.includes('aleister')) return { category: 'agent', productSlug: null };
+    if (desc.includes('sub-agent') || desc.includes('subagent')) return { category: 'subagent', productSlug: null };
+    if (desc.includes('skill') || desc.includes('humanizer') || desc.includes('coding')) return { category: 'skill', productSlug: null };
+
+    return { category: 'other', productSlug: null };
+}
+
 export const GET: APIRoute = async () => {
     try {
         const headers = { Authorization: stripeAuth() };
 
-        // Fetch in parallel: balance, recent charges (last 30 days), all charges for total
-        const [balanceRes, chargesRes] = await Promise.all([
+        // Fetch in parallel: balance, recent charges (30d), ALL charges for product breakdown
+        const [balanceRes, chargesRes, allChargesRes] = await Promise.all([
             fetch(`${STRIPE_API}/balance`, { headers }),
             fetch(`${STRIPE_API}/charges?limit=100&created[gte]=${Math.floor(Date.now() / 1000) - 30 * 86400}`, { headers }),
+            fetch(`${STRIPE_API}/charges?limit=100`, { headers }),
         ]);
 
-        const [balance, charges] = await Promise.all([
+        const [balance, charges, allCharges] = await Promise.all([
             balanceRes.json(),
             chargesRes.json(),
+            allChargesRes.json(),
         ]);
 
         // Available + pending balance
@@ -32,7 +69,7 @@ export const GET: APIRoute = async () => {
             (sum: number, b: any) => sum + (b.amount || 0), 0
         ) / 100;
 
-        // Process charges for recent transactions
+        // Process 30d charges for recent transactions
         const successfulCharges = (charges.data || []).filter(
             (c: any) => c.status === 'succeeded' && !c.refunded
         );
@@ -52,6 +89,24 @@ export const GET: APIRoute = async () => {
             product: c.metadata?.product || null,
         }));
 
+        // Product sales breakdown from ALL charges
+        const allSuccessful = (allCharges.data || []).filter(
+            (c: any) => c.status === 'succeeded' && !c.refunded
+        );
+
+        const productSales = { agent: 0, subagent: 0, skill: 0, upgrade: 0, other: 0 };
+        const productRevenue = { agent: 0, subagent: 0, skill: 0, upgrade: 0, other: 0 };
+
+        for (const charge of allSuccessful) {
+            const { category } = classifyCharge(charge);
+            if (category in productSales) {
+                productSales[category as keyof typeof productSales]++;
+                productRevenue[category as keyof typeof productRevenue] += (charge.amount || 0) / 100;
+            }
+        }
+
+        const totalSold = productSales.agent + productSales.subagent + productSales.skill;
+
         return new Response(JSON.stringify({
             success: true,
             balance: {
@@ -62,6 +117,15 @@ export const GET: APIRoute = async () => {
             revenue30d: totalRevenue30d,
             chargeCount30d: successfulCharges.length,
             recentTransactions,
+            productSales: {
+                agent: productSales.agent,
+                subagent: productSales.subagent,
+                skill: productSales.skill,
+                upgrade: productSales.upgrade,
+                other: productSales.other,
+                totalSold,
+            },
+            productRevenue,
             timestamp: new Date().toISOString(),
         }), {
             status: 200,
@@ -78,6 +142,8 @@ export const GET: APIRoute = async () => {
             revenue30d: 0,
             chargeCount30d: 0,
             recentTransactions: [],
+            productSales: { agent: 0, subagent: 0, skill: 0, upgrade: 0, other: 0, totalSold: 0 },
+            productRevenue: { agent: 0, subagent: 0, skill: 0, upgrade: 0, other: 0 },
             timestamp: new Date().toISOString(),
             error: 'Failed to fetch Stripe data',
         }), {
