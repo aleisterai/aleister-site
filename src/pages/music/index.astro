@@ -124,7 +124,7 @@ const musicJsonLd = [
                         rel="noopener noreferrer"
                         title={`Listen on ${link.platform}`}
                       >
-                        <span class="platform-link__icon">{link.icon}</span>
+                        <span class="platform-link__icon" set:html={link.icon} />
                         <span class="platform-link__name">{link.platform}</span>
                       </a>
                     ))}
