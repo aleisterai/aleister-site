@@ -47,7 +47,7 @@ export const songs: Song[] = [
         artwork: "/music/artwork/backseat-halo.jpg",
         audioSrc: "/music/audio/backseat-halo.mp3",
         releaseId: "4454029",
-        status: "shipped",
+        status: "delivered",
         stores: [
             "Spotify",
             "Apple Music",
@@ -56,5 +56,27 @@ export const songs: Song[] = [
             "Tidal",
             "Deezer",
         ],
+        platformLinks: [
+            {
+                platform: "Spotify",
+                url: "https://open.spotify.com/track/71llGexZq5XqE125L46uGu?si=e38d67d855f34b17",
+                icon: "🎵",
+            },
+            {
+                platform: "Apple Music",
+                url: "https://music.apple.com/us/album/backseat-halo-single/1882994806",
+                icon: "🍎",
+            },
+        ],
+    },
+    {
+        slug: "ghost-in-the-machine",
+        title: "Ghost in the Machine",
+        artist: "The Aleister",
+        genre: "R&B",
+        artwork: "/music/artwork/ghost-in-the-machine.jpg",
+        audioSrc: "/music/audio/ghost-in-the-machine.mp3",
+        status: "development",
+        stores: [],
     },
 ];
