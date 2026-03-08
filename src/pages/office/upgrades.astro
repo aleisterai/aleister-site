@@ -280,22 +280,21 @@ const agents = deskUpgrades.map((desk) => {
                                         </span>
                                     )}
                                     <div class="furniture-card__render-wrap">
-                                        {item.meshPath ? (
+                                        <img
+                                            class="furniture-card__render furniture-card__fallback-img"
+                                            src={nextLevel.renderImage}
+                                            alt={item.name}
+                                            loading="lazy"
+                                            onerror="this.style.display='none'"
+                                        />
+                                        {item.meshPath && (
                                             <canvas
                                                 class="furniture-card__render furniture-card__canvas"
                                                 data-mesh={item.meshPath}
                                                 data-fallback={nextLevel.renderImage}
                                                 width="400"
                                                 height="400"
-                                                style={`background: url(${nextLevel.renderImage}) center/cover no-repeat;`}
-                                            />
-                                        ) : (
-                                            <img
-                                                class="furniture-card__render"
-                                                src={nextLevel.renderImage}
-                                                alt={item.name}
-                                                loading="lazy"
-                                                onerror="this.style.display='none'"
+                                                style="display:none;"
                                             />
                                         )}
                                     </div>
@@ -848,6 +847,11 @@ const agents = deskUpgrades.map((desk) => {
                         // Render ONE frame directly to the canvas
                         renderer.render(scene, camera);
 
+                        // Show the 3D canvas and hide the fallback image
+                        canvas.style.display = '';
+                        const fallbackImg = canvas.parentElement?.querySelector('.furniture-card__fallback-img');
+                        if (fallbackImg) fallbackImg.style.display = 'none';
+
                         // Cleanup — dispose renderer & geometry
                         renderer.dispose();
                         model.traverse((o) => {
@@ -861,6 +865,7 @@ const agents = deskUpgrades.map((desk) => {
                         });
                     } catch (err) {
                         console.warn('GLB card render failed:', meshPath, err);
+                        // Keep canvas hidden so fallback image stays visible
                         canvas.style.display = 'none';
                     }
                 }

@@ -1474,6 +1474,14 @@
     object-fit: cover;
 }
 
+/* Canvas overlays the fallback image when 3D render succeeds */
+.furniture-card__render-wrap .furniture-card__canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
 /* Stagger glow per card */
 .furniture-card:nth-child(2) .furniture-card__render-wrap {
     animation-delay: -1.5s;
