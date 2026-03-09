@@ -1225,6 +1225,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             submitBtn.textContent = "Subscribe →";
         }
     });
+
+    /* ── Success overlay after Stripe checkout ── */
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get("success") === "1") {
+            var overlay = document.getElementById("success-overlay");
+            if (overlay) overlay.style.display = "flex";
+            // Clean URL
+            window.history.replaceState({}, "", window.location.pathname);
+        }
+        var dismissBtn = document.getElementById("success-dismiss");
+        if (dismissBtn) {
+            dismissBtn.addEventListener("click", function () {
+                var overlay = document.getElementById("success-overlay");
+                if (overlay) overlay.style.display = "none";
+            });
+        }
+    })();
 </script>
 
 <style>
@@ -2009,6 +2027,48 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </style>
 
 <style is:global>
+    /* ─── Success Overlay ─── */
+    .la-success-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(8px);
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .la-success-card {
+        max-width: 520px;
+        width: 100%;
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+
+    .la-success__icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .la-success-card h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .la-success-card p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+
+    .la-success-card strong {
+        color: var(--text-accent);
+    }
+
     /* ─── Comparison Desktop/Mobile Toggle ─── */
     .compare-mobile {
         display: none;

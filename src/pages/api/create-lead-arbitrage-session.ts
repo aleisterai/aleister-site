@@ -90,6 +90,9 @@ export const POST: APIRoute = async ({ request }) => {
         if (body.business) params.append('subscription_data[metadata][business_name]', body.business);
         if (body.info) params.append('subscription_data[metadata][business_info]', body.info.substring(0, 500));
 
+        // Enable automatic tax receipts via invoice email
+        params.append('subscription_data[invoice_settings][issuer][type]', 'self');
+
         const res = await fetch(`${STRIPE_API}/checkout/sessions`, {
             method: 'POST',
             headers: {
