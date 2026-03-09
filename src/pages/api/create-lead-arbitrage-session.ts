@@ -68,7 +68,6 @@ export const POST: APIRoute = async ({ request }) => {
         params.append('mode', 'subscription');
         params.append('success_url', `${origin}/lead-arbitrage?success=1&session_id={CHECKOUT_SESSION_ID}`);
         params.append('cancel_url', `${origin}/lead-arbitrage?cancelled=1`);
-        params.append('customer_creation', 'if_required');
 
         // Inline price_data with monthly recurring
         params.append('line_items[0][price_data][currency]', 'usd');
@@ -102,8 +101,8 @@ export const POST: APIRoute = async ({ request }) => {
         const session = await res.json();
 
         if (!res.ok) {
-            console.error('Stripe session error:', session);
-            return new Response(JSON.stringify({ error: 'Failed to create checkout session' }), { status: 500 });
+            console.error('Stripe session error:', JSON.stringify(session));
+            return new Response(JSON.stringify({ error: session?.error?.message || 'Failed to create checkout session' }), { status: 500 });
         }
 
         return new Response(JSON.stringify({
