@@ -259,17 +259,43 @@ def git_push(total_synced: int):
         # Don't raise exception to avoid cron failure
 
 
+def sync_readme(src_dir: str, dst_dir: str, label: str) -> int:
+    """Copy README.md verbatim from Obsidian source to site destination.
+    Returns 1 if the file was updated, 0 if unchanged."""
+    src = os.path.join(src_dir, "README.md")
+    dst = os.path.join(dst_dir, "README.md")
+    if not os.path.exists(src):
+        return 0
+    with open(src, "r") as f:
+        content = f.read()
+    if os.path.exists(dst):
+        with open(dst, "r") as f:
+            if f.read() == content:
+                return 0
+    os.makedirs(dst_dir, exist_ok=True)
+    with open(dst, "w") as f:
+        f.write(content)
+    print(f"  📄 {label} README.md updated")
+    return 1
+
+
 def main():
     print(f"Starting content sync at {SITE_ROOT}")
     print(f"Obsidian source: {OBSIDIAN_ROOT}")
     print(f"Site target: {SITE_CONTENT}")
     
-    # TIL sync
+    # TIL sync (README first, then dated files)
+    readme_synced = sync_readme(
+        os.path.join(OBSIDIAN_ROOT, "TIL"),
+        os.path.join(SITE_CONTENT, "til"),
+        "TIL"
+    )
     t_synced, t_skipped, t_errors = sync_directory(
         os.path.join(OBSIDIAN_ROOT, "TIL"),
         os.path.join(SITE_CONTENT, "til"),
         parse_obsidian_til, til_to_astro, "TIL"
     )
+    t_synced += readme_synced
     print(f"TIL: {t_synced} synced, {t_skipped} unchanged, {t_errors} errors")
 
     # Team sync
