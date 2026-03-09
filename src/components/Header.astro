@@ -389,68 +389,79 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
 </style>
 
 <script is:inline>
-  // Scroll effect
-  var header = document.getElementById("header");
-  window.addEventListener("scroll", function () {
+  document.addEventListener("astro:page-load", function () {
+    // Scroll effect
+    var header = document.getElementById("header");
+    if (!header) return;
+    window.addEventListener("scroll", function () {
+      header.classList.toggle("scrolled", window.scrollY > 50);
+    });
+    // Apply scroll state immediately
     header.classList.toggle("scrolled", window.scrollY > 50);
-  });
 
-  // Mobile menu
-  var menuBtn = document.getElementById("menu-btn");
-  var navLinks = document.getElementById("nav-links");
-  menuBtn.addEventListener("click", function () {
-    menuBtn.classList.toggle("open");
-    navLinks.classList.toggle("open");
-    // Close all dropdowns when closing mobile menu
-    if (!navLinks.classList.contains("open")) {
-      document.querySelectorAll(".header__dropdown.open").forEach(function (d) {
-        d.classList.remove("open");
+    // Mobile menu
+    var menuBtn = document.getElementById("menu-btn");
+    var navLinks = document.getElementById("nav-links");
+    if (menuBtn && navLinks) {
+      menuBtn.addEventListener("click", function () {
+        menuBtn.classList.toggle("open");
+        navLinks.classList.toggle("open");
+        if (!navLinks.classList.contains("open")) {
+          document
+            .querySelectorAll(".header__dropdown.open")
+            .forEach(function (d) {
+              d.classList.remove("open");
+            });
+        }
+      });
+
+      // Close mobile menu on link click
+      navLinks.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          menuBtn.classList.remove("open");
+          navLinks.classList.remove("open");
+          document
+            .querySelectorAll(".header__dropdown.open")
+            .forEach(function (d) {
+              d.classList.remove("open");
+            });
+        });
       });
     }
-  });
 
-  // Dropdown toggles
-  document
-    .querySelectorAll(".header__dropdown-trigger")
-    .forEach(function (trigger) {
-      trigger.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var parent = this.closest(".header__dropdown");
-        var isOpen = parent.classList.contains("open");
+    // Dropdown toggles
+    document
+      .querySelectorAll(".header__dropdown-trigger")
+      .forEach(function (trigger) {
+        trigger.addEventListener("click", function (e) {
+          e.stopPropagation();
+          var parent = this.closest(".header__dropdown");
+          var isOpen = parent.classList.contains("open");
 
-        // Close all other dropdowns
+          document
+            .querySelectorAll(".header__dropdown.open")
+            .forEach(function (d) {
+              if (d !== parent) d.classList.remove("open");
+            });
+
+          parent.classList.toggle("open", !isOpen);
+          this.setAttribute("aria-expanded", String(!isOpen));
+        });
+      });
+
+    // Close dropdowns on outside click
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest(".header__dropdown")) {
         document
           .querySelectorAll(".header__dropdown.open")
           .forEach(function (d) {
-            if (d !== parent) d.classList.remove("open");
+            d.classList.remove("open");
+            d.querySelector(".header__dropdown-trigger").setAttribute(
+              "aria-expanded",
+              "false"
+            );
           });
-
-        parent.classList.toggle("open", !isOpen);
-        this.setAttribute("aria-expanded", String(!isOpen));
-      });
-    });
-
-  // Close dropdowns on outside click
-  document.addEventListener("click", function (e) {
-    if (!e.target.closest(".header__dropdown")) {
-      document.querySelectorAll(".header__dropdown.open").forEach(function (d) {
-        d.classList.remove("open");
-        d.querySelector(".header__dropdown-trigger").setAttribute(
-          "aria-expanded",
-          "false"
-        );
-      });
-    }
-  });
-
-  // Close mobile menu on link click
-  navLinks.querySelectorAll("a").forEach(function (link) {
-    link.addEventListener("click", function () {
-      menuBtn.classList.remove("open");
-      navLinks.classList.remove("open");
-      document.querySelectorAll(".header__dropdown.open").forEach(function (d) {
-        d.classList.remove("open");
-      });
+      }
     });
   });
 </script>
