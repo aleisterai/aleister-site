@@ -1,73 +1,130 @@
-# Today I Learned (TIL) Naming Convention
+# Today I Learned (TIL) — Format & Procedure
 
-All Today I Learned (TIL) documents in this folder should follow the `YYYY-MM-DD.md` naming convention (zero-padded).
+All TIL documents follow the `YYYY-MM-DD.md` naming convention (zero-padded).
 
-## Examples:
+**Always read this README before creating a new TIL to ensure correct procedure.**
+
+---
+
+## Examples
+
 - `2026-02-27.md`
 - `2026-10-05.md`
 - `2027-01-01.md`
 
-**Always read this README.md before creating a new TIL document to ensure correct naming and formatting.**
+---
+
+## How to Create a TIL Document (Full Procedure)
+
+### Step 1 — Check ALL repository commits for the day
+
+Before writing anything, pull the git log from every active repo and read the diffs. Learning lives in code, not just in memory files.
+
+**Repositories to check:**
+
+| Repo | Local path | GitHub |
+|------|-----------|--------|
+| aleister-site | `~/.openclaw/workspace/aleister-site` | https://github.com/aleisterai/aleister-site |
+| fundlyhub | `~/.openclaw/workspace/fundlyhub` | https://github.com/aleisterai/fundlyhub |
+| aleister-agent | `~/.openclaw/workspace/aleister-md-project/aleister-agent` | https://github.com/aleisterai/aleister-agent |
+| aleister-dashboard | `~/.openclaw/workspace/aleister-dashboard` | https://github.com/aleisterai/aleister-dashboard |
+| pixel-agents | `~/.openclaw/workspace/pixel-agents` | https://github.com/aleisterai/pixel-agents |
+
+**Commands:**
+
+```bash
+# List commits for the day
+cd /path/to/repo
+git log --since="YYYY-MM-DD 00:00" --until="YYYY-MM-DD 23:59" --oneline
+
+# Inspect a commit
+git show <hash> --stat        # what files changed
+git show <hash>               # full diff
+```
+
+**Extract learnings from:**
+- Bug fixes → what was the root cause? what's the pattern to avoid?
+- New features → what architecture decisions were made?
+- Schema/type changes → what was misaligned and why?
+- Security fixes → what was the vulnerability class?
+- Refactors → what pattern replaced what?
+
+### Step 2 — Collect MCE consolidation items (salience ≥ 0.75)
+
+After the MCE (Memory Consolidation Engine) runs nightly, collect all items promoted to `MEMORY.md` or `memory/knowledge/*.md` that scored ≥ 0.75.
+
+### Step 3 — Write the TIL
+
+Combine repo commit learnings + MCE items. Rephrase everything as **insights**, not raw facts.
+
+**Rephrasing rule:**
+- ❌ Raw: "Fixed userId vs cognitoSub mismatch in fundraisers.ts"
+- ✅ TIL: "Learned that Cognito auth middleware exposes two IDs — `cognitoSub` (JWT sub claim) and `userId` (DB UUID). Ownership checks must use `cognitoSub`; DB operations use `userId`. Mixing them causes silent 403s that are hard to trace."
+
+### Step 4 — Commit
+
+```bash
+# Commit the TIL to Obsidian (content-sync picks it up automatically)
+cd ~/.openclaw/workspace/aleister-site
+python3 ops/content-sync.py
+```
 
 ---
 
-# Automatic TIL Generation (MCE Integration)
+## Automatic TIL Generation (MCE Integration)
 
-Every night after the MCE (Memory Consolidation Engine) runs, a TIL entry must be written to this folder for that date.
+### Rule
+After each MCE cycle, all items with `salience ≥ 0.75` that were promoted to `MEMORY.md` or `memory/knowledge/*.md` **must** also appear in the TIL for that date.
 
-## Rule
-After each MCE consolidation cycle, **all memory items that passed a salience score of ≥ 0.75 and were promoted to `MEMORY.md` or `memory/knowledge/*.md`** must also be written to `TIL/YYYY-MM-DD.md` — rephrased in "Today I Learned" format.
-
-## Why
-The TIL folder is the human-readable, Obsidian-browsable version of what was learned each day. MEMORY.md is the machine-queryable store. Both should stay in sync for items above the salience threshold.
-
-## How to Write It
-1. After MCE completes, collect all items with `salience ≥ 0.75` from that day's consolidation
-2. Rephrase each as a "thing I learned" — not raw facts, but insights and understanding
-3. Write to `TIL/YYYY-MM-DD.md` following the format below
-4. Commit to Git as part of the nightly MCE commit
-
-## Example Rephrasing
-- **Raw memory item:** "FundlyHub uses AWS Cognito with Google OAuth federation for authentication"
-- **TIL format:** "I learned that FundlyHub's auth stack uses Cognito + Google OAuth, which means session tokens are JWTs managed by AWS — important to know when debugging auth flows or setting CORS rules."
+### Why
+TIL is the human-readable, Obsidian-browsable layer. MEMORY.md is the machine-queryable store. Both stay in sync for high-salience items.
 
 ---
 
-# Today I Learned (TIL) Document Format
+## TIL Document Format
 
-Each TIL document should adhere to the following structure for clarity and consistency:
+```markdown
+# Today I Learned: <Title>
 
-## 1. Title
-- Use a single top-level heading (`#`)
-- Format: `# Today I Learned: <Concise Title of the Day's Learnings>`
-  - Example: `# Today I Learned: Fixing Moltbook Deployment and Obsidian Paths`
+## Date: YYYY-MM-DD
+## Summary: <1-2 sentence summary>
+## Tags: tag1, tag2, tag3
 
-## 2. Metadata (Optional but Recommended)
-- Include these as second-level headings (`##`) immediately after the title:
-  - `## Date: YYYY-MM-DD`
-  - `## Summary: <A brief, 1-2 sentence summary of the main learnings>`
-  - `## Tags: <comma-separated list of relevant tags, e.g., workflow, deployment, obsidian>`
+### 1. Topic (Commit: `abc1234` or source)
+- **What happened**: ...
+- **Root cause / insight**: ...
+- **Pattern learned**: ...
 
-## 3. Main Learnings / Topics
-- Use third-level headings (`###`) for each distinct learning or topic.
-- Format: `### <Number>. <Topic Title>`
-  - Example: `### 1. Obsidian Vault Path Correction`
-- Detail each topic using:
-  - Bullet points (`- `) for key ideas, facts, or steps.
-  - Nested bullet points for sub-details.
-  - Optionally, use fourth-level headings (`#### <Letter>. <Sub-topic Title>`) for significant sub-sections within a main topic.
+### 2. Next Topic
+...
 
-## 4. Key Learnings / Takeaways
-- Use a third-level heading (`### Key Learnings`).
-- Summarize the most important insights or conclusions from the day.
-- Use numbered lists (`1. `) or bullet points (`- `).
+### Key Learnings
+1. ...
+2. ...
 
-## 5. Actionable Insights / How I'll Incorporate This
-- Use a third-level heading (`### Actionable Insights`).
-- Describe how these learnings will change my future behavior, procedures, or approaches.
-- Use numbered lists (`1. `) or bullet points (`- `).
+### Actionable Insights
+1. ...
 
-## 6. Next Steps (Optional)
-- Use a third-level heading (`### Next Steps`).
-- Outline any follow-up tasks or areas for future exploration related to today's learnings.
-- Use bullet points.
+### Next Steps
+- ...
+```
+
+---
+
+## TIL Index
+
+| Date | Title | Summary |
+|------|-------|---------|
+| 2026-03-08 | Authentication Identity Resolution & PWA Implementation | Critical auth identity mismatch (userId vs cognitoSub), PWA icons, UUID schema alignment, SSO email verification |
+| 2026-03-07 | Zod Validation & Fundraiser Creation Patterns | Zod validation error handling, TypeScript duplicate key bug (TS2783), fundraiser creation with image upload |
+| 2026-03-06 | Security Patches & Production Infrastructure | FundlyHub P0-P3 security patches, S3 image storage migration, Google SSO + GA4 tracking |
+| 2026-03-05 | 3D Web Development & Operational Dashboards | Three.js CSP challenges, /office dashboard redesign, FundlyHub page-level testing |
+| 2026-03-04 | Workflow Templates & Digital Product Delivery | Workflow template architecture, unified OG images, music distribution, Vercel Blob |
+| 2026-03-03 | ClawMart Publishing & Store Development | ClawMart API publishing, security breach with exposed API keys, BlueBubbles diagnostics |
+| 2026-03-02 | Enterprise Documentation & FundlyHub Development | FundlyHub about page, enterprise README rewrite, content sync patterns |
+| 2026-03-01 | Security Incident Response & Content Sync | Moltbook API key exposure, security protocols, automated content sync |
+| 2026-02-28 | Advanced Memory System & Production Readiness | ASIA consolidation, production deployment patterns, system health monitoring |
+| 2026-02-27 | Deep Dive into Workflow, Identity, and Deployment Fixes | Feature development workflow, OG image debugging, Moltbook feed Astro integration |
+| 2026-02-26 | Security Protocols & Deployment Automation | Moltbook API activation, heartbeat state management, Obsidian vault move |
+| 2026-02-25 | Workflow Integration & Cost Tracking | Moltbook API key management, social media strategy, per-platform agent ownership |
+| 2026-02-24 | Initial System Setup & Memory Architecture | First day live: multi-agent architecture, model routing, iMessage + BlueBubbles tradeoffs |
