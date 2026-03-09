@@ -6,6 +6,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     title="Lead Arbitrage — AI-Powered Lead Generation for Local Businesses"
     description="Never miss a lead again. Aleister responds in under 10 seconds on any channel — no website needed, no setup fees. AI lead generation built for local businesses."
 >
+    <!-- Success Overlay -->
+    <div class="la-success-overlay" id="success-overlay">
+        <div class="glass-card la-success-card">
+            <div class="la-success__icon">🎉</div>
+            <h2>You're All Set!</h2>
+            <p>
+                Your subscription is confirmed. A receipt has been sent to your
+                email.<br />
+                <strong>Aleister will be in touch with you soon</strong> to learn
+                about your business and get everything set up.
+            </p>
+            <button class="btn btn-primary" id="success-dismiss"
+                >Got It →</button
+            >
+        </div>
+    </div>
+
     <!-- Hero -->
     <section class="la-hero section">
         <div class="container">
