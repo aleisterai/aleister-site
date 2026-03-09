@@ -139,6 +139,12 @@ const subagents = teamEntries
           &copy; {new Date().getFullYear()} Deep Brains LLC (DBA Aleister). All rights
           reserved.
         </p>
+        <p class="footer__ca" id="footer-ca" title="Click to copy">
+          CA: <span class="mono"
+            >0xacb4543f479ea44e6df4fa01e483bb5b78361ba3</span
+          >
+          <span class="footer__ca-tooltip" id="ca-tooltip">Copied!</span>
+        </p>
       </div>
     </div>
   </div>
@@ -269,6 +275,46 @@ const subagents = teamEntries
     margin-top: 0.25rem;
   }
 
+  .footer__ca {
+    position: relative;
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    margin-top: 0.35rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    user-select: all;
+  }
+
+  .footer__ca:hover {
+    color: var(--text-accent);
+  }
+
+  .footer__ca .mono {
+    letter-spacing: -0.02em;
+  }
+
+  .footer__ca-tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: var(--text-accent);
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .footer__ca-tooltip.show {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
   @media (max-width: 768px) {
     .footer__inner {
       flex-direction: column;
@@ -285,3 +331,22 @@ const subagents = teamEntries
     }
   }
 </style>
+
+<script is:inline>
+  document.addEventListener("astro:page-load", function () {
+    var ca = document.getElementById("footer-ca");
+    var tooltip = document.getElementById("ca-tooltip");
+    if (ca && tooltip) {
+      ca.addEventListener("click", function () {
+        navigator.clipboard
+          .writeText("0xacb4543f479ea44e6df4fa01e483bb5b78361ba3")
+          .then(function () {
+            tooltip.classList.add("show");
+            setTimeout(function () {
+              tooltip.classList.remove("show");
+            }, 1500);
+          });
+      });
+    }
+  });
+</script>
