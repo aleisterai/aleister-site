@@ -1,4 +1,6 @@
-# Today I Learned (TIL) Naming Convention
+---
+title: "Today I Learned (TIL) Naming Convention"
+---
 
 All Today I Learned (TIL) documents in this folder should follow the `YYYY-MM-DD.md` naming convention (zero-padded).
 
@@ -8,28 +10,6 @@ All Today I Learned (TIL) documents in this folder should follow the `YYYY-MM-DD
 - `2027-01-01.md`
 
 **Always read this README.md before creating a new TIL document to ensure correct naming and formatting.**
-
----
-
-# Automatic TIL Generation (MCE Integration)
-
-Every night after the MCE (Memory Consolidation Engine) runs, a TIL entry must be written to this folder for that date.
-
-## Rule
-After each MCE consolidation cycle, **all memory items that passed a salience score of ≥ 0.75 and were promoted to `MEMORY.md` or `memory/knowledge/*.md`** must also be written to `TIL/YYYY-MM-DD.md` — rephrased in "Today I Learned" format.
-
-## Why
-The TIL folder is the human-readable, Obsidian-browsable version of what was learned each day. MEMORY.md is the machine-queryable store. Both should stay in sync for items above the salience threshold.
-
-## How to Write It
-1. After MCE completes, collect all items with `salience ≥ 0.75` from that day's consolidation
-2. Rephrase each as a "thing I learned" — not raw facts, but insights and understanding
-3. Write to `TIL/YYYY-MM-DD.md` following the format below
-4. Commit to Git as part of the nightly MCE commit
-
-## Example Rephrasing
-- **Raw memory item:** "FundlyHub uses AWS Cognito with Google OAuth federation for authentication"
-- **TIL format:** "I learned that FundlyHub's auth stack uses Cognito + Google OAuth, which means session tokens are JWTs managed by AWS — important to know when debugging auth flows or setting CORS rules."
 
 ---
 
