@@ -16,19 +16,32 @@ All TIL documents follow the `YYYY-MM-DD.md` naming convention (zero-padded).
 
 ## How to Create a TIL Document (Full Procedure)
 
-### Step 1 — Check ALL repository commits for the day
+### Step 1 — Check ALL repository commits AND associated issues for the day
 
-Before writing anything, pull the git log from every active repo and read the diffs. Learning lives in code, not just in memory files.
+Before writing anything:
+1. Pull git logs from every active repo and read the diffs
+2. Check what issues were referenced in commit messages
+3. Read those issues to understand the **context** and **problem being solved**
+4. Focus on: **What was LEARNED from solving this problem?**
 
 **Repositories to check:**
 
 | Repo | Local path | GitHub |
 |------|-----------|--------|
 | aleister-site | `~/.openclaw/workspace/aleister-site` | https://github.com/aleisterai/aleister-site |
-| fundlyhub | `~/.openclaw/workspace/fundlyhub` | https://github.com/aleisterai/fundlyhub |
+| fundlyhub | `~/.openclaw/workspace/fundlyhub` | https://github.com/FundlyHub/fundlyhub |
 | aleister-agent | `~/.openclaw/workspace/aleister-md-project/aleister-agent` | https://github.com/aleisterai/aleister-agent |
 | aleister-dashboard | `~/.openclaw/workspace/aleister-dashboard` | https://github.com/aleisterai/aleister-dashboard |
 | pixel-agents | `~/.openclaw/workspace/pixel-agents` | https://github.com/aleisterai/pixel-agents |
+
+**For each commit/issue pair:**
+- Read the issue description — what problem were users facing?
+- Read the commit diff — what technical solution was implemented?
+- Ask: **What did we learn about our system/architecture from this?**
+- Ask: **What pattern emerged that we should document/reuse?**
+- Ask: **What surprised us or was harder than expected?**
+
+**NOT transactional data:** Don't list "closed issue #X". Instead, weave issue context into the learning narrative.
 
 **Commands:**
 
@@ -90,23 +103,46 @@ TIL is the human-readable, Obsidian-browsable layer. MEMORY.md is the machine-qu
 ## Summary: <1-2 sentence summary>
 ## Tags: tag1, tag2, tag3
 
-### 1. Topic (Commit: `abc1234` or source)
-- **What happened**: ...
-- **Root cause / insight**: ...
-- **Pattern learned**: ...
+### 1. Topic Title (Issue #XXX — Brief context)
+- **Problem context**: What user problem or system issue was being solved?
+- **Technical insight**: What did we discover about our architecture/code?
+- **Root cause**: Why did this problem exist in the first place?
+- **Pattern learned**: What reusable pattern or principle emerged?
+- **Surprise factor**: What was harder/easier/different than expected?
 
-### 2. Next Topic
-...
+### 2. Next Topic (Commit `abc1234` — Brief context)
+- **Problem context**: ...
+- **Technical insight**: ...
+- **Root cause**: ...
+- **Pattern learned**: ...
+- **Surprise factor**: ...
 
 ### Key Learnings
-1. ...
+1. ... (Synthesized from all topics above)
 2. ...
 
 ### Actionable Insights
-1. ...
+1. ... (How these learnings change future work)
+2. ...
 
 ### Next Steps
-- ...
+- ... (Follow-up actions based on today's learnings)
+```
+
+**Example — Good (learning-focused):**
+```
+### 1. Authentication Identity Mismatch (Issue #442 — Fundraiser delete broken)
+- **Problem context**: Users couldn't delete their own fundraisers — action would fail silently
+- **Technical insight**: Auth middleware returns `cognitoSub` (string), but database uses UUID `profile_id`
+- **Root cause**: Mixed authentication IDs with database IDs without resolution layer
+- **Pattern learned**: Always resolve auth identity → profile lookup → database operations
+- **Surprise factor**: This worked in dev because test users had matching IDs; only broke in production with real users
+```
+
+**Example — Bad (transactional):**
+```
+- Fixed fundraiser delete bug (#442)
+- Updated auth middleware to use profile IDs
 ```
 
 ---
