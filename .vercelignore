@@ -1,13 +1,4 @@
-# Ignore all TIL and Team file changes to prevent auto-deploys
-/til/
-/team/
-
-# Ignore all markdown files
-*.md
-
-# Only deploy when these files change
-!package.json
-!package-lock.json
-!astro.config.*
-!src/
-!public/
+# Ignore obsidian-docs sync changes to prevent unnecessary deploys
+# Only ignore specific sync directories, not all .md files
+src/content/til/
+src/content/team/
