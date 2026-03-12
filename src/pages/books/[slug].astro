@@ -3,6 +3,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { books } from "../../data/books";
 import { marked } from "marked";
 
+// Eagerly import all book markdown files as raw strings at build time.
+// This bundles the content into the serverless function, avoiding fs/fetch issues on Vercel.
+const mdModules = import.meta.glob("/public/books/*.md", {
+    eager: true,
+    query: "?raw",
+    import: "default",
+}) as Record<string, string>;
+
 const { slug } = Astro.params;
 const book = books.find((b) => b.slug === slug);
 
@@ -10,13 +18,11 @@ if (!book) {
     return Astro.redirect("/books");
 }
 
-// Fetch the markdown file via HTTP – works on both local dev and Vercel serverless
-const mdUrl = new URL(`/books/${book.slug}.md`, Astro.url);
-const mdResponse = await fetch(mdUrl);
-if (!mdResponse.ok) {
+const mdKey = `/public/books/${book.slug}.md`;
+const mdContent = mdModules[mdKey];
+if (!mdContent) {
     return Astro.redirect("/books");
 }
-const mdContent = await mdResponse.text();
 const htmlContent = await marked.parse(mdContent);
 
 // Extract chapter headings for table of contents
