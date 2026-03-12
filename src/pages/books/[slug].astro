@@ -2,8 +2,6 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { books } from "../../data/books";
 import { marked } from "marked";
-import fs from "node:fs";
-import path from "node:path";
 
 const { slug } = Astro.params;
 const book = books.find((b) => b.slug === slug);
@@ -12,9 +10,13 @@ if (!book) {
     return Astro.redirect("/books");
 }
 
-// Read the markdown file from public/ and parse it
-const mdPath = path.join(process.cwd(), "public", "books", `${book.slug}.md`);
-const mdContent = fs.readFileSync(mdPath, "utf-8");
+// Fetch the markdown file via HTTP – works on both local dev and Vercel serverless
+const mdUrl = new URL(`/books/${book.slug}.md`, Astro.url);
+const mdResponse = await fetch(mdUrl);
+if (!mdResponse.ok) {
+    return Astro.redirect("/books");
+}
+const mdContent = await mdResponse.text();
 const htmlContent = await marked.parse(mdContent);
 
 // Extract chapter headings for table of contents
