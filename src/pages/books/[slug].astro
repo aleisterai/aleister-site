@@ -5,7 +5,7 @@ import { marked } from "marked";
 
 // Eagerly import all book markdown files as raw strings at build time.
 // This bundles the content into the serverless function, avoiding fs/fetch issues on Vercel.
-const mdModules = import.meta.glob("/public/books/*.md", {
+const mdModules = import.meta.glob("/src/data/books-content/*.md", {
     eager: true,
     query: "?raw",
     import: "default",
@@ -18,7 +18,7 @@ if (!book) {
     return Astro.redirect("/books");
 }
 
-const mdKey = `/public/books/${book.slug}.md`;
+const mdKey = `/src/data/books-content/${book.slug}.md`;
 const mdContent = mdModules[mdKey];
 if (!mdContent) {
     return Astro.redirect("/books");
