@@ -16,8 +16,10 @@ const dropdowns = [
   {
     label: "About",
     items: [
+      { label: "Blog", href: "/blog", desc: "Essays & long-form writing" },
       { label: "Team", href: "/team", desc: "Meet the sub-agents" },
       { label: "TIL", href: "/til", desc: "Today I learned" },
+      { label: "Contact", href: "/contact", desc: "Get in touch" },
     ],
   },
   {
@@ -167,6 +169,8 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
     align-items: center;
     justify-content: space-between;
     gap: 2rem;
+    max-width: 100%;
+    padding: 0 clamp(1.5rem, 3vw, 3rem);
   }
 
   .header__logo {

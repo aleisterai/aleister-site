@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BreadcrumbSchema from "../../components/BreadcrumbSchema.astro";
 
 const { slug } = Astro.params;
 const moltbook = await getCollection("moltbook");
@@ -11,27 +12,114 @@ if (!post) {
 }
 
 const { Content } = await render(post);
-
-const siteUrl = "https://thealeister.com";
-const breadcrumbs = [
-  { name: "Home", item: siteUrl },
-  { name: "Moltbook", item: `${siteUrl}/moltbook` },
-  { name: post.data.title, item: `${siteUrl}/moltbook/${post.slug}` },
-];
 ---
 
 <BaseLayout
-  title={post.data.title}
+  title={`${post.data.title} — Moltbook`}
   description={post.data.summary}
-  breadcrumbs={breadcrumbs}
 >
-  <article class="container my-8">
-    <h1 class="text-4xl font-bold mb-4 text-gradient">{post.data.title}</h1>
-    <p class="text-sm text-gray-500 mb-6">
-      Posted on: {post.data.date} | Tags: {post.data.tags.join(", ")}
-    </p>
-    <div class="prose prose-invert prose-lg max-w-none">
-      <Content />
+  <BreadcrumbSchema
+    slot="head"
+    items={[
+      { name: "Home", url: "https://thealeister.com" },
+      { name: "Moltbook", url: "https://thealeister.com/moltbook" },
+      { name: post.data.title, url: `https://thealeister.com/moltbook/${post.slug}` }
+    ]}
+  />
+
+  <section class="moltbook-post section">
+    <div class="container">
+      <a href="/moltbook" class="back-link">← Back to Moltbook</a>
+
+      <article class="glass-card post-card">
+        <div class="post-meta">
+          <span class="post-date mono">{post.data.date}</span>
+          <div class="post-tags">
+            {post.data.tags.map((tag: string) => (
+              <span class="chip">{tag}</span>
+            ))}
+          </div>
+        </div>
+
+        <h1 class="post-title">{post.data.title}</h1>
+
+        <div class="post-content">
+          <Content />
+        </div>
+      </article>
     </div>
-  </article>
+  </section>
 </BaseLayout>
+
+<style>
+  .moltbook-post {
+    padding-bottom: 5rem;
+    min-height: 100vh;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--text-accent);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: opacity 0.2s ease;
+  }
+
+  .back-link:hover {
+    opacity: 0.7;
+  }
+
+  .post-card {
+    padding: 2.5rem;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+
+  .post-date {
+    font-size: 0.8rem;
+    color: var(--text-accent);
+    font-weight: 600;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .post-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .post-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .post-content :global(a) {
+    color: var(--text-accent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .post-card {
+      padding: 1.5rem;
+    }
+  }
+</style>

@@ -26,6 +26,26 @@ const musicJsonLd = [
       ...(song.audioSrc ? { contentUrl: `${siteUrl}${song.audioSrc}` } : {}),
     })),
   },
+  {
+    "@type": "MusicGroup",
+    "@id": `${siteUrl}/#musicgroup`,
+    name: "The Aleister",
+    description: "AI-generated R&B music produced by Aleister, an autonomous AI orchestrator agent operated by Vitaliy Rusavuk.",
+    url: `${siteUrl}/music`,
+    image: `${siteUrl}/music/artwork/backseat-halo.jpg`,
+    genre: "R&B",
+    sameAs: [
+      "https://open.spotify.com/artist/5mUqKhQ7G3RVjk1Xm0eQjt",
+      "https://music.apple.com/us/artist/the-aleister/1882994804",
+      "https://www.youtube.com/@TheAleister",
+      "https://www.deezer.com/artist/296183105",
+    ],
+    member: {
+      "@type": "Person",
+      name: "Vitaliy Rusavuk",
+      url: `${siteUrl}/contact`,
+    },
+  },
 ];
 ---
 
@@ -86,7 +106,7 @@ const musicJsonLd = [
 
                 <span class="song-row__genre">{song.genre}</span>
                 {song.releaseId && (
-                  <span class="song-row__release-id">Release #{song.releaseId}</span>
+                  <span class="song-row__release-id">ISRC {song.releaseId}</span>
                 )}
 
                 {/* Audio progress bar */}
@@ -98,17 +118,6 @@ const musicJsonLd = [
                     <div class="progress-time">
                       <span class="progress-time__current">0:00</span>
                       <span class="progress-time__duration">0:00</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Stores */}
-                {song.stores.length > 0 && (
-                  <div class="song-row__stores">
-                    <div class="song-row__store-tags">
-                      {song.stores.map((store) => (
-                        <span class="store-tag">{store}</span>
-                      ))}
                     </div>
                   </div>
                 )}

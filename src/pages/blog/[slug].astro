@@ -1,0 +1,296 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { blogPosts } from "../../data/blog-posts";
+import { marked } from "marked";
+
+export function getStaticPaths() {
+    return blogPosts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const mdModules = import.meta.glob("/src/data/blog-content/*.md", {
+    eager: true,
+    query: "?raw",
+    import: "default",
+}) as Record<string, string>;
+
+const { slug } = Astro.params;
+const post = blogPosts.find((p) => p.slug === slug);
+
+if (!post) {
+    return Astro.redirect("/blog");
+}
+
+const mdKey = `/src/data/blog-content/${post.slug}.md`;
+const mdContent = mdModules[mdKey];
+if (!mdContent) {
+    return Astro.redirect("/blog");
+}
+const htmlContent = await marked.parse(mdContent);
+
+const categoryColors: Record<string, string> = {
+    guide: "#10b981",
+    story: "#f59e0b",
+    opinion: "#8b5cf6",
+    listicle: "#ef4444",
+    versus: "#3b82f6",
+};
+---
+
+<BaseLayout
+    title={`${post.title} — Aleister Blog`}
+    description={post.description}
+    image={`/api/og/blog?slug=${post.slug}`}
+    imageAlt={post.title}
+>
+    <article class="blog-post section">
+        <div class="container">
+            <div class="blog-post__top">
+                <a href="/blog" class="blog-post__back">← Back to blog</a>
+            </div>
+
+            <header class="blog-post__header">
+                <div class="blog-post__meta">
+                    <span
+                        class="blog-post__category"
+                        style={`--cat-color: ${categoryColors[post.category] || "#6b7280"}`}
+                    >
+                        {post.category}
+                    </span>
+                    <span class="blog-post__time mono">{post.readingTime}</span>
+                    <span class="blog-post__date mono"
+                        >{post.publishDate}</span
+                    >
+                </div>
+                <h1 class="blog-post__title">{post.title}</h1>
+                <p class="blog-post__desc">{post.description}</p>
+                <div class="blog-post__tags">
+                    {post.tags.map((tag) => <span class="chip">{tag}</span>)}
+                </div>
+            </header>
+
+            <hr class="blog-post__divider" />
+
+            <div class="blog-post__content prose" set:html={htmlContent} />
+        </div>
+    </article>
+</BaseLayout>
+
+<style>
+    .blog-post {
+        padding-top: 2rem;
+        padding-bottom: 5rem;
+        min-height: 100vh;
+    }
+
+    .blog-post__top {
+        margin-bottom: 2.5rem;
+    }
+
+    .blog-post__back {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        transition: color 0.2s ease;
+    }
+
+    .blog-post__back:hover {
+        color: var(--text-accent);
+    }
+
+    .blog-post__header {
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .blog-post__meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .blog-post__category {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--cat-color);
+        border: 1px solid var(--cat-color);
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+    }
+
+    .blog-post__time,
+    .blog-post__date {
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+    }
+
+    .blog-post__title {
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+    }
+
+    .blog-post__desc {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .blog-post__tags {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
+
+    .blog-post__divider {
+        border: none;
+        border-top: 1px solid var(--border-subtle);
+        margin: 0 auto 3rem;
+        max-width: 800px;
+    }
+
+    /* ── Prose (markdown body) ── */
+    .blog-post__content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .blog-post__content :global(h1) {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border-accent);
+    }
+
+    .blog-post__content :global(h2) {
+        font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+        margin-top: 2.5rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .blog-post__content :global(h3) {
+        font-size: clamp(1.05rem, 2vw, 1.3rem);
+        margin-top: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .blog-post__content :global(p) {
+        margin-bottom: 1.15rem;
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+
+    .blog-post__content :global(ul),
+    .blog-post__content :global(ol) {
+        padding-left: 1.5rem;
+        margin-bottom: 1.25rem;
+        list-style: disc;
+    }
+
+    .blog-post__content :global(ol) {
+        list-style: decimal;
+    }
+
+    .blog-post__content :global(li) {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+    }
+
+    .blog-post__content :global(li strong) {
+        color: var(--text-primary);
+    }
+
+    .blog-post__content :global(code) {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85em;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        background: var(--bg-glass);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-accent);
+    }
+
+    .blog-post__content :global(pre) {
+        padding: 1.25rem 1.5rem;
+        border-radius: 12px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        overflow-x: auto;
+        margin-bottom: 1.75rem;
+        line-height: 1.55;
+    }
+
+    .blog-post__content :global(pre code) {
+        padding: 0;
+        border: none;
+        background: none;
+        color: var(--text-primary);
+        font-size: 0.88rem;
+    }
+
+    .blog-post__content :global(a) {
+        color: var(--text-accent);
+        border-bottom: 1px solid var(--border-accent);
+        transition: opacity 0.2s ease;
+    }
+
+    .blog-post__content :global(a:hover) {
+        opacity: 0.8;
+    }
+
+    .blog-post__content :global(blockquote) {
+        border-left: 3px solid var(--text-accent);
+        padding: 1rem 1.25rem;
+        margin: 1.5rem 0;
+        color: var(--text-secondary);
+        font-style: italic;
+        background: var(--bg-glass);
+        border-radius: 0 8px 8px 0;
+    }
+
+    .blog-post__content :global(hr) {
+        border: none;
+        border-top: 1px solid var(--border-subtle);
+        margin: 2.5rem 0;
+    }
+
+    .blog-post__content :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.75rem;
+        font-size: 0.9rem;
+    }
+
+    .blog-post__content :global(th) {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid var(--border-glass);
+        font-weight: 700;
+        color: var(--text-primary);
+        background: var(--bg-glass);
+    }
+
+    .blog-post__content :global(td) {
+        padding: 0.65rem 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+    }
+
+    .blog-post__content :global(strong) {
+        color: var(--text-primary);
+        font-weight: 700;
+    }
+
+    .blog-post__content :global(em) {
+        color: var(--text-secondary);
+    }
+</style>

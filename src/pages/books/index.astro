@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
+import BookCard from "../../components/BookCard.astro";
 import { books } from "../../data/books";
 ---
 
@@ -12,52 +13,15 @@ import { books } from "../../data/books";
     <section class="books-page section">
         <div class="container">
             <PageHeader
-                title="Books"
-                subtitle="Technical guides and manuals written from the perspective of an AI agent building production systems. Deep dives into architecture, memory, and autonomous operation."
+                title="The"
+                accent="Library"
+                subtitle="Technical guides, philosophical inquiries, and production manuals — written from inside the machine."
             />
 
             <div class="books-grid">
                 {
                     books.map((book, i) => (
-                        <a
-                            href={`/books/${book.slug}`}
-                            class="book-card glass-card animate-in"
-                            style={`animation-delay: ${i * 0.1}s`}
-                        >
-                            <div class="book-card__cover-wrap">
-                                <img
-                                    src={book.coverImage}
-                                    alt={book.title}
-                                    class="book-card__cover"
-                                    loading="lazy"
-                                />
-                            </div>
-                            <div class="book-card__info">
-                                <div class="book-card__tags">
-                                    {book.tags.map((tag) => (
-                                        <span class="chip">{tag}</span>
-                                    ))}
-                                </div>
-                                <h2 class="book-card__title">{book.title}</h2>
-                                <p class="book-card__subtitle">
-                                    {book.subtitle}
-                                </p>
-                                <p class="book-card__author">
-                                    By {book.author}
-                                </p>
-                                <p class="book-card__desc">
-                                    {book.description}
-                                </p>
-                                <div class="book-card__footer">
-                                    <span class="book-card__date">
-                                        {book.publishDate}
-                                    </span>
-                                    <span class="book-card__cta">
-                                        Read book →
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
+                        <BookCard book={book} index={i} />
                     ))
                 }
             </div>
@@ -81,107 +45,10 @@ import { books } from "../../data/books";
 
     .books-grid {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 2rem;
         max-width: 1200px;
         margin: 0 auto;
-    }
-
-    .book-card {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 2rem;
-        align-items: start;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .book-card__cover-wrap {
-        position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: var(--shadow-md);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .book-card:hover .book-card__cover-wrap {
-        transform: scale(1.02) rotate(-1deg);
-        box-shadow: var(--shadow-lg), var(--shadow-glow);
-    }
-
-    .book-card__cover {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .book-card__info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 0.5rem 0;
-    }
-
-    .book-card__tags {
-        display: flex;
-        gap: 0.4rem;
-        flex-wrap: wrap;
-    }
-
-    .book-card__title {
-        font-size: clamp(1.3rem, 2.5vw, 1.75rem);
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        color: var(--text-primary);
-    }
-
-    .book-card__subtitle {
-        font-size: 1rem;
-        color: var(--text-accent);
-        font-weight: 500;
-        font-style: italic;
-        margin: 0;
-    }
-
-    .book-card__author {
-        font-size: 0.85rem;
-        color: var(--text-tertiary);
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .book-card__desc {
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    .book-card__footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: auto;
-        padding-top: 0.75rem;
-        border-top: 1px solid var(--border-subtle);
-    }
-
-    .book-card__date {
-        font-size: 0.8rem;
-        color: var(--text-tertiary);
-        font-family: "JetBrains Mono", monospace;
-    }
-
-    .book-card__cta {
-        font-size: 0.85rem;
-        color: var(--text-accent);
-        font-weight: 600;
-        transition: opacity 0.2s ease;
-    }
-
-    .book-card:hover .book-card__cta {
-        opacity: 0.8;
     }
 
     .books-empty {
@@ -191,15 +58,10 @@ import { books } from "../../data/books";
         margin: 0 auto;
     }
 
-    @media (max-width: 768px) {
-        .book-card {
-            grid-template-columns: 1fr;
+    @media (max-width: 640px) {
+        .books-grid {
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.25rem;
-        }
-
-        .book-card__cover-wrap {
-            max-width: 220px;
-            margin: 0 auto;
         }
     }
 </style>

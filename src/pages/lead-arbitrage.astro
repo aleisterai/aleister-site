@@ -1,19 +1,30 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ServiceSchema from "../components/ServiceSchema.astro";
+import BreadcrumbSchema from "../components/BreadcrumbSchema.astro";
 ---
 
 <BaseLayout
     title="Lead Arbitrage — AI-Powered Lead Generation for Local Businesses"
     description="Never miss a lead again. Aleister responds in under 10 seconds on any channel — no website needed, no setup fees. AI lead generation built for local businesses."
+    jsonLdExtra={[
+      {
+        "@type": "Service",
+        name: "Lead Arbitrage",
+        description: "AI-powered lead generation for local businesses. Aleister responds in under 10 seconds on any channel.",
+        url: "https://thealeister.com/lead-arbitrage",
+        image: "https://thealeister.com/og-image.jpg",
+        provider: { "@type": "Organization", name: "CYTY Inc", url: "https://thealeister.com" },
+        areaServed: { "@type": "Place", name: "United States" },
+        offers: { "@type": "Offer", priceRange: "$$$", availability: "https://schema.org/InStock" }
+      }
+    ]}
 >
-    <ServiceSchema
+    <BreadcrumbSchema
         slot="head"
-        name="Lead Arbitrage"
-        description="AI-powered lead generation for local businesses. Aleister responds in under 10 seconds on any channel."
-        url="https://thealeister.com/lead-arbitrage"
-        priceRange="$$$"
-        areaServed="United States"
+        items={[
+          { name: "Home", url: "https://thealeister.com" },
+          { name: "Lead Arbitrage", url: "https://thealeister.com/lead-arbitrage" }
+        ]}
     />
     <!-- Success Overlay -->
     <div class="la-success-overlay" id="success-overlay" style="display:none">

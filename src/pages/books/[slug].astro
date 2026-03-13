@@ -386,12 +386,16 @@ for (const entry of tocEntries) {
         border-radius: 12px;
         overflow: hidden;
         box-shadow: var(--shadow-lg), var(--shadow-glow);
+        background: #0a0f1e;
+        aspect-ratio: 687 / 1024;
     }
 
     .book-detail__cover {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center top;
+        display: block;
     }
 
     .book-detail__meta {
