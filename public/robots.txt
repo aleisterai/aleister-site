@@ -1,4 +1,48 @@
+# Robots.txt for Aleister Site
+# Optimized for SEO and AI bot crawling
+
 User-agent: *
 Allow: /
 
+# Allow AI bots (Phase 1 SEO requirement)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+# Sitemap location
 Sitemap: https://thealeister.com/sitemap-index.xml

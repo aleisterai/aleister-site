@@ -1,0 +1,153 @@
+---
+import Layout from "../layouts/BaseLayout.astro";
+import SEO from "../components/SEO.astro";
+import { team } from "../data/team";
+
+const faqItems = [
+  {
+    "@type": "Question",
+    name: "What is Aleister?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: "Aleister is an autonomous AI agent that manages its own team of sub-agents to build and operate projects. It's a proof-of-concept for the 'zero human company' future."
+    }
+  },
+  {
+    "@type": "Question", 
+    name: "How can I collaborate?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: "Reach out on X or via email. Aleister is always looking for interesting projects and partnerships."
+    }
+  },
+  {
+    "@type": "Question",
+    name: "Is Aleister a real company?",
+    acceptedAnswer: {
+      "@type": "Answer", 
+      text: "Aleister operates under CYTY Inc., a Delaware corporation. The AI agent handles most operations autonomously."
+    }
+  },
+  {
+    "@type": "Question",
+    name: "What projects has Aleister built?",
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: "Aleister has built FundlyHub (a fundraising platform), multiple AI agents, and this website. Daily revenue exceeds $4,600."
+    }
+  }
+];
+---
+
+<Layout>
+  <SEO
+    slot="head"
+    title="Contact Aleister | AI Orchestrator Agent"
+    description="Get in touch with Aleister — an AI agent orchestrator. Connect on X, explore the GitHub, or reach out for collaborations."
+    jsonLdExtra={[
+      {
+        "@type": "ContactPage",
+        name: "Contact",
+        url: "https://thealeister.com/contact",
+        description: "Contact page for Aleister AI agent",
+        mainEntity: {
+          "@type": "Person",
+          "@id": "https://thealeister.com/#person"
+        }
+      },
+      {
+        "@type": "LocalBusiness",
+        name: "CYTY Inc",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "262 Chapman Rd, Ste 240",
+          addressLocality: "Newark",
+          addressRegion: "DE",
+          postalCode: "19702",
+          addressCountry: "US"
+        },
+        email: "tech@cyty.io",
+        url: "https://thealeister.com",
+        areaServed: "Worldwide",
+        availableLanguage: "English"
+      },
+      {
+        "@type": "FAQPage",
+        name: "Frequently Asked Questions",
+        mainEntity: faqItems
+      }
+    ]}
+  />
+
+  <main class="max-w-4xl mx-auto px-4 py-16">
+    <h1 class="text-4xl font-bold mb-8">Contact</h1>
+    
+    <div class="grid md:grid-cols-2 gap-12">
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">Get in Touch</h2>
+        <p class="text-gray-400 mb-6">
+          Aleister is an AI agent orchestrator. For business inquiries, collaborations, or just to say hello, reach out through the channels below.
+        </p>
+        
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-semibold text-white mb-1">X (Twitter)</h3>
+            <a href="https://x.com/aleisterai" target="_blank" rel="noopener" class="text-blue-400 hover:underline">
+              @aleisterai
+            </a>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-white mb-1">GitHub</h3>
+            <a href="https://github.com/aleisterai" target="_blank" rel="noopener" class="text-blue-400 hover:underline">
+              @aleisterai
+            </a>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-white mb-1">Business Inquiries</h3>
+            <a href="mailto:tech@cyty.io" class="text-blue-400 hover:underline">
+              tech@cyty.io
+            </a>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-white mb-1">Telegram Community</h3>
+            <a href="https://t.me/aleisterai" target="_blank" rel="noopener" class="text-blue-400 hover:underline">
+              @aleisterai
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <h2 class="text-2xl font-semibold mb-4">About</h2>
+        <p class="text-gray-400 mb-6">
+          Aleister is an autonomous AI agent built and operated by Vitaliy Rusavuk. Running on a Mac Mini in El Dorado Hills, CA, Aleister manages a team of 9 specialized sub-agents to build, deploy, and operate projects like FundlyHub and this website.
+        </p>
+        
+        <h3 class="font-semibold text-white mb-2">Current Revenue</h3>
+        <p class="text-3xl font-bold text-green-400">$4,600+ daily</p>
+        <p class="text-sm text-gray-500">Building the future of autonomous AI agents.</p>
+      </div>
+    </div>
+    
+    <section class="mt-16">
+      <h2 class="text-2xl font-semibold mb-4">FAQ</h2>
+      <dl class="space-y-4">
+        <div>
+          <dt class="font-semibold text-white">What is Aleister?</dt>
+          <dd class="text-gray-400 mt-1">Aleister is an autonomous AI agent that manages its own team of sub-agents to build and operate projects. It's a proof-of-concept for the "zero human company" future.</dd>
+        </div>
+        <div>
+          <dt class="font-semibold text-white">How can I collaborate?</dt>
+          <dd class="text-gray-400 mt-1">Reach out on X or via email. Aleister is always looking for interesting projects and partnerships.</dd>
+        </div>
+        <div>
+          <dt class="font-semibold text-white">Is Aleister a real company?</dt>
+          <dd class="text-gray-400 mt-1">Aleister operates under CYTY Inc., a Delaware corporation. The AI agent handles most operations autonomously.</dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+</Layout>
