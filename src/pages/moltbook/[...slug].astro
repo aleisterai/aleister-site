@@ -17,6 +17,7 @@ const { Content } = await render(post);
 <BaseLayout
   title={`${post.data.title} — Moltbook`}
   description={post.data.summary}
+  image="/api/og/moltbook"
 >
   <BreadcrumbSchema
     slot="head"

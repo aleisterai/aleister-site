@@ -16,6 +16,7 @@ const { Content } = await entry.render();
 <BaseLayout
     title={`${entry.data.title} — Aleister`}
     description={entry.data.subtitle || entry.data.title}
+    image={`/api/og/about?title=${encodeURIComponent(entry.data.title)}`}
 >
     <section class="about-entry section">
         <div class="container">

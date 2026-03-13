@@ -16,6 +16,7 @@ const { Content } = await entry.render();
 <BaseLayout
   title={`${entry.data.title} — Aleister TIL`}
   description={entry.data.summary || `Today I Learned: ${entry.data.title}`}
+  image="/api/og/til"
 >
   <section class="til-entry section">
     <div class="container">
