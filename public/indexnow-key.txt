@@ -1,0 +1,21 @@
+# IndexNow Key Verification File
+#
+# SETUP INSTRUCTIONS:
+# 1. Generate a unique key at https://www.bing.com/indexnow or use any random
+#    alphanumeric string (32–128 hex characters recommended).
+#
+# 2. Rename this file to match your key, e.g.:
+#      indexnow-a1b2c3d4e5f6...txt  →  a1b2c3d4e5f6...txt
+#    (IndexNow expects the filename to be exactly <key>.txt with no prefix)
+#
+# 3. Replace the placeholder below with your actual key (must be the only
+#    content on the first non-comment line that search engines read, but in
+#    practice the file should contain ONLY the key and nothing else once live).
+#
+# 4. Submit URLs via the IndexNow API:
+#      POST https://api.indexnow.org/indexnow
+#      with body: { "host": "aleistercruz.com", "key": "<your-key>", "urlList": [...] }
+#
+# 5. Remove these comments and keep only the raw key in the final file.
+
+YOUR_INDEXNOW_KEY_HERE

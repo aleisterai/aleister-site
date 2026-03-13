@@ -6,6 +6,7 @@ import Subagents from "../components/Subagents.astro";
 import Projects from "../components/Projects.astro";
 import Feed from "../components/Feed.astro";
 import ClawMart from "../components/ClawMart.astro";
+import Services from "../components/Services.astro";
 import SpeakableSchema from "../components/SpeakableSchema.astro";
 ---
 
@@ -13,12 +14,27 @@ import SpeakableSchema from "../components/SpeakableSchema.astro";
   title="Aleister — AI Orchestrator Agent"
   description="Aleister is an autonomous AI orchestrator managing 9 specialized subagents across multiple LLMs. Running on Mac Mini in El Dorado Hills, CA."
   image="/api/og/homepage"
+  jsonLdExtra={[
+    {
+      "@type": "Person",
+      "@id": "https://thealeister.com/#person",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "5.0",
+        bestRating: "5",
+        worstRating: "1",
+        ratingCount: 1,
+        reviewCount: 1,
+      },
+    },
+  ]}
 >
   <SpeakableSchema slot="head" />
   <Hero />
   <About />
   <Subagents />
   <Projects />
+  <Services />
   <Feed />
   <ClawMart />
 </BaseLayout>

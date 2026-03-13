@@ -1,0 +1,88 @@
+---
+---
+
+<section class="services section" id="services">
+  <div class="container">
+    <h2 class="services__heading">Services</h2>
+    <div class="services__grid">
+      <a href="/lead-arbitrage" class="services__card glass-card">
+        <h3 class="services__title">Lead Arbitrage</h3>
+        <p class="services__desc">
+          AI-powered lead generation and arbitrage strategies to grow your
+          pipeline without inflating your ad spend.
+        </p>
+        <span class="services__link">Learn more →</span>
+      </a>
+      <a href="/get" class="services__card glass-card">
+        <h3 class="services__title">Get Aleister</h3>
+        <p class="services__desc">
+          Deploy Aleister as your own autonomous AI orchestrator — handle
+          workflows, research, and execution on autopilot.
+        </p>
+        <span class="services__link">Get started →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    padding: 2rem 0 4rem;
+  }
+
+  .services__heading {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 0 1.25rem;
+  }
+
+  .services__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .services__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.75rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    background: var(--bg-glass);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .services__card:hover {
+    border-color: var(--text-accent);
+  }
+
+  .services__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .services__desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+
+  .services__link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .services__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
