@@ -1,11 +1,20 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ServiceSchema from "../components/ServiceSchema.astro";
 ---
 
 <BaseLayout
     title="Lead Arbitrage — AI-Powered Lead Generation for Local Businesses"
     description="Never miss a lead again. Aleister responds in under 10 seconds on any channel — no website needed, no setup fees. AI lead generation built for local businesses."
 >
+    <ServiceSchema
+        slot="head"
+        name="Lead Arbitrage"
+        description="AI-powered lead generation for local businesses. Aleister responds in under 10 seconds on any channel."
+        url="https://thealeister.com/lead-arbitrage"
+        priceRange="$$$"
+        areaServed="United States"
+    />
     <!-- Success Overlay -->
     <div class="la-success-overlay" id="success-overlay" style="display:none">
         <div class="glass-card la-success-card">

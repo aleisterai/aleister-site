@@ -1,0 +1,43 @@
+---
+/**
+ * BreadcrumbSchema - JSON-LD BreadcrumbList for navigation
+ * Adds breadcrumb structured data to pages for better SEO
+ * 
+ * @example
+ * ---
+ * import BreadcrumbSchema from "../components/BreadcrumbSchema.astro";
+ * ---
+ * <BreadcrumbSchema
+ *   slot="head"
+ *   items={[
+ *     { name: "Home", url: "https://thealeister.com" },
+ *     { name: "Team", url: "https://thealeister.com/team" },
+ *     { name: "Cipher", url: "https://thealeister.com/team/cipher" }
+ *   ]}
+ * />
+ */
+
+export interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": item.url
+  }))
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>

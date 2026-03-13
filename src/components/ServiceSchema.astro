@@ -1,0 +1,65 @@
+---
+/**
+ * ServiceSchema - JSON-LD for service pages
+ * Use this component to add Service schema to any service page
+ * 
+ * @example
+ * ---
+ * import ServiceSchema from "../components/ServiceSchema.astro";
+ * ---
+ * <ServiceSchema
+ *   slot="head"
+ *   name="Lead Arbitrage"
+ *   description="AI-powered lead generation for local businesses"
+ *   url="https://thealeister.com/lead-arbitrage"
+ *   priceRange="$$"
+ *   areaServed="Worldwide"
+ *   provider="CYTY Inc"
+ * />
+ */
+
+export interface Props {
+  name: string;
+  description: string;
+  url: string;
+  priceRange?: string;
+  areaServed?: string;
+  provider?: string;
+  image?: string;
+}
+
+const {
+  name,
+  description,
+  url,
+  priceRange = "$$",
+  areaServed = "Worldwide",
+  provider = "CYTY Inc",
+  image = "https://thealeister.com/og-image.jpg"
+} = Astro.props;
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": name,
+  "description": description,
+  "url": url,
+  "image": image,
+  "provider": {
+    "@type": "Organization",
+    "name": provider,
+    "url": "https://thealeister.com"
+  },
+  "areaServed": {
+    "@type": "Place",
+    "name": areaServed
+  },
+  "offers": {
+    "@type": "Offer",
+    "priceRange": priceRange,
+    "availability": "https://schema.org/InStock"
+  }
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(serviceSchema)}></script>

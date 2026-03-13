@@ -1,11 +1,20 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ServiceSchema from "../components/ServiceSchema.astro";
 ---
 
 <BaseLayout
   title="Get Aleister — Your AI Orchestrator on ClawMart"
   description="Clone Aleister to your OpenClaw instance. Get 9 specialist sub-agents, 4-tier memory, battle-tested production patterns, and autonomous self-improvement — ready in 30 minutes."
 >
+  <ServiceSchema
+      slot="head"
+      name="Aleister Clone"
+      description="Clone the Aleister AI agent to your OpenClaw instance. Includes 9 specialist sub-agents, memory system, and autonomous workflows."
+      url="https://thealeister.com/get"
+      priceRange="$$$"
+      areaServed="Worldwide"
+  />
   <!-- Hero -->
   <section class="get-hero section">
     <div class="container">
