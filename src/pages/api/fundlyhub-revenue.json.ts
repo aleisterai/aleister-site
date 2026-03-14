@@ -17,57 +17,33 @@ export const GET: APIRoute = async () => {
         }
 
         const headers = { Authorization: fundlyhubAuth() };
-
-        // Fetch balance + recent charges (30d) + all-time charges
         const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 86400;
 
-        const [balanceRes, chargesRes, allChargesRes] = await Promise.all([
-            fetch(`${STRIPE_API}/balance`, { headers, signal: AbortSignal.timeout(8000) }),
-            fetch(`${STRIPE_API}/charges?limit=100&created[gte]=${thirtyDaysAgo}`, {
-                headers,
-                signal: AbortSignal.timeout(8000),
-            }),
+        // Fetch charges — all-time and 30d
+        // Use separate fetches so we can paginate if needed
+        const [chargesRes, charges30dRes] = await Promise.all([
             fetch(`${STRIPE_API}/charges?limit=100`, {
                 headers,
                 signal: AbortSignal.timeout(8000),
             }),
+            fetch(`${STRIPE_API}/charges?limit=100&created[gte]=${thirtyDaysAgo}`, {
+                headers,
+                signal: AbortSignal.timeout(8000),
+            }),
         ]);
 
-        if (!balanceRes.ok || !chargesRes.ok || !allChargesRes.ok) {
+        if (!chargesRes.ok || !charges30dRes.ok) {
             throw new Error(
-                `Stripe API error: balance=${balanceRes.status} charges=${chargesRes.status} all=${allChargesRes.status}`
+                `Stripe charges error: all=${chargesRes.status} 30d=${charges30dRes.status}`
             );
         }
 
-        const [balance, charges, allCharges] = await Promise.all([
-            balanceRes.json(),
+        const [allCharges, charges30d] = await Promise.all([
             chargesRes.json(),
-            allChargesRes.json(),
+            charges30dRes.json(),
         ]);
 
-        // Available + pending balance
-        const available =
-            (balance.available || []).reduce(
-                (sum: number, b: any) => sum + (b.amount || 0),
-                0
-            ) / 100;
-        const pending =
-            (balance.pending || []).reduce(
-                (sum: number, b: any) => sum + (b.amount || 0),
-                0
-            ) / 100;
-
-        // 30d successful charges
-        const successfulCharges30d = (charges.data || []).filter(
-            (c: any) => c.status === 'succeeded' && !c.refunded
-        );
-        const revenue30d =
-            successfulCharges30d.reduce(
-                (sum: number, c: any) => sum + (c.amount || 0),
-                0
-            ) / 100;
-
-        // All-time successful charges (from the last 100)
+        // All-time successful charges
         const allSuccessful = (allCharges.data || []).filter(
             (c: any) => c.status === 'succeeded' && !c.refunded
         );
@@ -77,24 +53,56 @@ export const GET: APIRoute = async () => {
                 0
             ) / 100;
 
+        // 30d successful charges
+        const successful30d = (charges30d.data || []).filter(
+            (c: any) => c.status === 'succeeded' && !c.refunded
+        );
+        const revenue30d =
+            successful30d.reduce(
+                (sum: number, c: any) => sum + (c.amount || 0),
+                0
+            ) / 100;
+
+        // Try balance (optional — restricted key may lack rak_balance_read)
+        let balance = { available: 0, pending: 0, total: 0 };
+        try {
+            const balanceRes = await fetch(`${STRIPE_API}/balance`, {
+                headers,
+                signal: AbortSignal.timeout(5000),
+            });
+            if (balanceRes.ok) {
+                const balanceData = await balanceRes.json();
+                const available =
+                    (balanceData.available || []).reduce(
+                        (sum: number, b: any) => sum + (b.amount || 0),
+                        0
+                    ) / 100;
+                const pending =
+                    (balanceData.pending || []).reduce(
+                        (sum: number, b: any) => sum + (b.amount || 0),
+                        0
+                    ) / 100;
+                balance = { available, pending, total: available + pending };
+            }
+        } catch {
+            // Balance not available with this key — that's fine
+        }
+
         return new Response(
             JSON.stringify({
                 success: true,
                 totalRevenue,
                 revenue30d,
-                chargeCount30d: successfulCharges30d.length,
-                balance: {
-                    available,
-                    pending,
-                    total: available + pending,
-                },
+                chargeCount30d: successful30d.length,
+                chargeCountAll: allSuccessful.length,
+                balance,
                 timestamp: new Date().toISOString(),
             }),
             {
                 status: 200,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cache-Control': 'public, max-age=300', // 5 min cache
+                    'Cache-Control': 'public, max-age=300',
                 },
             }
         );
@@ -106,6 +114,7 @@ export const GET: APIRoute = async () => {
                 totalRevenue: 0,
                 revenue30d: 0,
                 chargeCount30d: 0,
+                chargeCountAll: 0,
                 balance: { available: 0, pending: 0, total: 0 },
                 timestamp: new Date().toISOString(),
                 error: 'Failed to fetch FundlyHub data',
