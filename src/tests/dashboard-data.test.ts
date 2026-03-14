@@ -409,16 +409,16 @@ describe('market-data.json', () => {
     });
 });
 
-// ─── patreon-revenue.json ─────────────────────────────────────────────────────
+// ─── fundlyhub-revenue.json ───────────────────────────────────────────────────
 
-describe('patreon-revenue.json', () => {
+describe('fundlyhub-revenue.json', () => {
     let GET: (ctx: any) => Promise<Response>;
     let fetchSpy: FetchMock;
 
     beforeEach(async () => {
         vi.resetModules();
-        vi.stubEnv('PATREON_ACCESS_TOKEN', 'test_access_token');
-        ({ GET } = await import('../pages/api/patreon-revenue.json.ts?t=' + Date.now()));
+        vi.stubEnv('FUNDLYHUB_STRIPE_KEY', 'rk_test_FUNDLYHUB');
+        ({ GET } = await import('../pages/api/fundlyhub-revenue.json.ts?t=' + Date.now()));
     });
 
     afterEach(() => {
@@ -426,30 +426,22 @@ describe('patreon-revenue.json', () => {
         vi.unstubAllEnvs();
     });
 
-    it('returns patron count and monthly revenue from Patreon API', async () => {
+    it('returns total revenue and 30d revenue from FundlyHub Stripe', async () => {
         fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
             const url = String(input);
-            if (url.includes('/campaigns?')) {
+            if (url.includes('/balance')) {
                 return mockResponse({
-                    data: [{
-                        id: '12345',
-                        attributes: {
-                            patron_count: 1,
-                            pledge_sum: 400,
-                            creation_name: 'Aleister',
-                        },
-                    }],
+                    available: [{ amount: 12000, currency: 'usd' }],
+                    pending: [{ amount: 3000, currency: 'usd' }],
                 });
             }
-            if (url.includes('/members')) {
+            if (url.includes('/charges')) {
                 return mockResponse({
-                    data: [{
-                        attributes: {
-                            patron_status: 'active_patron',
-                            currently_entitled_amount_cents: 400,
-                            full_name: 'Test Patron',
-                        },
-                    }],
+                    data: [
+                        { id: 'ch_1', amount: 5000, status: 'succeeded', refunded: false, created: Date.now() / 1000 },
+                        { id: 'ch_2', amount: 3000, status: 'succeeded', refunded: false, created: Date.now() / 1000 },
+                        { id: 'ch_3', amount: 2000, status: 'failed', refunded: false, created: Date.now() / 1000 },
+                    ],
                 });
             }
             return mockResponse({}, false, 500);
@@ -460,14 +452,15 @@ describe('patreon-revenue.json', () => {
 
         expect(res.status).toBe(200);
         expect(data.success).toBe(true);
-        expect(data.monthlyRevenue).toBe(4); // 400 cents = $4
-        expect(data.patronCount).toBe(1);
-        expect(data.campaignName).toBe('Aleister');
+        expect(data.balance.available).toBe(120);
+        expect(data.balance.pending).toBe(30);
+        expect(data.balance.total).toBe(150);
+        expect(data.chargeCount30d).toBe(2); // Only succeeded + not refunded
     });
 
-    it('returns $4 fallback when Patreon API is down', async () => {
+    it('returns $0 fallback when Stripe API fails', async () => {
         fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
-            throw new Error('Patreon API unavailable');
+            throw new Error('Stripe API unavailable');
         });
 
         const res = await GET(makeAstroCtx());
@@ -475,21 +468,22 @@ describe('patreon-revenue.json', () => {
 
         expect(res.status).toBe(200);
         expect(data.success).toBe(false);
-        expect(data.monthlyRevenue).toBe(4); // Known fallback
-        expect(data.patronCount).toBe(1);
+        expect(data.totalRevenue).toBe(0);
+        expect(data.revenue30d).toBe(0);
+        expect(data.chargeCount30d).toBe(0);
     });
 
-    it('handles missing access token gracefully', async () => {
+    it('handles missing API key gracefully', async () => {
         vi.resetModules();
         vi.unstubAllEnvs();
-        // No PATREON_ACCESS_TOKEN set
-        const mod = await import('../pages/api/patreon-revenue.json.ts?t=notoken' + Date.now());
+        // No FUNDLYHUB_STRIPE_KEY set
+        const mod = await import('../pages/api/fundlyhub-revenue.json.ts?t=nokey' + Date.now());
 
         const res = await mod.GET(makeAstroCtx());
         const data = await res.json();
 
         expect(res.status).toBe(200);
-        expect(data.monthlyRevenue).toBe(4); // Fallback
+        expect(data.totalRevenue).toBe(0); // Fallback
     });
 });
 
@@ -604,21 +598,21 @@ describe('Stress — concurrent dashboard requests', () => {
         // Test all endpoints in parallel
         vi.resetModules();
         vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_OUTAGE');
-        vi.stubEnv('PATREON_ACCESS_TOKEN', 'test_outage');
-        const [tokenMod, treasuryMod, stripeMod, marketMod, patreonMod] = await Promise.all([
+        vi.stubEnv('FUNDLYHUB_STRIPE_KEY', 'rk_test_OUTAGE');
+        const [tokenMod, treasuryMod, stripeMod, marketMod, fundlyhubMod] = await Promise.all([
             import('../pages/api/token-prices.json.ts?t=outage' + Date.now()),
             import('../pages/api/treasury-balances.json.ts?t=outage' + Date.now()),
             import('../pages/api/store-revenue.json.ts?t=outage' + Date.now()),
             import('../pages/api/market-data.json.ts?t=outage' + Date.now()),
-            import('../pages/api/patreon-revenue.json.ts?t=outage' + Date.now()),
+            import('../pages/api/fundlyhub-revenue.json.ts?t=outage' + Date.now()),
         ]);
 
-        const [tokenRes, treasuryRes, stripeRes, marketRes, patreonRes] = await Promise.all([
+        const [tokenRes, treasuryRes, stripeRes, marketRes, fundlyhubRes] = await Promise.all([
             tokenMod.GET(makeAstroCtx()),
             treasuryMod.GET(makeAstroCtx()),
             stripeMod.GET(makeAstroCtx()),
             marketMod.GET(makeAstroCtx()),
-            patreonMod.GET(makeAstroCtx()),
+            fundlyhubMod.GET(makeAstroCtx()),
         ]);
 
         // ALL must return 200 — never crash or 500
@@ -626,13 +620,13 @@ describe('Stress — concurrent dashboard requests', () => {
         expect(treasuryRes.status).toBe(200);
         expect(stripeRes.status).toBe(200);
         expect(marketRes.status).toBe(200);
-        expect(patreonRes.status).toBe(200);
+        expect(fundlyhubRes.status).toBe(200);
 
         const tokenData = await tokenRes.json();
         const treasuryData = await treasuryRes.json();
         const stripeData = await stripeRes.json();
         const marketData = await marketRes.json();
-        const patreonData = await patreonRes.json();
+        const fundlyhubData = await fundlyhubRes.json();
 
         // token-prices: ETH should never be $0
         expect(tokenData.ethereum.usd).toBeGreaterThan(0);
@@ -647,9 +641,9 @@ describe('Stress — concurrent dashboard requests', () => {
         // market-data: zero but not crash
         expect(marketData.price).toBe(0);
 
-        // patreon: $4 fallback
-        expect(patreonData.monthlyRevenue).toBe(4);
-        expect(patreonData.patronCount).toBe(1);
+        // fundlyhub: $0 fallback
+        expect(fundlyhubData.totalRevenue).toBe(0);
+        expect(fundlyhubData.chargeCount30d).toBe(0);
 
         console.log('✓ All 5 endpoints survived total API outage with graceful fallbacks');
     });
@@ -733,16 +727,16 @@ describe('Data consistency — cross-endpoint invariants', () => {
         vi.unstubAllEnvs();
     });
 
-    it('all-time revenue calculation: clawmart + store + patreon + tokenFees', () => {
+    it('all-time revenue calculation: clawmart + store + fundlyhub + tokenFees', () => {
         // Simulates the dashboard JS calculation
         const clawmart = 89;
         const store = 65; // Stripe balance
-        const patreon = 4; // 1 × $4/mo
+        const fundlyhub = 150; // FundlyHub Stripe revenue
         const tokenFees = 1840.90; // Treasury value (ETH + ALEISTER + USDC)
 
-        const total = clawmart + store + patreon + tokenFees;
+        const total = clawmart + store + fundlyhub + tokenFees;
 
-        expect(total).toBeCloseTo(1998.90, 2);
+        expect(total).toBeCloseTo(2144.90, 2);
         expect(total).toBeGreaterThan(0);
 
         // Verify no double-counting (tokenFees IS treasury, not added separately)

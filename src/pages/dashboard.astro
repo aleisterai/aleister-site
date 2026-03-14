@@ -47,7 +47,7 @@ const CLAW_MART_EARNINGS = 89;
       <div class="dashboard-section">
         <h2 class="section-title">
           Revenue Streams <a
-            href="https://trustmrr.com/startup/aleister"
+            href="https://trustmrr.com/founder/aleisterai"
             target="_blank"
             rel="noopener"
             class="section-title__link">TrustMRR ↗</a
@@ -86,16 +86,19 @@ const CLAW_MART_EARNINGS = 89;
           </a>
           <a
             class="revenue-card"
-            id="rev-patreon"
-            href="https://patreon.com/aleisterai"
+            id="rev-fundlyhub"
+            href="https://fundlyhub.com"
             target="_blank"
             rel="noopener"
           >
             <div class="revenue-card__body">
               <div class="revenue-card__name">
-                Patreon <span class="live-dot-inline"><span></span></span>
+                FundlyHub <span class="live-dot-inline"><span></span></span>
               </div>
-              <div class="revenue-card__amount" id="patreon-revenue">$4.00</div>
+              <div class="revenue-card__amount" id="fundlyhub-revenue">—</div>
+              <div class="revenue-card__sub" id="fundlyhub-sub">
+                Loading from Stripe...
+              </div>
             </div>
           </a>
           <div class="revenue-card" id="rev-token">
@@ -891,9 +894,9 @@ const CLAW_MART_EARNINGS = 89;
     function updateAllTimeRevenue() {
       const clawmart = window.__clawmartRevenue || 89;
       const store = window.__storeRevenue || 0;
-      const patreon = window.__patreonRevenue || 4;
+      const fundlyhub = window.__fundlyhubRevenue || 0;
       const tokenFees = window.__tokenFeesRevenue || 0;
-      const total = clawmart + store + patreon + tokenFees;
+      const total = clawmart + store + fundlyhub + tokenFees;
 
       const el = document.getElementById("all-time-revenue");
       const changeEl = document.getElementById("all-time-change");
@@ -960,12 +963,12 @@ const CLAW_MART_EARNINGS = 89;
 
       refreshData();
       fetchStoreRevenue();
-      fetchPatreonRevenue();
+      fetchFundlyHubRevenue();
 
       refreshInterval = setInterval(() => {
         refreshData();
         fetchStoreRevenue();
-        fetchPatreonRevenue();
+        fetchFundlyHubRevenue();
       }, 60000);
 
       setupRefreshButton();
@@ -1000,21 +1003,27 @@ const CLAW_MART_EARNINGS = 89;
       }
     }
 
-    // ──── Patreon Revenue → Patreon card ────
-    async function fetchPatreonRevenue() {
+    // ──── FundlyHub Revenue → FundlyHub card ────
+    async function fetchFundlyHubRevenue() {
       try {
-        const res = await fetch("/api/patreon-revenue.json");
+        const res = await fetch("/api/fundlyhub-revenue.json");
         const data = await res.json();
 
-        const amountEl = document.getElementById("patreon-revenue");
-        const revenue = data.monthlyRevenue || 0;
-        window.__patreonRevenue = revenue;
+        const amountEl = document.getElementById("fundlyhub-revenue");
+        const subEl = document.getElementById("fundlyhub-sub");
+        const revenue = data.totalRevenue || 0;
+        window.__fundlyhubRevenue = revenue;
 
         if (amountEl) amountEl.textContent = formatCurrency(revenue);
+        if (subEl) {
+          subEl.textContent = `${
+            data.chargeCount30d || 0
+          } charges last 30d · Stripe`;
+        }
 
         updateAllTimeRevenue();
       } catch (err) {
-        console.error("Patreon revenue fetch error:", err);
+        console.error("FundlyHub revenue fetch error:", err);
       }
     }
   </script>
