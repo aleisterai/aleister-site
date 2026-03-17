@@ -24,3 +24,21 @@ pnpm-debug.log*
 .idea/
 .vercel
 downloads/
+
+# Agent identity & config (private, lives on Mac Mini)
+SOUL.md
+USER.md
+TOOLS.md
+IDENTITY.md
+AGENTS.md
+
+# Agent internal docs & ops
+TIL/
+Team/
+docs/
+ops/
+scripts/
+SEO-PRD.md
+team-fundraising.md
+.pokedex-ref/
+.venv/
