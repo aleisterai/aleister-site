@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader.astro";
 
 const TREASURY_SAFE = "0x9BeBF2c780D5ac632c11984E28fA9760D33a10e6";
 const TOKEN_CONTRACT = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
+const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 // Claw Mart earnings - will be fetched from API
 const CLAW_MART_EARNINGS = 89;
@@ -153,6 +154,52 @@ const CLAW_MART_EARNINGS = 89;
             </button>
             <a
               href={`https://basescan.org/address/${TREASURY_SAFE}`}
+              target="_blank"
+              rel="noopener"
+              class="badge"
+            >
+              BaseScan ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Token Burn ── -->
+      <div class="dashboard-section">
+        <h2 class="section-title">
+          Token Burn
+          <a
+            href={`https://basescan.org/token/${TOKEN_CONTRACT}?a=${BURN_ADDRESS}`}
+            target="_blank"
+            rel="noopener"
+            class="section-title__link">BaseScan ↗</a
+          >
+        </h2>
+        <div class="burn-card">
+          <div class="burn-card__icon">🔥</div>
+          <div class="burn-card__body">
+            <div class="burn-card__label">
+              $ALEISTER Burned Forever <span class="live-dot-inline"><span></span></span>
+            </div>
+            <div class="burn-card__amount" id="burn-amount">—</div>
+            <div class="burn-card__sub" id="burn-sub">Loading from chain...</div>
+          </div>
+          <div class="burn-card__usd" id="burn-usd"></div>
+        </div>
+        <div class="burn-address">
+          <div class="address-label">Burn Address</div>
+          <code class="address-value">{BURN_ADDRESS}</code>
+          <div class="address-actions">
+            <button
+              class="copy-btn"
+              data-copy={BURN_ADDRESS}
+              aria-label="Copy burn address"
+            >
+              <span class="copy-icon">⎘</span>
+              <span class="copy-text">Copy</span>
+            </button>
+            <a
+              href={`https://basescan.org/address/${BURN_ADDRESS}`}
               target="_blank"
               rel="noopener"
               class="badge"
@@ -595,6 +642,81 @@ const CLAW_MART_EARNINGS = 89;
       animation: pulse-dot 2s ease-in-out infinite;
     }
 
+    /* ──── Burn Card ──── */
+    .burn-card {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+      background: var(--bg-glass);
+      border: 1px solid color-mix(in srgb, #f97316 25%, var(--border-glass));
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .burn-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, color-mix(in srgb, #f97316 6%, transparent), transparent 60%);
+      pointer-events: none;
+    }
+
+    .burn-card__icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      flex-shrink: 0;
+      animation: burn-pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes burn-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.12); opacity: 0.85; }
+    }
+
+    .burn-card__body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .burn-card__label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+    }
+
+    .burn-card__amount {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .burn-card__sub {
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      font-style: italic;
+    }
+
+    .burn-card__usd {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f97316;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .burn-address {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
     /* ──── Disclaimer ──── */
     .dashboard-disclaimer {
       margin-top: 2rem;
@@ -964,11 +1086,13 @@ const CLAW_MART_EARNINGS = 89;
       refreshData();
       fetchStoreRevenue();
       fetchFundlyHubRevenue();
+      fetchBurnBalance();
 
       refreshInterval = setInterval(() => {
         refreshData();
         fetchStoreRevenue();
         fetchFundlyHubRevenue();
+        fetchBurnBalance();
       }, 60000);
 
       setupRefreshButton();
@@ -1024,6 +1148,42 @@ const CLAW_MART_EARNINGS = 89;
         updateAllTimeRevenue();
       } catch (err) {
         console.error("FundlyHub revenue fetch error:", err);
+      }
+    }
+
+    // ──── Burn Balance → Burn Tracker card ────
+    async function fetchBurnBalance() {
+      try {
+        const [burnRes, priceRes] = await Promise.all([
+          fetch("/api/burn-balance.json"),
+          fetch("/api/token-prices.json"),
+        ]);
+        const burnData = await burnRes.json();
+        const priceData = await priceRes.json();
+
+        const balance = burnData.balance || 0;
+        const price = priceData.aleister?.usd || 0;
+        const usdValue = balance * price;
+
+        const amountEl = document.getElementById("burn-amount");
+        const subEl = document.getElementById("burn-sub");
+        const usdEl = document.getElementById("burn-usd");
+
+        if (amountEl) {
+          amountEl.textContent = formatNumber(balance) + " $ALEISTER";
+        }
+        if (subEl) {
+          subEl.textContent = "tokens burned forever · verified on-chain";
+        }
+        if (usdEl && usdValue > 0) {
+          usdEl.textContent = "≈ " + formatCurrency(usdValue);
+        } else if (usdEl) {
+          usdEl.textContent = "";
+        }
+      } catch (err) {
+        console.error("Burn balance fetch error:", err);
+        const subEl = document.getElementById("burn-sub");
+        if (subEl) subEl.textContent = "Unable to load burn data";
       }
     }
   </script>

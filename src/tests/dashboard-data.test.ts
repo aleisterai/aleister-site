@@ -487,6 +487,95 @@ describe('fundlyhub-revenue.json', () => {
     });
 });
 
+// ─── burn-balance.json ────────────────────────────────────────────────────────
+
+describe('burn-balance.json', () => {
+    let GET: (ctx: any) => Promise<Response>;
+    let fetchSpy: FetchMock;
+
+    beforeEach(async () => {
+        vi.resetModules();
+        ({ GET } = await import('../pages/api/burn-balance.json.ts?t=' + Date.now()));
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('returns $ALEISTER balance at burn address from Base RPC', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+            // balanceOf returns a large token balance
+            return mockResponse({ jsonrpc: '2.0', id: 1, result: '0x52B7D2DCC80CD2E4000000' });
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.burnAddress).toBe('0x000000000000000000000000000000000000dEaD');
+        expect(data.balance).toBeGreaterThan(0);
+        expect(data.decimals).toBe(18);
+        expect(data.tokenContract).toBe('0xacb4543f479ea44e6df4fa01e483bb5b78361ba3');
+    });
+
+    it('returns fallback data when Base RPC is down', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+            throw new Error('RPC unreachable');
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        // callRpc catches internally, so endpoint still returns success:true with balance:0
+        expect(data.success).toBe(true);
+        expect(data.balance).toBe(0);
+    });
+
+    it('handles zero balance (no burns yet)', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+            return mockResponse({ jsonrpc: '2.0', id: 1, result: '0x0' });
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.balance).toBe(0);
+    });
+
+    it('handles RPC returning null result', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+            return mockResponse({ jsonrpc: '2.0', id: 1, result: null });
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        expect(res.status).toBe(200);
+        expect(data.success).toBe(true);
+        expect(data.balance).toBe(0);
+    });
+
+    it('response structure matches what dashboard JS expects', async () => {
+        fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+            return mockResponse({ jsonrpc: '2.0', id: 1, result: '0xDE0B6B3A7640000' }); // 1 token
+        });
+
+        const res = await GET(makeAstroCtx());
+        const data = await res.json();
+
+        // Dashboard JS accesses: data.balance
+        expect(data).toHaveProperty('success');
+        expect(data).toHaveProperty('burnAddress');
+        expect(data).toHaveProperty('balance');
+        expect(data).toHaveProperty('timestamp');
+        expect(typeof data.balance).toBe('number');
+    });
+});
+
 // ─── Stress Tests ─────────────────────────────────────────────────────────────
 
 describe('Stress — concurrent dashboard requests', () => {
@@ -599,20 +688,22 @@ describe('Stress — concurrent dashboard requests', () => {
         vi.resetModules();
         vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_OUTAGE');
         vi.stubEnv('FUNDLYHUB_STRIPE_KEY', 'rk_test_OUTAGE');
-        const [tokenMod, treasuryMod, stripeMod, marketMod, fundlyhubMod] = await Promise.all([
+        const [tokenMod, treasuryMod, stripeMod, marketMod, fundlyhubMod, burnMod] = await Promise.all([
             import('../pages/api/token-prices.json.ts?t=outage' + Date.now()),
             import('../pages/api/treasury-balances.json.ts?t=outage' + Date.now()),
             import('../pages/api/store-revenue.json.ts?t=outage' + Date.now()),
             import('../pages/api/market-data.json.ts?t=outage' + Date.now()),
             import('../pages/api/fundlyhub-revenue.json.ts?t=outage' + Date.now()),
+            import('../pages/api/burn-balance.json.ts?t=outage' + Date.now()),
         ]);
 
-        const [tokenRes, treasuryRes, stripeRes, marketRes, fundlyhubRes] = await Promise.all([
+        const [tokenRes, treasuryRes, stripeRes, marketRes, fundlyhubRes, burnRes] = await Promise.all([
             tokenMod.GET(makeAstroCtx()),
             treasuryMod.GET(makeAstroCtx()),
             stripeMod.GET(makeAstroCtx()),
             marketMod.GET(makeAstroCtx()),
             fundlyhubMod.GET(makeAstroCtx()),
+            burnMod.GET(makeAstroCtx()),
         ]);
 
         // ALL must return 200 — never crash or 500
@@ -621,12 +712,14 @@ describe('Stress — concurrent dashboard requests', () => {
         expect(stripeRes.status).toBe(200);
         expect(marketRes.status).toBe(200);
         expect(fundlyhubRes.status).toBe(200);
+        expect(burnRes.status).toBe(200);
 
         const tokenData = await tokenRes.json();
         const treasuryData = await treasuryRes.json();
         const stripeData = await stripeRes.json();
         const marketData = await marketRes.json();
         const fundlyhubData = await fundlyhubRes.json();
+        const burnData = await burnRes.json();
 
         // token-prices: ETH should never be $0
         expect(tokenData.ethereum.usd).toBeGreaterThan(0);
@@ -645,7 +738,11 @@ describe('Stress — concurrent dashboard requests', () => {
         expect(fundlyhubData.totalRevenue).toBe(0);
         expect(fundlyhubData.chargeCount30d).toBe(0);
 
-        console.log('✓ All 5 endpoints survived total API outage with graceful fallbacks');
+        // burn-balance: callRpc catches errors internally, so success:true with balance:0
+        expect(burnData.success).toBe(true);
+        expect(burnData.balance).toBe(0);
+
+        console.log('✓ All 6 endpoints survived total API outage with graceful fallbacks');
     });
 });
 
