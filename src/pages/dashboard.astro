@@ -992,8 +992,9 @@ const CLAW_MART_EARNINGS = 89;
       // Store treasury total for all-time calc
       window.__treasuryValue = treasuryData.totalValue || 0;
 
-      // Token Fees = total USD value of all treasury holdings
-      const tokenFeesTotal = treasuryData.totalValue || 0;
+      // Token Fees = total USD value of treasury holdings + burned tokens
+      const burnValue = window.__burnValue || 0;
+      const tokenFeesTotal = (treasuryData.totalValue || 0) + burnValue;
       const tokenFeesEl = document.getElementById("token-fees");
       if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
       window.__tokenFeesRevenue = tokenFeesTotal;
@@ -1165,6 +1166,9 @@ const CLAW_MART_EARNINGS = 89;
         const price = priceData.aleister?.usd || 0;
         const usdValue = balance * price;
 
+        // Store for Token Fees + All-Time Revenue calculations
+        window.__burnValue = usdValue;
+
         const amountEl = document.getElementById("burn-amount");
         const subEl = document.getElementById("burn-sub");
         const usdEl = document.getElementById("burn-usd");
@@ -1180,6 +1184,15 @@ const CLAW_MART_EARNINGS = 89;
         } else if (usdEl) {
           usdEl.textContent = "";
         }
+
+        // Recalculate Token Fees card to include burn value
+        const treasuryValue = window.__treasuryValue || 0;
+        const tokenFeesTotal = treasuryValue + usdValue;
+        const tokenFeesEl = document.getElementById("token-fees");
+        if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
+        window.__tokenFeesRevenue = tokenFeesTotal;
+
+        updateAllTimeRevenue();
       } catch (err) {
         console.error("Burn balance fetch error:", err);
         const subEl = document.getElementById("burn-sub");
