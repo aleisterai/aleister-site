@@ -432,17 +432,31 @@ import PageHeader from "../components/PageHeader.astro";
     return n.toLocaleString();
   }
 
+  function decodeEntities(str: string): string {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = str;
+    return textarea.value;
+  }
+
   function setAvatar(containerId: string, url: string) {
     if (!url) return;
     const container = document.getElementById(containerId);
     if (!container) return;
-    // Decode HTML entities in URL (Instagram returns &amp; etc)
-    const decoded = url.replace(/&amp;/g, '&').replace(/&#064;/g, '@').replace(/&quot;/g, '"');
+    const decoded = decodeEntities(url);
     const img = document.createElement('img');
     img.src = decoded;
     img.alt = 'Avatar';
     img.loading = 'lazy';
-    img.onerror = () => { (img as HTMLElement).style.display = 'none'; };
+    img.crossOrigin = 'anonymous';
+    img.referrerPolicy = 'no-referrer';
+    img.onerror = () => {
+      // Try without crossOrigin as fallback
+      if (img.crossOrigin) {
+        img.crossOrigin = '';
+        img.referrerPolicy = 'no-referrer';
+        img.src = decoded;
+      }
+    };
     const placeholder = container.querySelector('.cf-card__avatar-placeholder') as HTMLElement | null;
     if (placeholder) placeholder.style.display = 'none';
     container.appendChild(img);
@@ -474,6 +488,9 @@ import PageHeader from "../components/PageHeader.astro";
 
       const { youtube, tiktok, instagram } = data.platforms;
 
+      // Get shared avatar from YouTube (same brand across all platforms)
+      const sharedAvatar = youtube?.avatar || '';
+
       // ── YouTube ──
       if (youtube && !youtube.error) {
         const el = (id: string) => document.getElementById(id);
@@ -481,7 +498,7 @@ import PageHeader from "../components/PageHeader.astro";
         const shortsCount = (youtube.stats.shortsCount || 0) as number;
         el('yt-content-count')!.textContent = formatNumber(videoCount + shortsCount);
         el('yt-views')!.textContent = formatNumber(youtube.stats.totalViews || 0);
-        setAvatar('yt-avatar', youtube.avatar);
+        setAvatar('yt-avatar', sharedAvatar);
         setStatus('yt-status', youtube.stats.channelName || 'Connected', 'success');
       } else {
         setStatus('yt-status', youtube?.error || 'Could not fetch', 'error');
@@ -491,8 +508,8 @@ import PageHeader from "../components/PageHeader.astro";
       if (tiktok && !tiktok.error) {
         const el = (id: string) => document.getElementById(id);
         el('tt-content-count')!.textContent = formatNumber(tiktok.stats.videos);
-        el('tt-views')!.textContent = formatNumber(tiktok.stats.totalViews || '—');
-        setAvatar('tt-avatar', tiktok.avatar);
+        el('tt-views')!.textContent = formatNumber(tiktok.stats.likes || 0);
+        setAvatar('tt-avatar', sharedAvatar);
         setStatus('tt-status', tiktok.stats.nickname || 'Connected', 'success');
       } else {
         setStatus('tt-status', tiktok?.error || 'Could not fetch', 'error');
@@ -502,8 +519,8 @@ import PageHeader from "../components/PageHeader.astro";
       if (instagram && !instagram.error) {
         const el = (id: string) => document.getElementById(id);
         el('ig-content-count')!.textContent = formatNumber(instagram.stats.posts);
-        el('ig-views')!.textContent = formatNumber(instagram.stats.totalViews || '—');
-        setAvatar('ig-avatar', instagram.avatar);
+        el('ig-views')!.textContent = formatNumber(instagram.stats.totalViews || 0);
+        setAvatar('ig-avatar', sharedAvatar);
         setStatus('ig-status', instagram.stats.displayName || 'Connected', 'success');
       } else {
         setStatus('ig-status', instagram?.error || 'Could not fetch', 'error');
