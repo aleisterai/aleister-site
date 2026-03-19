@@ -19,8 +19,8 @@ const APIFY_TOKEN = import.meta.env.APIFY_TOKEN || process.env.APIFY_TOKEN || ''
 // ── Per-platform cache with different TTLs ────────────────────────────
 const CACHE_TTL = {
   youtube: 5 * 60 * 1000,      // 5 minutes (free HTML scraping)
-  tiktok: 60 * 60 * 1000,      // 1 hour (Apify costs $)
-  instagram: 60 * 60 * 1000,   // 1 hour (Apify costs $)
+  tiktok: 2 * 60 * 60 * 1000,  // 2 hours (Apify costs $)
+  instagram: 2 * 60 * 60 * 1000, // 2 hours (Apify costs $)
 };
 
 const cache: Record<string, { data: PlatformStats; timestamp: number }> = {};
