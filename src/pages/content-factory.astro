@@ -43,12 +43,12 @@ import PageHeader from "../components/PageHeader.astro";
           </div>
           <div class="cf-card__stats">
             <div class="cf-stat">
-              <span class="cf-stat__value" id="yt-subscribers">—</span>
-              <span class="cf-stat__label">Subscribers</span>
-            </div>
-            <div class="cf-stat">
               <span class="cf-stat__value" id="yt-videos">—</span>
               <span class="cf-stat__label">Videos</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="yt-shorts">—</span>
+              <span class="cf-stat__label">Shorts</span>
             </div>
             <div class="cf-stat">
               <span class="cf-stat__value" id="yt-views">—</span>
@@ -78,16 +78,16 @@ import PageHeader from "../components/PageHeader.astro";
           </div>
           <div class="cf-card__stats">
             <div class="cf-stat">
-              <span class="cf-stat__value" id="tt-followers">—</span>
-              <span class="cf-stat__label">Followers</span>
+              <span class="cf-stat__value" id="tt-videos">—</span>
+              <span class="cf-stat__label">Videos</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="tt-views">—</span>
+              <span class="cf-stat__label">Total Views</span>
             </div>
             <div class="cf-stat">
               <span class="cf-stat__value" id="tt-likes">—</span>
               <span class="cf-stat__label">Likes</span>
-            </div>
-            <div class="cf-stat">
-              <span class="cf-stat__value" id="tt-videos">—</span>
-              <span class="cf-stat__label">Videos</span>
             </div>
           </div>
           <div class="cf-card__status" id="tt-status">
@@ -113,16 +113,16 @@ import PageHeader from "../components/PageHeader.astro";
           </div>
           <div class="cf-card__stats">
             <div class="cf-stat">
-              <span class="cf-stat__value" id="ig-followers">—</span>
-              <span class="cf-stat__label">Followers</span>
-            </div>
-            <div class="cf-stat">
               <span class="cf-stat__value" id="ig-posts">—</span>
               <span class="cf-stat__label">Posts</span>
             </div>
             <div class="cf-stat">
-              <span class="cf-stat__value" id="ig-following">—</span>
-              <span class="cf-stat__label">Following</span>
+              <span class="cf-stat__value" id="ig-views">—</span>
+              <span class="cf-stat__label">Views</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="ig-reels">—</span>
+              <span class="cf-stat__label">Reels</span>
             </div>
           </div>
           <div class="cf-card__status" id="ig-status">
@@ -473,8 +473,8 @@ import PageHeader from "../components/PageHeader.astro";
       // ── YouTube ──
       if (youtube && !youtube.error) {
         const el = (id: string) => document.getElementById(id);
-        el('yt-subscribers')!.textContent = formatNumber(youtube.stats.subscribers || 0);
         el('yt-videos')!.textContent = formatNumber(youtube.stats.videoCount || 0);
+        el('yt-shorts')!.textContent = formatNumber(youtube.stats.shortsCount || 0);
         el('yt-views')!.textContent = formatNumber(youtube.stats.totalViews || 0);
         setAvatar('yt-avatar', youtube.avatar);
         setStatus('yt-status', youtube.stats.channelName || 'Connected', 'success');
@@ -485,9 +485,9 @@ import PageHeader from "../components/PageHeader.astro";
       // ── TikTok ──
       if (tiktok && !tiktok.error) {
         const el = (id: string) => document.getElementById(id);
-        el('tt-followers')!.textContent = formatNumber(tiktok.stats.followers);
-        el('tt-likes')!.textContent = formatNumber(tiktok.stats.likes);
         el('tt-videos')!.textContent = formatNumber(tiktok.stats.videos);
+        el('tt-views')!.textContent = formatNumber(tiktok.stats.totalViews || 0);
+        el('tt-likes')!.textContent = formatNumber(tiktok.stats.likes);
         setAvatar('tt-avatar', tiktok.avatar);
         setStatus('tt-status', tiktok.stats.nickname || 'Connected', 'success');
       } else {
@@ -497,9 +497,9 @@ import PageHeader from "../components/PageHeader.astro";
       // ── Instagram ──
       if (instagram && !instagram.error) {
         const el = (id: string) => document.getElementById(id);
-        el('ig-followers')!.textContent = formatNumber(instagram.stats.followers);
         el('ig-posts')!.textContent = formatNumber(instagram.stats.posts);
-        el('ig-following')!.textContent = formatNumber(instagram.stats.following);
+        el('ig-views')!.textContent = formatNumber(instagram.stats.totalViews || 0);
+        el('ig-reels')!.textContent = formatNumber(instagram.stats.reels || 0);
         setAvatar('ig-avatar', instagram.avatar);
         setStatus('ig-status', instagram.stats.displayName || 'Connected', 'success');
       } else {
