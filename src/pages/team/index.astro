@@ -1,23 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { getCollection } from 'astro:content';
+import { teamMembers } from '../../data/team';
 
 export const prerender = true;
 
-const teamEntries = await getCollection('team');
-
-const desiredOrder = ['Cipher', 'Sage', 'Quill', 'Rally', 'Echo', 'Pixel', 'Forge', 'Prism', 'Lyra'];
-
-const subagents = teamEntries
-  .map(entry => entry.data)
-  .sort((a, b) => {
-    let indexA = desiredOrder.indexOf(a.name);
-    let indexB = desiredOrder.indexOf(b.name);
-    if (indexA === -1) indexA = 99;
-    if (indexB === -1) indexB = 99;
-    return indexA - indexB;
-  });
+const subagents = teamMembers;
 ---
 
 <BaseLayout
