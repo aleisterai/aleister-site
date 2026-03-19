@@ -194,6 +194,7 @@ const CLAW_MART_EARNINGS = 89;
             </div>
             <div class="buyback-card__amount" id="buyback-amount">—</div>
             <div class="buyback-card__sub" id="buyback-sub">Loading from chain...</div>
+            <div class="buyback-card__swaps" id="buyback-swaps"></div>
           </div>
           <div class="buyback-card__usd" id="buyback-usd"></div>
         </div>
@@ -782,6 +783,35 @@ const CLAW_MART_EARNINGS = 89;
       font-style: italic;
     }
 
+    .buyback-card__swaps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.6rem;
+    }
+
+    .buyback-swap-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text-secondary);
+    }
+
+    .buyback-swap-row a {
+      color: var(--accent, #6c5ce7);
+      text-decoration: none;
+      font-weight: 600;
+      opacity: 0.8;
+      transition: opacity 0.15s;
+    }
+
+    .buyback-swap-row a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
     .buyback-card__usd {
       font-size: 1.1rem;
       font-weight: 700;
@@ -1246,18 +1276,31 @@ const CLAW_MART_EARNINGS = 89;
         const amountEl = document.getElementById("buyback-amount");
         const subEl = document.getElementById("buyback-sub");
         const usdEl = document.getElementById("buyback-usd");
+        const swapsEl = document.getElementById("buyback-swaps");
 
         if (amountEl) {
           amountEl.textContent = formatNumber(totalAleister) + " $ALEISTER";
         }
         if (subEl) {
-          const wethUsd = totalWeth * ethPrice;
           subEl.textContent = `${totalWeth.toFixed(4)} WETH spent · ${buybackData.swapCount || 0} swap${(buybackData.swapCount || 0) !== 1 ? 's' : ''} · verified on-chain`;
         }
         if (usdEl && usdValue > 0) {
           usdEl.textContent = "≈ " + formatCurrency(usdValue);
         } else if (usdEl) {
           usdEl.textContent = "";
+        }
+
+        // Render individual swap rows with tx links
+        if (swapsEl && buybackData.swaps?.length) {
+          swapsEl.innerHTML = buybackData.swaps.map((s) => {
+            const hashShort = s.txHash.slice(0, 6) + '…' + s.txHash.slice(-4);
+            const wethFmt = s.wethSpent.toFixed(4);
+            const aleisterFmt = formatNumber(s.aleisterBought);
+            return `<div class="buyback-swap-row">
+              <span>${wethFmt} WETH → ${aleisterFmt} $ALEISTER</span>
+              <a href="https://basescan.org/tx/${s.txHash}" target="_blank" rel="noopener">${hashShort} ↗</a>
+            </div>`;
+          }).join('');
         }
       } catch (err) {
         console.error("Buyback data fetch error:", err);

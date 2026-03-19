@@ -8,8 +8,10 @@ const WETH_ADDRESS = "0x4200000000000000000000000000000000000006"; // WETH on Ba
 // ERC-20 Transfer(address from, address to, uint256 value)
 const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
-// Safe deployed around block 22000000 (scan from a safe start)
-const START_BLOCK = "0x14FB180"; // ~22_000_000
+// Known buyback transactions (WETH → $ALEISTER from Safe wallet)
+const BUYBACK_TX_HASHES = [
+  "0x0cd39b0bb2d752bafef290a759bb8bce1e5b5b34948bdeac8e76f349835bbc39",
+];
 
 function padAddress(addr: string): string {
   return "0x000000000000000000000000" + addr.slice(2).toLowerCase();
@@ -40,62 +42,71 @@ function hexToToken(hex: string, decimals: number): number {
   }
 }
 
-export const GET: APIRoute = async () => {
+interface BuybackSwap {
+  txHash: string;
+  wethSpent: number;
+  aleisterBought: number;
+}
+
+async function parseBuybackTx(txHash: string): Promise<BuybackSwap | null> {
   try {
+    const receipt = await callRpc('eth_getTransactionReceipt', [txHash]);
+    if (!receipt?.logs) return null;
+
     const safePadded = padAddress(TREASURY_SAFE);
+    let wethSpent = 0;
+    let aleisterBought = 0;
 
-    // 1) Find all WETH transfers FROM the treasury safe (WETH spent)
-    const wethOutLogs = await callRpc('eth_getLogs', [{
-      fromBlock: START_BLOCK,
-      toBlock: 'latest',
-      address: WETH_ADDRESS,
-      topics: [TRANSFER_TOPIC, safePadded, null], // from=safe, to=anyone
-    }]);
+    for (const log of receipt.logs) {
+      const addr = log.address?.toLowerCase();
+      const topic0 = log.topics?.[0];
+      const topicFrom = log.topics?.[1]?.toLowerCase();
+      const topicTo = log.topics?.[2]?.toLowerCase();
 
-    // 2) Find all $ALEISTER transfers TO the treasury safe (tokens bought)
-    const aleisterInLogs = await callRpc('eth_getLogs', [{
-      fromBlock: START_BLOCK,
-      toBlock: 'latest',
-      address: TOKEN_CONTRACT,
-      topics: [TRANSFER_TOPIC, null, safePadded], // from=anyone, to=safe
-    }]);
+      if (topic0 !== TRANSFER_TOPIC) continue;
 
-    // Build a set of tx hashes where WETH left the safe
-    const wethOutTxs = new Map<string, number>();
-    for (const log of (wethOutLogs || [])) {
-      const amount = hexToToken(log.data, 18);
-      const txHash = log.transactionHash;
-      wethOutTxs.set(txHash, (wethOutTxs.get(txHash) || 0) + amount);
+      // WETH Transfer FROM the safe = WETH spent
+      if (addr === WETH_ADDRESS.toLowerCase() && topicFrom === safePadded) {
+        wethSpent += hexToToken(log.data, 18);
+      }
+
+      // $ALEISTER Transfer TO the safe = tokens bought
+      if (addr === TOKEN_CONTRACT.toLowerCase() && topicTo === safePadded) {
+        aleisterBought += hexToToken(log.data, 18);
+      }
     }
 
-    // Find matching txs where $ALEISTER came in AND WETH went out (= swaps)
+    if (wethSpent > 0 || aleisterBought > 0) {
+      return { txHash, wethSpent, aleisterBought };
+    }
+    return null;
+  } catch (error) {
+    console.error(`Error parsing buyback tx ${txHash}:`, error);
+    return null;
+  }
+}
+
+export const GET: APIRoute = async () => {
+  try {
+    const results = await Promise.all(
+      BUYBACK_TX_HASHES.map((hash) => parseBuybackTx(hash))
+    );
+
+    const swaps: BuybackSwap[] = results.filter((r): r is BuybackSwap => r !== null);
     let totalWethSpent = 0;
     let totalAleisterBought = 0;
-    let swapCount = 0;
-    const swapTxHashes: string[] = [];
 
-    for (const log of (aleisterInLogs || [])) {
-      const txHash = log.transactionHash;
-      if (wethOutTxs.has(txHash)) {
-        const aleisterAmount = hexToToken(log.data, 18);
-        const wethAmount = wethOutTxs.get(txHash)!;
-        totalAleisterBought += aleisterAmount;
-        totalWethSpent += wethAmount;
-        swapCount++;
-        if (!swapTxHashes.includes(txHash)) {
-          swapTxHashes.push(txHash);
-        }
-        // Remove to avoid double-counting if multiple ALEISTER transfers in same tx
-        wethOutTxs.delete(txHash);
-      }
+    for (const swap of swaps) {
+      totalWethSpent += swap.wethSpent;
+      totalAleisterBought += swap.aleisterBought;
     }
 
     return new Response(JSON.stringify({
       success: true,
       totalWethSpent,
       totalAleisterBought,
-      swapCount: swapTxHashes.length,
-      swapTxHashes,
+      swapCount: swaps.length,
+      swaps,
       treasuryAddress: TREASURY_SAFE,
       timestamp: new Date().toISOString(),
     }), {
@@ -103,7 +114,7 @@ export const GET: APIRoute = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=120', // 2min cache
+        'Cache-Control': 'public, max-age=300', // 5min — buyback txs don't change
       },
     });
   } catch (error) {
@@ -114,7 +125,7 @@ export const GET: APIRoute = async () => {
       totalWethSpent: 0,
       totalAleisterBought: 0,
       swapCount: 0,
-      swapTxHashes: [],
+      swaps: [],
       treasuryAddress: TREASURY_SAFE,
       timestamp: new Date().toISOString(),
       error: 'Unable to fetch buyback data',
