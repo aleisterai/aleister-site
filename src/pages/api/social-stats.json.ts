@@ -13,6 +13,61 @@ interface PlatformStats {
   error?: string;
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────
+const YT_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+};
+
+/** Parse "1.3K views", "562 views", "1.4M views" → numeric value */
+function parseViewString(str: string): number {
+  const clean = str.replace(/,/g, '').replace(/\s*views?\s*/i, '').trim();
+  const multiplierMatch = clean.match(/^([\d.]+)\s*([KMBkmb])?$/);
+  if (!multiplierMatch) return 0;
+  const num = parseFloat(multiplierMatch[1]);
+  const suffix = (multiplierMatch[2] || '').toUpperCase();
+  if (suffix === 'K') return Math.round(num * 1_000);
+  if (suffix === 'M') return Math.round(num * 1_000_000);
+  if (suffix === 'B') return Math.round(num * 1_000_000_000);
+  return Math.round(num);
+}
+
+/** Extract per-video view counts from YouTube page HTML using overlayMetadata */
+function extractVideoViews(html: string): { count: number; totalViews: number } {
+  let count = 0;
+  let totalViews = 0;
+
+  // Method 1: overlayMetadata (works for shorts)
+  // Pattern: "overlayMetadata":{"primaryText":{"content":"..."},"secondaryText":{"content":"563 views"}}
+  const overlayPattern = /"overlayMetadata":\{[^]*?"secondaryText":\{"content":"([^"]+)"\}/g;
+  let match;
+  while ((match = overlayPattern.exec(html)) !== null) {
+    const viewText = match[1];
+    if (/\d/.test(viewText) && /view/i.test(viewText)) {
+      totalViews += parseViewString(viewText);
+      count++;
+    }
+  }
+
+  // Method 2: viewCountText (works for regular videos)
+  if (count === 0) {
+    const viewCountPattern = /"viewCountText":\{"simpleText":"([^"]+)"\}/g;
+    while ((match = viewCountPattern.exec(html)) !== null) {
+      totalViews += parseViewString(match[1]);
+      count++;
+    }
+  }
+
+  // Method 3: count videoRenderer entries for video count
+  if (count === 0) {
+    const renderers = html.match(/"videoRenderer"/g);
+    if (renderers) count = renderers.length;
+  }
+
+  return { count, totalViews };
+}
+
 // ── YouTube Scraper ───────────────────────────────────────────────────
 async function scrapeYouTube(): Promise<PlatformStats> {
   const handle = '@CutGlAsmr';
@@ -26,73 +81,62 @@ async function scrapeYouTube(): Promise<PlatformStats> {
   };
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      },
-      signal: AbortSignal.timeout(15000),
-    });
+    // Fetch both main channel page and shorts page in parallel
+    const [mainRes, shortsRes, videosRes] = await Promise.all([
+      fetch(url, { headers: YT_HEADERS, signal: AbortSignal.timeout(15000) }),
+      fetch(`${url}/shorts`, { headers: YT_HEADERS, signal: AbortSignal.timeout(15000) }),
+      fetch(`${url}/videos`, { headers: YT_HEADERS, signal: AbortSignal.timeout(15000) }),
+    ]);
 
-    if (!response.ok) {
-      result.error = `HTTP ${response.status}`;
+    if (!mainRes.ok) {
+      result.error = `HTTP ${mainRes.status}`;
       return result;
     }
 
-    const html = await response.text();
+    const [mainHtml, shortsHtml, videosHtml] = await Promise.all([
+      mainRes.text(),
+      shortsRes.ok ? shortsRes.text() : '',
+      videosRes.ok ? videosRes.text() : '',
+    ]);
 
-    // Extract subscriber count from meta tags or page content
-    const subscriberMatch = html.match(/"subscriberCountText":\s*\{[^}]*"simpleText":\s*"([^"]+)"/);
-    if (subscriberMatch) {
-      result.stats.subscribers = subscriberMatch[1];
-    }
-
-    // Extract video count
-    const videoCountMatch = html.match(/"videosCountText":\s*\{[^}]*"runs":\s*\[\s*\{[^}]*"text":\s*"([^"]+)"/);
-    if (videoCountMatch) {
-      result.stats.videoCount = videoCountMatch[1];
-    }
-
-    // Try alternate video count pattern
-    if (!result.stats.videoCount) {
-      const altVideoMatch = html.match(/"videoCountText":\s*\{[^}]*"simpleText":\s*"([^"]+)"/);
-      if (altVideoMatch) {
-        result.stats.videoCount = altVideoMatch[1];
-      }
-    }
-
-    // Extract avatar thumbnail
-    const avatarMatch = html.match(/"avatar":\s*\{[^}]*"thumbnails":\s*\[\s*\{[^}]*"url":\s*"([^"]+)"/);
+    // ── Channel metadata from main page ──
+    // Avatar
+    const avatarMatch = mainHtml.match(/"avatar":\s*\{[^}]*"thumbnails":\s*\[\s*\{[^}]*"url":\s*"([^"]+)"/);
     if (avatarMatch) {
       result.avatar = avatarMatch[1].replace(/\\u0026/g, '&');
     }
 
-    // Extract channel description
-    const descMatch = html.match(/"description":\s*"([^"]{0,200})"/);
-    if (descMatch) {
-      result.stats.description = descMatch[1].replace(/\\n/g, ' ').substring(0, 100);
-    }
-
-    // Extract total view count from about page data
-    const viewCountMatch = html.match(/"viewCountText":\s*\{[^}]*"simpleText":\s*"([^"]+)"/);
-    if (viewCountMatch) {
-      result.stats.totalViews = viewCountMatch[1];
-    }
-
-    // Try to get channel name
-    const nameMatch = html.match(/"channelName":\s*"([^"]+)"/);
+    // Channel name
+    const nameMatch = mainHtml.match(/"channelName":\s*"([^"]+)"/);
     if (nameMatch) {
       result.stats.channelName = nameMatch[1];
-    }
-
-    // Fallback: extract title
-    if (!result.stats.channelName) {
-      const titleMatch = html.match(/<title>([^<]+)<\/title>/);
+    } else {
+      const titleMatch = mainHtml.match(/<title>([^<]+)<\/title>/);
       if (titleMatch) {
         result.stats.channelName = titleMatch[1].replace(' - YouTube', '').trim();
       }
     }
+
+    // ── Extract view counts from shorts page ──
+    const shortsData = extractVideoViews(shortsHtml);
+    result.stats.shortsCount = shortsData.count;
+    result.stats.shortsViews = shortsData.totalViews;
+
+    // ── Extract view counts from videos page ──
+    const videosData = extractVideoViews(videosHtml);
+    result.stats.videoCount = videosData.count;
+    result.stats.videoViews = videosData.totalViews;
+
+    // If videos page didn't have overlayMetadata, try viewCountText from main page
+    if (videosData.totalViews === 0) {
+      const viewCountMatch = mainHtml.match(/"viewCountText":\s*\{[^}]*"simpleText":\s*"([^"]+)"/);
+      if (viewCountMatch) {
+        result.stats.videoViews = parseViewString(viewCountMatch[1]);
+      }
+    }
+
+    // ── Combined totals ──
+    result.stats.totalViews = (result.stats.videoViews as number || 0) + (result.stats.shortsViews as number || 0);
 
   } catch (err: any) {
     result.error = err.message || 'Failed to fetch';

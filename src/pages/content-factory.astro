@@ -82,12 +82,12 @@ import PageHeader from "../components/PageHeader.astro";
               <span class="cf-stat__label">Videos</span>
             </div>
             <div class="cf-stat">
-              <span class="cf-stat__value" id="tt-views">—</span>
-              <span class="cf-stat__label">Total Views</span>
-            </div>
-            <div class="cf-stat">
               <span class="cf-stat__value" id="tt-likes">—</span>
               <span class="cf-stat__label">Likes</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="tt-followers">—</span>
+              <span class="cf-stat__label">Followers</span>
             </div>
           </div>
           <div class="cf-card__status" id="tt-status">
@@ -117,12 +117,12 @@ import PageHeader from "../components/PageHeader.astro";
               <span class="cf-stat__label">Posts</span>
             </div>
             <div class="cf-stat">
-              <span class="cf-stat__value" id="ig-views">—</span>
-              <span class="cf-stat__label">Views</span>
+              <span class="cf-stat__value" id="ig-followers">—</span>
+              <span class="cf-stat__label">Followers</span>
             </div>
             <div class="cf-stat">
-              <span class="cf-stat__value" id="ig-reels">—</span>
-              <span class="cf-stat__label">Reels</span>
+              <span class="cf-stat__value" id="ig-following">—</span>
+              <span class="cf-stat__label">Following</span>
             </div>
           </div>
           <div class="cf-card__status" id="ig-status">
@@ -486,8 +486,8 @@ import PageHeader from "../components/PageHeader.astro";
       if (tiktok && !tiktok.error) {
         const el = (id: string) => document.getElementById(id);
         el('tt-videos')!.textContent = formatNumber(tiktok.stats.videos);
-        el('tt-views')!.textContent = formatNumber(tiktok.stats.totalViews || 0);
         el('tt-likes')!.textContent = formatNumber(tiktok.stats.likes);
+        el('tt-followers')!.textContent = formatNumber(tiktok.stats.followers);
         setAvatar('tt-avatar', tiktok.avatar);
         setStatus('tt-status', tiktok.stats.nickname || 'Connected', 'success');
       } else {
@@ -498,8 +498,8 @@ import PageHeader from "../components/PageHeader.astro";
       if (instagram && !instagram.error) {
         const el = (id: string) => document.getElementById(id);
         el('ig-posts')!.textContent = formatNumber(instagram.stats.posts);
-        el('ig-views')!.textContent = formatNumber(instagram.stats.totalViews || 0);
-        el('ig-reels')!.textContent = formatNumber(instagram.stats.reels || 0);
+        el('ig-followers')!.textContent = formatNumber(instagram.stats.followers);
+        el('ig-following')!.textContent = formatNumber(instagram.stats.following);
         setAvatar('ig-avatar', instagram.avatar);
         setStatus('ig-status', instagram.stats.displayName || 'Connected', 'success');
       } else {
