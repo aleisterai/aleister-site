@@ -1,47 +1,40 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
 import { storeItems } from "../../data/store";
+import { teamMembers } from "../../data/team";
 
 export const prerender = true;
 
-export async function getStaticPaths() {
-  const team = await getCollection("team");
-  return team.map((member) => ({
-    params: { slug: member.slug },
-    props: { member },
+// Load markdown files directly (bypasses buggy getCollection on Vercel)
+const teamMdFiles = import.meta.glob<{ Content: any; frontmatter: any }>(
+  "../../content/team/*.md",
+  { eager: true }
+);
+
+export function getStaticPaths() {
+  return teamMembers.map((m) => ({
+    params: { slug: m.name.toLowerCase() },
+    props: { slug: m.name.toLowerCase() },
   }));
 }
 
-const { member } = Astro.props;
-const { Content } = await member.render();
-const { name, codename, role, model, color, avatar, traits, description } =
-  member.data;
+const { slug } = Astro.props;
+const memberData = teamMembers.find((m) => m.name.toLowerCase() === slug)!;
+const { name, codename, role, model, color, avatar, traits, description } = memberData;
+
+// Find matching markdown file for this member
+const mdKey = Object.keys(teamMdFiles).find((k) => k.includes(`/${slug}.md`));
+const mdModule = mdKey ? teamMdFiles[mdKey] : null;
+const Content = mdModule?.Content;
+
 const storeItem =
   storeItems.find(
-    (i) => i.slug === member.slug && i.category === "Sub-Agent"
+    (i) => i.slug === slug && i.category === "Sub-Agent"
   ) ?? null;
 
 // Other agents for navigation
-const allTeam = await getCollection("team");
-const desiredOrder = [
-  "Cipher",
-  "Sage",
-  "Quill",
-  "Rally",
-  "Echo",
-  "Pixel",
-  "Forge",
-  "Prism",
-  "Lyra",
-];
-const otherAgents = allTeam
-  .filter((m) => m.slug !== member.slug)
-  .sort((a, b) => {
-    const ai = desiredOrder.indexOf(a.data.name);
-    const bi = desiredOrder.indexOf(b.data.name);
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-  });
+const otherAgents = teamMembers
+  .filter((m) => m.name.toLowerCase() !== slug);
 ---
 
 <BaseLayout
@@ -55,7 +48,7 @@ const otherAgents = allTeam
       jobTitle: role,
       description,
       image: avatar ? `https://thealeister.com${avatar}` : undefined,
-      url: `https://thealeister.com/team/${member.slug}`,
+      url: `https://thealeister.com/team/${slug}`,
       worksFor: {
         "@type": "Person",
         "@id": "https://thealeister.com/#person",
@@ -104,7 +97,7 @@ const otherAgents = allTeam
       <p class="about-entry__subtitle">{description}</p>
 
       <article class="about-entry__content prose">
-        <Content />
+        {Content ? <Content /> : <p>Content loading...</p>}
       </article>
     </div>
   </section>
@@ -116,21 +109,21 @@ const otherAgents = allTeam
         {
           otherAgents.map((agent) => (
             <a
-              href={`/team/${agent.slug}`}
+              href={`/team/${agent.name.toLowerCase()}`}
               class="other-agent-card"
-              style={`--agent-color: ${agent.data.color}`}
+              style={`--agent-color: ${agent.color}`}
             >
               <img
-                src={agent.data.avatar}
-                alt={agent.data.name}
+                src={agent.avatar}
+                alt={agent.name}
                 class="other-agent-card__avatar"
                 width="48"
                 height="48"
               />
               <div class="other-agent-card__info">
-                <span class="other-agent-card__name">{agent.data.name}</span>
+                <span class="other-agent-card__name">{agent.name}</span>
                 <span class="other-agent-card__codename">
-                  {agent.data.codename}
+                  {agent.codename}
                 </span>
               </div>
               <span class="other-agent-card__arrow">→</span>
