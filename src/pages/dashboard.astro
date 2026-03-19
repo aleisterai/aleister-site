@@ -210,6 +210,40 @@ const CLAW_MART_EARNINGS = 89;
         </div>
       </div>
 
+      <!-- ── Buybacks ── -->
+      <div class="dashboard-section">
+        <h2 class="section-title">
+          Buybacks
+          <a
+            href={`https://basescan.org/address/${TREASURY_SAFE}`}
+            target="_blank"
+            rel="noopener"
+            class="section-title__link">Safe Wallet ↗</a
+          >
+        </h2>
+        <div class="buyback-list">
+          <a
+            class="buyback-card"
+            href="https://basescan.org/tx/0x0cd39b0bb2d752bafef290a759bb8bce1e5b5b34948bdeac8e76f349835bbc39"
+            target="_blank"
+            rel="noopener"
+          >
+            <div class="buyback-card__icon">💎</div>
+            <div class="buyback-card__body">
+              <div class="buyback-card__pair">WETH → $ALEISTER</div>
+              <div class="buyback-card__meta">
+                <span id="buyback-weth-0">Loading...</span> · Executed via Safe Wallet
+              </div>
+            </div>
+            <div class="buyback-card__tx">
+              <span class="buyback-card__usd" id="buyback-usd-0"></span>
+              <code class="buyback-card__hash">0x0cd3…bc39</code>
+              <span class="buyback-card__link">BaseScan ↗</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
       <!-- ── Disclaimer ── -->
       <div class="dashboard-disclaimer">
         This dashboard displays real-time data. Revenue figures update as
@@ -717,6 +751,106 @@ const CLAW_MART_EARNINGS = 89;
       padding: 1.25rem;
     }
 
+    /* ──── Buyback Cards ──── */
+    .buyback-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .buyback-card {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      background: var(--bg-glass);
+      border: 1px solid color-mix(in srgb, #6c5ce7 20%, var(--border-glass));
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .buyback-card:hover {
+      border-color: color-mix(in srgb, #6c5ce7 40%, var(--border-glass));
+      transform: translateY(-1px);
+    }
+
+    .buyback-card__icon {
+      font-size: 1.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .buyback-card__body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .buyback-card__pair {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .buyback-card__meta {
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      font-style: italic;
+    }
+
+    .buyback-card__tx {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .buyback-card__hash {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .buyback-card__link {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--accent, #6c5ce7);
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .buyback-card:hover .buyback-card__link {
+      opacity: 1;
+    }
+
+    .buyback-card__usd {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #6c5ce7;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .buyback-card {
+        flex-wrap: wrap;
+      }
+      .buyback-card__tx {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--border-glass);
+      }
+    }
+
     /* ──── Disclaimer ──── */
     .dashboard-disclaimer {
       margin-top: 2rem;
@@ -1019,13 +1153,14 @@ const CLAW_MART_EARNINGS = 89;
       const store = window.__storeRevenue || 0;
       const fundlyhub = window.__fundlyhubRevenue || 0;
       const tokenFees = window.__tokenFeesRevenue || 0;
-      const total = clawmart + store + fundlyhub + tokenFees;
+      const buybacks = window.__buybackRevenue || 0;
+      const total = clawmart + store + fundlyhub + tokenFees + buybacks;
 
       const el = document.getElementById("all-time-revenue");
       const changeEl = document.getElementById("all-time-change");
       if (el) el.textContent = formatCurrency(total);
       if (changeEl) {
-        changeEl.textContent = "4 revenue streams";
+        changeEl.textContent = "5 revenue streams";
         changeEl.className = "stat-change change-up";
       }
     }
@@ -1088,12 +1223,14 @@ const CLAW_MART_EARNINGS = 89;
       fetchStoreRevenue();
       fetchFundlyHubRevenue();
       fetchBurnBalance();
+      fetchBuybackData();
 
       refreshInterval = setInterval(() => {
         refreshData();
         fetchStoreRevenue();
         fetchFundlyHubRevenue();
         fetchBurnBalance();
+        fetchBuybackData();
       }, 60000);
 
       setupRefreshButton();
@@ -1149,6 +1286,44 @@ const CLAW_MART_EARNINGS = 89;
         updateAllTimeRevenue();
       } catch (err) {
         console.error("FundlyHub revenue fetch error:", err);
+      }
+    }
+
+    // ──── Buyback Data → Buybacks section + Token Fees ────
+    async function fetchBuybackData() {
+      try {
+        const [buybackRes, priceRes] = await Promise.all([
+          fetch("/api/buyback-data.json"),
+          fetch("/api/token-prices.json"),
+        ]);
+        const buybackData = await buybackRes.json();
+        const priceData = await priceRes.json();
+
+        const ethPrice = priceData.ethereum?.usd || 0;
+        let totalUsd = 0;
+
+        // Update each buyback card
+        (buybackData.buybacks || []).forEach((bb, i) => {
+          const wethEl = document.getElementById(`buyback-weth-${i}`);
+          const usdEl = document.getElementById(`buyback-usd-${i}`);
+          const usdValue = (bb.wethAmount || 0) * ethPrice;
+          totalUsd += usdValue;
+
+          if (wethEl) {
+            wethEl.textContent = `${(bb.wethAmount || 0).toFixed(4)} WETH`;
+          }
+          if (usdEl && usdValue > 0) {
+            usdEl.textContent = `≈ ${formatCurrency(usdValue)}`;
+          }
+        });
+
+        // Store buyback USD total for all-time revenue
+        window.__buybackRevenue = totalUsd;
+        updateAllTimeRevenue();
+      } catch (err) {
+        console.error("Buyback data fetch error:", err);
+        const wethEl = document.getElementById("buyback-weth-0");
+        if (wethEl) wethEl.textContent = "—";
       }
     }
 
