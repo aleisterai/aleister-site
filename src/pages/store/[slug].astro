@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { storeItems } from "../../data/store";
-import { getCollection } from "astro:content";
+import { teamMembers } from "../../data/team";
 import { marked } from "marked";
 
 // SSR — must NOT prerender so we can read session_id from URL at request time
@@ -12,12 +12,11 @@ if (!item) {
   return Astro.redirect("/store");
 }
 
-// For subagent items, pull rich data from the team collection
+// For subagent items, pull rich data from the team data
 const isSubagent = item.category === "Sub-Agent";
-const teamMember = isSubagent
-  ? (await getCollection("team")).find((m) => m.slug === slug)
+const teamData = isSubagent
+  ? teamMembers.find((m) => m.name.toLowerCase() === slug) ?? null
   : null;
-const teamData = teamMember?.data ?? null;
 
 const sessionId = Astro.url.searchParams.get("session_id");
 const purchased = !!sessionId;
