@@ -508,7 +508,7 @@ import PageHeader from "../components/PageHeader.astro";
       if (tiktok && !tiktok.error) {
         const el = (id: string) => document.getElementById(id);
         el('tt-content-count')!.textContent = formatNumber(tiktok.stats.videos);
-        el('tt-views')!.textContent = formatNumber(tiktok.stats.likes || 0);
+        el('tt-views')!.textContent = formatNumber(tiktok.stats.totalViews || 0);
         setAvatar('tt-avatar', sharedAvatar);
         setStatus('tt-status', tiktok.stats.nickname || 'Connected', 'success');
       } else {

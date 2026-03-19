@@ -1,17 +1,20 @@
 import type { APIRoute } from 'astro';
 
 // ── Social Media Stats Scraper ────────────────────────────────────────
-// Fetches live stats from YouTube, TikTok, and Instagram by parsing
-// their public page HTML. No API keys required.
+// YouTube: HTML scraping (shorts + videos views)
+// TikTok:  Apify actor (real per-video play counts)
+// Instagram: GraphQL API (per-post video_view_count)
 
 interface PlatformStats {
   platform: string;
   handle: string;
   url: string;
   avatar: string;
-  stats: Record<string, string | number>;
+  stats: Record<string, string | number | boolean>;
   error?: string;
 }
+
+const APIFY_TOKEN = import.meta.env.APIFY_TOKEN || process.env.APIFY_TOKEN || '';
 
 // ── Helpers ───────────────────────────────────────────────────────────
 const YT_HEADERS = {
@@ -38,8 +41,7 @@ function extractVideoViews(html: string): { count: number; totalViews: number } 
   let count = 0;
   let totalViews = 0;
 
-  // Method 1: overlayMetadata (works for shorts)
-  // Pattern: "overlayMetadata":{"primaryText":{"content":"..."},"secondaryText":{"content":"563 views"}}
+  // overlayMetadata (works for shorts)
   const overlayPattern = /"overlayMetadata":\{[^]*?"secondaryText":\{"content":"([^"]+)"\}/g;
   let match;
   while ((match = overlayPattern.exec(html)) !== null) {
@@ -50,7 +52,7 @@ function extractVideoViews(html: string): { count: number; totalViews: number } 
     }
   }
 
-  // Method 2: viewCountText (works for regular videos)
+  // viewCountText (works for regular videos)
   if (count === 0) {
     const viewCountPattern = /"viewCountText":\{"simpleText":"([^"]+)"\}/g;
     while ((match = viewCountPattern.exec(html)) !== null) {
@@ -59,7 +61,6 @@ function extractVideoViews(html: string): { count: number; totalViews: number } 
     }
   }
 
-  // Method 3: count videoRenderer entries for video count
   if (count === 0) {
     const renderers = html.match(/"videoRenderer"/g);
     if (renderers) count = renderers.length;
@@ -81,7 +82,6 @@ async function scrapeYouTube(): Promise<PlatformStats> {
   };
 
   try {
-    // Fetch both main channel page and shorts page in parallel
     const [mainRes, shortsRes, videosRes] = await Promise.all([
       fetch(url, { headers: YT_HEADERS, signal: AbortSignal.timeout(15000) }),
       fetch(`${url}/shorts`, { headers: YT_HEADERS, signal: AbortSignal.timeout(15000) }),
@@ -99,12 +99,9 @@ async function scrapeYouTube(): Promise<PlatformStats> {
       videosRes.ok ? videosRes.text() : '',
     ]);
 
-    // ── Channel metadata from main page ──
     // Avatar
     const avatarMatch = mainHtml.match(/"avatar":\s*\{[^}]*"thumbnails":\s*\[\s*\{[^}]*"url":\s*"([^"]+)"/);
-    if (avatarMatch) {
-      result.avatar = avatarMatch[1].replace(/\\u0026/g, '&');
-    }
+    if (avatarMatch) result.avatar = avatarMatch[1].replace(/\\u0026/g, '&');
 
     // Channel name
     const nameMatch = mainHtml.match(/"channelName":\s*"([^"]+)"/);
@@ -112,30 +109,26 @@ async function scrapeYouTube(): Promise<PlatformStats> {
       result.stats.channelName = nameMatch[1];
     } else {
       const titleMatch = mainHtml.match(/<title>([^<]+)<\/title>/);
-      if (titleMatch) {
-        result.stats.channelName = titleMatch[1].replace(' - YouTube', '').trim();
-      }
+      if (titleMatch) result.stats.channelName = titleMatch[1].replace(' - YouTube', '').trim();
     }
 
-    // ── Extract view counts from shorts page ──
+    // Shorts views
     const shortsData = extractVideoViews(shortsHtml);
     result.stats.shortsCount = shortsData.count;
     result.stats.shortsViews = shortsData.totalViews;
 
-    // ── Extract view counts from videos page ──
+    // Videos views
     const videosData = extractVideoViews(videosHtml);
     result.stats.videoCount = videosData.count;
     result.stats.videoViews = videosData.totalViews;
 
-    // If videos page didn't have overlayMetadata, try viewCountText from main page
+    // Fallback for video views
     if (videosData.totalViews === 0) {
-      const viewCountMatch = mainHtml.match(/"viewCountText":\s*\{[^}]*"simpleText":\s*"([^"]+)"/);
-      if (viewCountMatch) {
-        result.stats.videoViews = parseViewString(viewCountMatch[1]);
-      }
+      const viewCountMatch = mainHtml.match(/"viewCountText":\s*\{[^}]*"simpleText":\s*"([^"]+)"\}/);
+      if (viewCountMatch) result.stats.videoViews = parseViewString(viewCountMatch[1]);
     }
 
-    // ── Combined totals ──
+    // Combined totals
     result.stats.totalViews = (result.stats.videoViews as number || 0) + (result.stats.shortsViews as number || 0);
 
   } catch (err: any) {
@@ -145,7 +138,7 @@ async function scrapeYouTube(): Promise<PlatformStats> {
   return result;
 }
 
-// ── TikTok Scraper ────────────────────────────────────────────────────
+// ── TikTok Scraper (via Apify) ───────────────────────────────────────
 async function scrapeTikTok(): Promise<PlatformStats> {
   const handle = '@glasscut.asmr6';
   const url = `https://www.tiktok.com/${handle}`;
@@ -158,68 +151,60 @@ async function scrapeTikTok(): Promise<PlatformStats> {
   };
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      },
-      signal: AbortSignal.timeout(15000),
+    // Use Apify's free TikTok scraper for real per-video play counts
+    const apifyUrl = `https://api.apify.com/v2/acts/clockworks~free-tiktok-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}`;
+    const apifyRes = await fetch(apifyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        profiles: ['glasscut.asmr6'],
+        resultsPerPage: 30,
+        shouldDownloadVideos: false,
+      }),
+      signal: AbortSignal.timeout(60000),
     });
 
-    if (!response.ok) {
-      result.error = `HTTP ${response.status}`;
-      return result;
-    }
+    if (apifyRes.ok) {
+      const videos: any[] = await apifyRes.json();
+      let totalViews = 0;
+      for (const video of videos) {
+        totalViews += (video.playCount || 0);
+      }
+      result.stats.videos = videos.length;
+      result.stats.totalViews = totalViews;
 
-    const html = await response.text();
-
-    // Extract __UNIVERSAL_DATA_FOR_REHYDRATION__ JSON
-    const rehydrationMatch = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
-    if (rehydrationMatch) {
-      try {
-        const data = JSON.parse(rehydrationMatch[1]);
-        const userDetail = data?.['__DEFAULT_SCOPE__']?.['webapp.user-detail'];
-        const userInfo = userDetail?.userInfo;
-
-        if (userInfo) {
-          const user = userInfo.user || {};
-          const stats = userInfo.stats || {};
-
-          result.stats.nickname = user.nickname || handle;
-          result.stats.followers = stats.followerCount ?? 0;
-          result.stats.following = stats.followingCount ?? 0;
-          result.stats.likes = stats.heartCount ?? stats.heart ?? 0;
-          result.stats.videos = stats.videoCount ?? 0;
-          result.stats.diggs = stats.diggCount ?? 0;
-          result.avatar = user.avatarLarger || user.avatarMedium || user.avatarThumb || '';
-
-          if (user.signature) {
-            result.stats.bio = user.signature;
-          }
-          if (user.verified !== undefined) {
-            result.stats.verified = user.verified;
-          }
-        }
-      } catch (parseErr) {
-        // JSON parsing failed, try regex fallback
+      // Profile info from first video's author
+      if (videos.length > 0) {
+        const author = videos[0].authorMeta || videos[0].author || {};
+        result.stats.nickname = author.nickName || author.nickname || author.name || 'GlassCut ASMR';
+        result.avatar = author.avatar || '';
       }
     }
 
-    // Fallback: try meta tag extraction
-    if (!result.stats.followers) {
-      const followersMatch = html.match(/"followerCount":\s*(\d+)/);
-      if (followersMatch) result.stats.followers = parseInt(followersMatch[1]);
-    }
-    if (!result.stats.likes) {
-      const likesMatch = html.match(/"heartCount":\s*(\d+)/);
-      if (likesMatch) result.stats.likes = parseInt(likesMatch[1]);
-    }
-    if (!result.avatar) {
-      const avatarMatch = html.match(/"avatarLarger":\s*"([^"]+)"/);
-      if (avatarMatch) result.avatar = avatarMatch[1].replace(/\\u002F/g, '/');
-    }
+    // Fallback: fetch profile page for nickname/avatar
+    if (!result.stats.nickname || !result.avatar) {
+      const profileRes = await fetch(url, {
+        headers: { 'User-Agent': YT_HEADERS['User-Agent'], 'Accept-Language': 'en-US,en;q=0.9' },
+        signal: AbortSignal.timeout(15000),
+      });
 
+      if (profileRes.ok) {
+        const html = await profileRes.text();
+        const rehydrationMatch = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
+        if (rehydrationMatch) {
+          try {
+            const data = JSON.parse(rehydrationMatch[1]);
+            const userInfo = data?.['__DEFAULT_SCOPE__']?.['webapp.user-detail']?.userInfo;
+            if (userInfo) {
+              const user = userInfo.user || {};
+              if (!result.stats.nickname) result.stats.nickname = user.nickname || handle;
+              if (!result.avatar) result.avatar = user.avatarLarger || user.avatarMedium || '';
+              if (!result.stats.videos) result.stats.videos = userInfo.stats?.videoCount ?? 0;
+            }
+          } catch { /* ignore */ }
+        }
+      }
+    }
   } catch (err: any) {
     result.error = err.message || 'Failed to fetch';
   }
@@ -227,7 +212,7 @@ async function scrapeTikTok(): Promise<PlatformStats> {
   return result;
 }
 
-// ── Instagram Scraper ─────────────────────────────────────────────────
+// ── Instagram Scraper (via GraphQL API) ──────────────────────────────
 async function scrapeInstagram(): Promise<PlatformStats> {
   const handle = '@cutglasmr';
   const url = 'https://www.instagram.com/cutglasmr/';
@@ -240,11 +225,10 @@ async function scrapeInstagram(): Promise<PlatformStats> {
   };
 
   try {
-    // Use Instagram's internal GraphQL API with the public app ID
     const apiUrl = 'https://www.instagram.com/api/v1/users/web_profile_info/?username=cutglasmr';
     const response = await fetch(apiUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': YT_HEADERS['User-Agent'],
         'X-IG-App-ID': '936619743392459',
         'Accept': '*/*',
         'Sec-Fetch-Mode': 'cors',
@@ -255,7 +239,6 @@ async function scrapeInstagram(): Promise<PlatformStats> {
     });
 
     if (!response.ok) {
-      // Fallback to HTML scraping if API fails
       return await scrapeInstagramFallback(result);
     }
 
@@ -268,19 +251,16 @@ async function scrapeInstagram(): Promise<PlatformStats> {
       result.stats.followers = user.edge_followed_by?.count ?? 0;
       result.avatar = user.profile_pic_url_hd || user.profile_pic_url || '';
 
-      // Sum up video_view_count from all posts
+      // Sum video_view_count from all posts
       const edges = user.edge_owner_to_timeline_media?.edges || [];
       let totalViews = 0;
       for (const edge of edges) {
         const node = edge?.node;
-        if (node?.video_view_count) {
-          totalViews += node.video_view_count;
-        }
+        if (node?.video_view_count) totalViews += node.video_view_count;
       }
       result.stats.totalViews = totalViews;
     }
-  } catch (err: any) {
-    // Try fallback
+  } catch {
     return await scrapeInstagramFallback(result);
   }
 
@@ -291,21 +271,13 @@ async function scrapeInstagram(): Promise<PlatformStats> {
 async function scrapeInstagramFallback(result: PlatformStats): Promise<PlatformStats> {
   try {
     const response = await fetch('https://www.instagram.com/cutglasmr/', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
+      headers: { 'User-Agent': YT_HEADERS['User-Agent'], 'Accept-Language': 'en-US,en;q=0.9' },
       signal: AbortSignal.timeout(15000),
     });
 
-    if (!response.ok) {
-      result.error = `HTTP ${response.status}`;
-      return result;
-    }
+    if (!response.ok) { result.error = `HTTP ${response.status}`; return result; }
 
     const html = await response.text();
-
-    // Meta description: "X Followers, Y Following, Z Posts"
     const metaDescMatch = html.match(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i);
     if (metaDescMatch) {
       const desc = metaDescMatch[1];
@@ -314,10 +286,8 @@ async function scrapeInstagramFallback(result: PlatformStats): Promise<PlatformS
       const followersM = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
       if (followersM) result.stats.followers = followersM[1];
     }
-
     const ogImageMatch = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i);
     if (ogImageMatch) result.avatar = ogImageMatch[1];
-
     const titleMatch = html.match(/<title>([^<]+)<\/title>/);
     if (titleMatch) {
       const namePart = titleMatch[1].split('(')[0].trim();
@@ -326,7 +296,6 @@ async function scrapeInstagramFallback(result: PlatformStats): Promise<PlatformS
   } catch (err: any) {
     result.error = err.message || 'Failed to fetch';
   }
-
   return result;
 }
 
@@ -348,7 +317,7 @@ export const GET: APIRoute = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=300', // Cache for 5 minutes
+        'Cache-Control': 'public, max-age=300',
       },
     });
   } catch (error: any) {
