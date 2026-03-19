@@ -1,9 +1,9 @@
 import type { APIRoute } from 'astro';
 
 // ── Social Media Stats Scraper ────────────────────────────────────────
-// YouTube: HTML scraping (shorts + videos views)
-// TikTok:  Apify actor (real per-video play counts)
-// Instagram: GraphQL API (per-post video_view_count)
+// YouTube:   HTML scraping, refreshes every 5 min (free)
+// TikTok:    Apify clockworks~free-tiktok-scraper, refreshes every 1 hr
+// Instagram: Apify apify~instagram-reel-scraper, refreshes every 1 hr
 
 interface PlatformStats {
   platform: string;
