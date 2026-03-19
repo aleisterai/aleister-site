@@ -6,7 +6,7 @@ import { teamMembers } from "../../data/team";
 export const prerender = true;
 
 // Load markdown files directly (bypasses buggy getCollection on Vercel)
-const teamMdFiles = import.meta.glob<{ Content: any; frontmatter: any }>(
+const teamMdFiles = import.meta.glob<any>(
   "../../content/team/*.md",
   { eager: true }
 );
@@ -25,7 +25,7 @@ const { name, codename, role, model, color, avatar, traits, description } = memb
 // Find matching markdown file for this member
 const mdKey = Object.keys(teamMdFiles).find((k) => k.includes(`/${slug}.md`));
 const mdModule = mdKey ? teamMdFiles[mdKey] : null;
-const Content = mdModule?.Content;
+const Content = mdModule?.Content || mdModule?.default;
 
 const storeItem =
   storeItems.find(
