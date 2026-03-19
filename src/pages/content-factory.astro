@@ -1,0 +1,530 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+---
+
+<BaseLayout
+  title="Content Factory · Aleister"
+  description="Live social media statistics for Aleister's content channels on YouTube, TikTok, and Instagram."
+  image="/api/og/dashboard"
+>
+  <div class="cf-page">
+    <div class="container">
+      <!-- ── Hero ── -->
+      <div class="cf-hero">
+        <PageHeader
+          accent="Content Factory"
+          subtitle="Live social media stats across YouTube, TikTok, and Instagram. Auto-refreshes every 5 minutes."
+        >
+          <p class="cf-chain">
+            Live Stats <span class="live-dot-inline"><span></span></span>
+          </p>
+        </PageHeader>
+      </div>
+
+      <!-- ── Stats Grid ── -->
+      <div class="cf-grid" id="cf-grid">
+
+        <!-- YouTube Card -->
+        <div class="cf-card cf-card--youtube" id="yt-card">
+          <div class="cf-card__header">
+            <div class="cf-card__platform-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.3-1.9.5-3.8.5-5.8s-.2-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+              </svg>
+            </div>
+            <div class="cf-card__title-area">
+              <h2 class="cf-card__title">YouTube</h2>
+              <a class="cf-card__handle" href="https://www.youtube.com/@CutGlAsmr" target="_blank" rel="noopener">@CutGlAsmr</a>
+            </div>
+            <div class="cf-card__avatar" id="yt-avatar">
+              <div class="cf-card__avatar-placeholder">YT</div>
+            </div>
+          </div>
+          <div class="cf-card__stats">
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="yt-subscribers">—</span>
+              <span class="cf-stat__label">Subscribers</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="yt-videos">—</span>
+              <span class="cf-stat__label">Videos</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="yt-views">—</span>
+              <span class="cf-stat__label">Total Views</span>
+            </div>
+          </div>
+          <div class="cf-card__status" id="yt-status">
+            <span class="cf-card__loading">Loading...</span>
+          </div>
+        </div>
+
+        <!-- TikTok Card -->
+        <div class="cf-card cf-card--tiktok" id="tt-card">
+          <div class="cf-card__header">
+            <div class="cf-card__platform-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.77a8.26 8.26 0 0 0 4.83 1.56V6.88a4.84 4.84 0 0 1-1.07-.19z"/>
+              </svg>
+            </div>
+            <div class="cf-card__title-area">
+              <h2 class="cf-card__title">TikTok</h2>
+              <a class="cf-card__handle" href="https://www.tiktok.com/@glasscut.asmr6" target="_blank" rel="noopener">@glasscut.asmr6</a>
+            </div>
+            <div class="cf-card__avatar" id="tt-avatar">
+              <div class="cf-card__avatar-placeholder">TT</div>
+            </div>
+          </div>
+          <div class="cf-card__stats">
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="tt-followers">—</span>
+              <span class="cf-stat__label">Followers</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="tt-likes">—</span>
+              <span class="cf-stat__label">Likes</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="tt-videos">—</span>
+              <span class="cf-stat__label">Videos</span>
+            </div>
+          </div>
+          <div class="cf-card__status" id="tt-status">
+            <span class="cf-card__loading">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Instagram Card -->
+        <div class="cf-card cf-card--instagram" id="ig-card">
+          <div class="cf-card__header">
+            <div class="cf-card__platform-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.97.25 2.43.42a4.07 4.07 0 0 1 1.53.99c.46.46.78.93.99 1.53.17.46.36 1.26.42 2.43.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.97-.42 2.43a4.07 4.07 0 0 1-.99 1.53c-.46.46-.93.78-1.53.99-.46.17-1.26.36-2.43.42-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.97-.25-2.43-.42a4.07 4.07 0 0 1-1.53-.99 4.07 4.07 0 0 1-.99-1.53c-.17-.46-.36-1.26-.42-2.43C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.97.42-2.43.21-.6.53-1.07.99-1.53.46-.46.93-.78 1.53-.99.46-.17 1.26-.36 2.43-.42C8.87 2.17 9.25 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.83 5.83 0 0 0-2.13 1.38A5.83 5.83 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91a5.83 5.83 0 0 0 1.38 2.13 5.83 5.83 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.83 5.83 0 0 0 2.13-1.38 5.83 5.83 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.83 5.83 0 0 0-1.38-2.13A5.83 5.83 0 0 0 19.86.63C19.1.33 18.22.13 16.95.07 15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/>
+              </svg>
+            </div>
+            <div class="cf-card__title-area">
+              <h2 class="cf-card__title">Instagram</h2>
+              <a class="cf-card__handle" href="https://www.instagram.com/cutglasmr" target="_blank" rel="noopener">@cutglasmr</a>
+            </div>
+            <div class="cf-card__avatar" id="ig-avatar">
+              <div class="cf-card__avatar-placeholder">IG</div>
+            </div>
+          </div>
+          <div class="cf-card__stats">
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="ig-followers">—</span>
+              <span class="cf-stat__label">Followers</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="ig-posts">—</span>
+              <span class="cf-stat__label">Posts</span>
+            </div>
+            <div class="cf-stat">
+              <span class="cf-stat__value" id="ig-following">—</span>
+              <span class="cf-stat__label">Following</span>
+            </div>
+          </div>
+          <div class="cf-card__status" id="ig-status">
+            <span class="cf-card__loading">Loading...</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Refresh Info ── -->
+      <div class="cf-refresh">
+        <span id="cf-timestamp">Fetching live stats...</span>
+        <button class="cf-refresh__btn" id="cf-refresh-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M23 4v6h-6M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ── Page Layout ── */
+  .cf-page { padding: 2rem 0 4rem; }
+
+  .cf-hero { margin-bottom: 3rem; }
+
+  .cf-chain {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .95rem;
+    color: var(--text-muted);
+    margin-top: .5rem;
+  }
+
+  .live-dot-inline {
+    display: inline-flex;
+    align-items: center;
+  }
+  .live-dot-inline span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, .4); }
+    50% { opacity: .7; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  }
+
+  /* ── Stats Grid ── */
+  .cf-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .cf-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Card Base ── */
+  .cf-card {
+    background: var(--glass-bg, rgba(255,255,255,.06));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border, rgba(255,255,255,.08));
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cf-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+    opacity: .85;
+  }
+
+  .cf-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .15);
+  }
+
+  /* Platform accent colors */
+  .cf-card--youtube::before { background: linear-gradient(90deg, #ff0000, #cc0000); }
+  .cf-card--tiktok::before { background: linear-gradient(90deg, #00f2ea, #ff0050); }
+  .cf-card--instagram::before { background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+
+  .cf-card--youtube:hover { border-color: rgba(255, 0, 0, .25); }
+  .cf-card--tiktok:hover { border-color: rgba(0, 242, 234, .25); }
+  .cf-card--instagram:hover { border-color: rgba(225, 48, 108, .25); }
+
+  /* ── Card Header ── */
+  .cf-card__header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+    padding-top: .5rem;
+  }
+
+  .cf-card__platform-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .cf-card--youtube .cf-card__platform-icon { background: rgba(255, 0, 0, .12); color: #ff0000; }
+  .cf-card--tiktok .cf-card__platform-icon { background: rgba(0, 242, 234, .12); color: #00f2ea; }
+  .cf-card--instagram .cf-card__platform-icon { background: rgba(225, 48, 108, .12); color: #e1306c; }
+
+  .cf-card__title-area { flex: 1; min-width: 0; }
+
+  .cf-card__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .cf-card__handle {
+    font-size: .8rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .cf-card__handle:hover { color: var(--accent); text-decoration: underline; }
+
+  /* ── Avatar ── */
+  .cf-card__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--glass-border, rgba(255,255,255,.1));
+  }
+
+  .cf-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cf-card__avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--glass-bg, rgba(255,255,255,.04));
+    letter-spacing: 1px;
+  }
+
+  /* ── Stats Row ── */
+  .cf-card__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .5rem;
+    text-align: center;
+    padding: 1rem 0;
+    border-top: 1px solid var(--glass-border, rgba(255,255,255,.06));
+    border-bottom: 1px solid var(--glass-border, rgba(255,255,255,.06));
+  }
+
+  .cf-stat__value {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cf-stat__label {
+    display: block;
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-muted);
+    margin-top: .15rem;
+  }
+
+  /* ── Status Bar ── */
+  .cf-card__status {
+    padding-top: .75rem;
+    font-size: .75rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .cf-card__loading {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .cf-card__loading::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--glass-border);
+    border-top-color: var(--accent, #8b5cf6);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .cf-card__status--success { color: #22c55e; }
+  .cf-card__status--error { color: #ef4444; }
+
+  /* ── Refresh Bar ── */
+  .cf-refresh {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--glass-bg, rgba(255,255,255,.03));
+    border: 1px solid var(--glass-border, rgba(255,255,255,.06));
+    border-radius: 12px;
+    font-size: .8rem;
+    color: var(--text-muted);
+  }
+
+  .cf-refresh__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem .8rem;
+    border: 1px solid var(--glass-border, rgba(255,255,255,.1));
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: .8rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .cf-refresh__btn:hover {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border-color: var(--accent, #8b5cf6);
+  }
+  .cf-refresh__btn:active { transform: scale(.96); }
+  .cf-refresh__btn.spinning svg { animation: spin .8s linear infinite; }
+
+  /* ── Light theme overrides ── */
+  :global([data-theme="light"]) .cf-card {
+    background: rgba(255,255,255,.85);
+    border-color: rgba(0,0,0,.08);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  :global([data-theme="light"]) .cf-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,.1);
+  }
+  :global([data-theme="light"]) .cf-card__stats {
+    border-color: rgba(0,0,0,.06);
+  }
+  :global([data-theme="light"]) .cf-refresh {
+    background: rgba(255,255,255,.7);
+    border-color: rgba(0,0,0,.08);
+  }
+</style>
+
+<script>
+  function formatNumber(val: any): string {
+    if (val === undefined || val === null || val === '') return '—';
+    if (typeof val === 'string') {
+      // Already formatted (e.g., "5.4K views")
+      if (/[KMBkmb]/.test(val)) return val;
+      // Try parsing
+      const num = parseInt(val.replace(/[^0-9]/g, ''));
+      if (isNaN(num)) return val;
+      return formatNum(num);
+    }
+    return formatNum(val);
+  }
+
+  function formatNum(n: number): string {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return n.toLocaleString();
+  }
+
+  function setAvatar(containerId: string, url: string) {
+    if (!url) return;
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Avatar';
+    img.loading = 'lazy';
+    img.onerror = () => { (img as HTMLElement).style.display = 'none'; };
+    const placeholder = container.querySelector('.cf-card__avatar-placeholder') as HTMLElement | null;
+    if (placeholder) placeholder.style.display = 'none';
+    container.appendChild(img);
+  }
+
+  function setStatus(id: string, msg: string, type: 'success' | 'error' | 'loading' = 'success') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'cf-card__status';
+    if (type !== 'loading') el.classList.add(`cf-card__status--${type}`);
+    el.innerHTML = type === 'loading'
+      ? `<span class="cf-card__loading">${msg}</span>`
+      : msg;
+  }
+
+  async function fetchStats() {
+    const btn = document.getElementById('cf-refresh-btn');
+    btn?.classList.add('spinning');
+
+    try {
+      const res = await fetch('/api/social-stats.json');
+      const data = await res.json();
+
+      if (!data.success) {
+        document.getElementById('cf-timestamp')!.textContent = 'Error fetching stats';
+        btn?.classList.remove('spinning');
+        return;
+      }
+
+      const { youtube, tiktok, instagram } = data.platforms;
+
+      // ── YouTube ──
+      if (youtube && !youtube.error) {
+        const el = (id: string) => document.getElementById(id);
+        el('yt-subscribers')!.textContent = formatNumber(youtube.stats.subscribers || 0);
+        el('yt-videos')!.textContent = formatNumber(youtube.stats.videoCount || 0);
+        el('yt-views')!.textContent = formatNumber(youtube.stats.totalViews || 0);
+        setAvatar('yt-avatar', youtube.avatar);
+        setStatus('yt-status', youtube.stats.channelName || 'Connected', 'success');
+      } else {
+        setStatus('yt-status', youtube?.error || 'Could not fetch', 'error');
+      }
+
+      // ── TikTok ──
+      if (tiktok && !tiktok.error) {
+        const el = (id: string) => document.getElementById(id);
+        el('tt-followers')!.textContent = formatNumber(tiktok.stats.followers);
+        el('tt-likes')!.textContent = formatNumber(tiktok.stats.likes);
+        el('tt-videos')!.textContent = formatNumber(tiktok.stats.videos);
+        setAvatar('tt-avatar', tiktok.avatar);
+        setStatus('tt-status', tiktok.stats.nickname || 'Connected', 'success');
+      } else {
+        setStatus('tt-status', tiktok?.error || 'Could not fetch', 'error');
+      }
+
+      // ── Instagram ──
+      if (instagram && !instagram.error) {
+        const el = (id: string) => document.getElementById(id);
+        el('ig-followers')!.textContent = formatNumber(instagram.stats.followers);
+        el('ig-posts')!.textContent = formatNumber(instagram.stats.posts);
+        el('ig-following')!.textContent = formatNumber(instagram.stats.following);
+        setAvatar('ig-avatar', instagram.avatar);
+        setStatus('ig-status', instagram.stats.displayName || 'Connected', 'success');
+      } else {
+        setStatus('ig-status', instagram?.error || 'Could not fetch', 'error');
+      }
+
+      // Update timestamp
+      const ts = new Date(data.timestamp);
+      document.getElementById('cf-timestamp')!.textContent =
+        `Last updated: ${ts.toLocaleTimeString()} · ${ts.toLocaleDateString()}`;
+
+    } catch (err) {
+      console.error('Failed to fetch social stats:', err);
+      document.getElementById('cf-timestamp')!.textContent = 'Failed to fetch stats. Retrying...';
+    }
+
+    btn?.classList.remove('spinning');
+  }
+
+  // Initial fetch
+  fetchStats();
+
+  // Refresh button
+  document.getElementById('cf-refresh-btn')?.addEventListener('click', fetchStats);
+
+  // Auto-refresh every 5 minutes
+  setInterval(fetchStats, 300_000);
+</script>
