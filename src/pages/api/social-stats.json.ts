@@ -240,13 +240,60 @@ async function scrapeInstagram(): Promise<PlatformStats> {
   };
 
   try {
-    const response = await fetch(url, {
+    // Use Instagram's internal GraphQL API with the public app ID
+    const apiUrl = 'https://www.instagram.com/api/v1/users/web_profile_info/?username=cutglasmr';
+    const response = await fetch(apiUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'X-IG-App-ID': '936619743392459',
+        'Accept': '*/*',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'Referer': 'https://www.instagram.com/cutglasmr/',
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!response.ok) {
+      // Fallback to HTML scraping if API fails
+      return await scrapeInstagramFallback(result);
+    }
+
+    const data = await response.json();
+    const user = data?.data?.user;
+
+    if (user) {
+      result.stats.displayName = user.full_name || 'cutglasmr';
+      result.stats.posts = user.edge_owner_to_timeline_media?.count ?? 0;
+      result.stats.followers = user.edge_followed_by?.count ?? 0;
+      result.avatar = user.profile_pic_url_hd || user.profile_pic_url || '';
+
+      // Sum up video_view_count from all posts
+      const edges = user.edge_owner_to_timeline_media?.edges || [];
+      let totalViews = 0;
+      for (const edge of edges) {
+        const node = edge?.node;
+        if (node?.video_view_count) {
+          totalViews += node.video_view_count;
+        }
+      }
+      result.stats.totalViews = totalViews;
+    }
+  } catch (err: any) {
+    // Try fallback
+    return await scrapeInstagramFallback(result);
+  }
+
+  return result;
+}
+
+/** Fallback Instagram scraper using HTML meta tags */
+async function scrapeInstagramFallback(result: PlatformStats): Promise<PlatformStats> {
+  try {
+    const response = await fetch('https://www.instagram.com/cutglasmr/', {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept-Language': 'en-US,en;q=0.9',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
       },
       signal: AbortSignal.timeout(15000),
     });
@@ -258,56 +305,24 @@ async function scrapeInstagram(): Promise<PlatformStats> {
 
     const html = await response.text();
 
-    // Try to extract from meta description (format: "X Followers, Y Following, Z Posts")
-    const metaDescMatch = html.match(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i) ||
-                          html.match(/<meta[^>]+content="([^"]+)"[^>]+name="description"/i);
+    // Meta description: "X Followers, Y Following, Z Posts"
+    const metaDescMatch = html.match(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i);
     if (metaDescMatch) {
       const desc = metaDescMatch[1];
-      result.stats.description = desc;
-
-      // Parse followers/following/posts from meta description
-      const followersM = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
-      if (followersM) result.stats.followers = followersM[1];
-
-      const followingM = desc.match(/([\d,.]+[KMB]?)\s*Following/i);
-      if (followingM) result.stats.following = followingM[1];
-
       const postsM = desc.match(/([\d,.]+[KMB]?)\s*Posts/i);
       if (postsM) result.stats.posts = postsM[1];
+      const followersM = desc.match(/([\d,.]+[KMB]?)\s*Followers/i);
+      if (followersM) result.stats.followers = followersM[1];
     }
 
-    // Try to get OG image for avatar
     const ogImageMatch = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i);
-    if (ogImageMatch) {
-      result.avatar = ogImageMatch[1];
-    }
+    if (ogImageMatch) result.avatar = ogImageMatch[1];
 
-    // Extract user name from title
     const titleMatch = html.match(/<title>([^<]+)<\/title>/);
     if (titleMatch) {
       const namePart = titleMatch[1].split('(')[0].trim();
       if (namePart) result.stats.displayName = namePart;
     }
-
-    // Try to extract from SharedData (older Instagram pages)
-    const sharedDataMatch = html.match(/window\._sharedData\s*=\s*({[\s\S]*?});<\/script>/);
-    if (sharedDataMatch) {
-      try {
-        const sharedData = JSON.parse(sharedDataMatch[1]);
-        const user = sharedData?.entry_data?.ProfilePage?.[0]?.graphql?.user;
-        if (user) {
-          result.stats.followers = user.edge_followed_by?.count ?? result.stats.followers;
-          result.stats.following = user.edge_follow?.count ?? result.stats.following;
-          result.stats.posts = user.edge_owner_to_timeline_media?.count ?? result.stats.posts;
-          result.avatar = user.profile_pic_url_hd || user.profile_pic_url || result.avatar;
-          result.stats.fullName = user.full_name || '';
-          result.stats.verified = user.is_verified || false;
-        }
-      } catch (e) {
-        // Parsing failed, we already have meta data
-      }
-    }
-
   } catch (err: any) {
     result.error = err.message || 'Failed to fetch';
   }
