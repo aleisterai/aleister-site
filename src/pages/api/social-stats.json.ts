@@ -190,8 +190,8 @@ async function scrapeTikTok(): Promise<PlatformStats> {
       }
     }
 
-    // Fallback: fetch profile page for nickname/avatar
-    if (!result.stats.nickname || !result.avatar) {
+    // Fallback: fetch profile page for nickname/avatar/totalViews
+    if (!result.stats.nickname || !result.avatar || !result.stats.totalViews) {
       const profileRes = await fetch(url, {
         headers: { 'User-Agent': YT_HEADERS['User-Agent'], 'Accept-Language': 'en-US,en;q=0.9' },
         signal: AbortSignal.timeout(15000),
@@ -206,9 +206,11 @@ async function scrapeTikTok(): Promise<PlatformStats> {
             const userInfo = data?.['__DEFAULT_SCOPE__']?.['webapp.user-detail']?.userInfo;
             if (userInfo) {
               const user = userInfo.user || {};
+              const profileStats = userInfo.stats || {};
               if (!result.stats.nickname) result.stats.nickname = user.nickname || handle;
               if (!result.avatar) result.avatar = user.avatarLarger || user.avatarMedium || '';
-              if (!result.stats.videos) result.stats.videos = userInfo.stats?.videoCount ?? 0;
+              if (!result.stats.videos) result.stats.videos = profileStats.videoCount ?? 0;
+              if (!result.stats.totalViews) result.stats.totalViews = profileStats.playCount ?? 0;
             }
           } catch { /* ignore */ }
         }
