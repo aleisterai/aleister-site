@@ -212,7 +212,7 @@ async function scrapeTikTok(): Promise<PlatformStats> {
   return result;
 }
 
-// ── Instagram Scraper (via Apify) ────────────────────────────────────
+// ── Instagram Scraper (via Apify Reel Scraper) ──────────────────────
 async function scrapeInstagram(): Promise<PlatformStats> {
   const handle = '@cutglasmr';
   const url = 'https://www.instagram.com/cutglasmr/';
@@ -225,70 +225,63 @@ async function scrapeInstagram(): Promise<PlatformStats> {
   };
 
   try {
-    // Use Apify's Instagram scraper for per-post view counts
-    const apifyUrl = `https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}`;
+    // Use Apify's dedicated Instagram Reel Scraper for real-time view counts
+    const apifyUrl = `https://api.apify.com/v2/acts/apify~instagram-reel-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}`;
     const apifyRes = await fetch(apifyUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        directUrls: ['https://www.instagram.com/cutglasmr/'],
-        resultsType: 'posts',
+        username: ['cutglasmr'],
         resultsLimit: 30,
       }),
-      signal: AbortSignal.timeout(120000),
+      signal: AbortSignal.timeout(180000),
     });
 
     if (apifyRes.ok) {
-      const posts: any[] = await apifyRes.json();
+      const reels: any[] = await apifyRes.json();
       let totalViews = 0;
-      for (const post of posts) {
-        totalViews += (post.videoViewCount || post.videoPlayCount || 0);
+      for (const reel of reels) {
+        totalViews += (reel.videoPlayCount || reel.videoViewCount || reel.views || reel.playCount || 0);
       }
-      result.stats.posts = posts.length;
+      result.stats.posts = reels.length;
       result.stats.totalViews = totalViews;
-
-      // Get profile info from first post's owner
-      if (posts.length > 0) {
-        const owner = posts[0].ownerFullName || posts[0].ownerUsername || '';
-        result.stats.displayName = owner || 'Glass Cut';
-      }
     }
 
-    // Fallback to GraphQL for profile data (avatar, displayName)
-    if (!result.stats.displayName || !result.avatar) {
-      try {
-        const apiUrl = 'https://www.instagram.com/api/v1/users/web_profile_info/?username=cutglasmr';
-        const response = await fetch(apiUrl, {
-          headers: {
-            'User-Agent': YT_HEADERS['User-Agent'],
-            'X-IG-App-ID': '936619743392459',
-            'Accept': '*/*',
-            'Referer': 'https://www.instagram.com/cutglasmr/',
-          },
-          signal: AbortSignal.timeout(15000),
-        });
+    // Fetch profile metadata (displayName, avatar) via GraphQL
+    try {
+      const apiUrl = 'https://www.instagram.com/api/v1/users/web_profile_info/?username=cutglasmr';
+      const response = await fetch(apiUrl, {
+        headers: {
+          'User-Agent': YT_HEADERS['User-Agent'],
+          'X-IG-App-ID': '936619743392459',
+          'Accept': '*/*',
+          'Referer': 'https://www.instagram.com/cutglasmr/',
+        },
+        signal: AbortSignal.timeout(15000),
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          const user = data?.data?.user;
-          if (user) {
-            if (!result.stats.displayName) result.stats.displayName = user.full_name || 'cutglasmr';
-            if (!result.stats.posts) result.stats.posts = user.edge_owner_to_timeline_media?.count ?? 0;
-            result.avatar = user.profile_pic_url_hd || user.profile_pic_url || '';
+      if (response.ok) {
+        const data = await response.json();
+        const user = data?.data?.user;
+        if (user) {
+          result.stats.displayName = user.full_name || 'cutglasmr';
+          if (!result.stats.posts) result.stats.posts = user.edge_owner_to_timeline_media?.count ?? 0;
+          result.avatar = user.profile_pic_url_hd || user.profile_pic_url || '';
 
-            // Use GraphQL views as fallback if Apify didn't return any
-            if (!result.stats.totalViews) {
-              const edges = user.edge_owner_to_timeline_media?.edges || [];
-              let totalViews = 0;
-              for (const edge of edges) {
-                if (edge?.node?.video_view_count) totalViews += edge.node.video_view_count;
-              }
-              result.stats.totalViews = totalViews;
+          // Use GraphQL views only if reel scraper returned nothing
+          if (!result.stats.totalViews) {
+            const edges = user.edge_owner_to_timeline_media?.edges || [];
+            let totalViews = 0;
+            for (const edge of edges) {
+              if (edge?.node?.video_view_count) totalViews += edge.node.video_view_count;
             }
+            result.stats.totalViews = totalViews;
           }
         }
-      } catch { /* GraphQL fallback failed, continue */ }
-    }
+      }
+    } catch { /* GraphQL failed, continue */ }
+
+    if (!result.stats.displayName) result.stats.displayName = 'Glass Cut';
   } catch (err: any) {
     result.error = err.message || 'Failed to fetch';
   }
