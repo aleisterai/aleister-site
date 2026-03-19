@@ -16,6 +16,15 @@ interface PlatformStats {
 
 const APIFY_TOKEN = import.meta.env.APIFY_TOKEN || process.env.APIFY_TOKEN || '';
 
+// ── Per-platform cache with different TTLs ────────────────────────────
+const CACHE_TTL = {
+  youtube: 5 * 60 * 1000,      // 5 minutes (free HTML scraping)
+  tiktok: 60 * 60 * 1000,      // 1 hour (Apify costs $)
+  instagram: 60 * 60 * 1000,   // 1 hour (Apify costs $)
+};
+
+const cache: Record<string, { data: PlatformStats; timestamp: number }> = {};
+
 // ── Helpers ───────────────────────────────────────────────────────────
 const YT_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -289,13 +298,29 @@ async function scrapeInstagram(): Promise<PlatformStats> {
   return result;
 }
 
+// ── Cached scraper wrapper ────────────────────────────────────────────
+async function cachedScrape(
+  key: string,
+  scraper: () => Promise<PlatformStats>,
+): Promise<PlatformStats> {
+  const now = Date.now();
+  const ttl = CACHE_TTL[key as keyof typeof CACHE_TTL] || 60 * 60 * 1000;
+  const cached = cache[key];
+  if (cached && (now - cached.timestamp) < ttl) {
+    return cached.data;
+  }
+  const data = await scraper();
+  cache[key] = { data, timestamp: now };
+  return data;
+}
+
 // ── API Route ─────────────────────────────────────────────────────────
 export const GET: APIRoute = async () => {
   try {
     const [youtube, tiktok, instagram] = await Promise.all([
-      scrapeYouTube(),
-      scrapeTikTok(),
-      scrapeInstagram(),
+      cachedScrape('youtube', scrapeYouTube),
+      cachedScrape('tiktok', scrapeTikTok),
+      cachedScrape('instagram', scrapeInstagram),
     ]);
 
     return new Response(JSON.stringify({
@@ -307,7 +332,7 @@ export const GET: APIRoute = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+        'Cache-Control': 'public, max-age=300', // Browser cache 5 min (server cache is per-platform)
       },
     });
   } catch (error: any) {
