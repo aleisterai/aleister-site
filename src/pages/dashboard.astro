@@ -164,10 +164,10 @@ const CLAW_MART_EARNINGS = 89;
         </div>
       </div>
 
-      <!-- ── Token Burn ── -->
+      <!-- ── Token Burn & Buybacks ── -->
       <div class="dashboard-section">
         <h2 class="section-title">
-          Token Burn
+          Token Burn & Buybacks
           <a
             href={`https://basescan.org/token/${TOKEN_CONTRACT}?a=${BURN_ADDRESS}`}
             target="_blank"
@@ -185,6 +185,17 @@ const CLAW_MART_EARNINGS = 89;
             <div class="burn-card__sub" id="burn-sub">Loading from chain...</div>
           </div>
           <div class="burn-card__usd" id="burn-usd"></div>
+        </div>
+        <div class="buyback-card">
+          <div class="buyback-card__icon">💎</div>
+          <div class="buyback-card__body">
+            <div class="buyback-card__label">
+              $ALEISTER Bought Back <span class="live-dot-inline"><span></span></span>
+            </div>
+            <div class="buyback-card__amount" id="buyback-amount">—</div>
+            <div class="buyback-card__sub" id="buyback-sub">Loading from chain...</div>
+          </div>
+          <div class="buyback-card__usd" id="buyback-usd"></div>
         </div>
         <div class="burn-address">
           <div class="address-label">Burn Address</div>
@@ -207,40 +218,6 @@ const CLAW_MART_EARNINGS = 89;
               BaseScan ↗
             </a>
           </div>
-        </div>
-      </div>
-
-      <!-- ── Buybacks ── -->
-      <div class="dashboard-section">
-        <h2 class="section-title">
-          Buybacks
-          <a
-            href={`https://basescan.org/address/${TREASURY_SAFE}`}
-            target="_blank"
-            rel="noopener"
-            class="section-title__link">Safe Wallet ↗</a
-          >
-        </h2>
-        <div class="buyback-list">
-          <a
-            class="buyback-card"
-            href="https://basescan.org/tx/0x0cd39b0bb2d752bafef290a759bb8bce1e5b5b34948bdeac8e76f349835bbc39"
-            target="_blank"
-            rel="noopener"
-          >
-            <div class="buyback-card__icon">💎</div>
-            <div class="buyback-card__body">
-              <div class="buyback-card__pair">WETH → $ALEISTER</div>
-              <div class="buyback-card__meta">
-                <span id="buyback-weth-0">Loading...</span> · Executed via Safe Wallet
-              </div>
-            </div>
-            <div class="buyback-card__tx">
-              <span class="buyback-card__usd" id="buyback-usd-0"></span>
-              <code class="buyback-card__hash">0x0cd3…bc39</code>
-              <span class="buyback-card__link">BaseScan ↗</span>
-            </div>
-          </a>
         </div>
       </div>
 
@@ -751,33 +728,30 @@ const CLAW_MART_EARNINGS = 89;
       padding: 1.25rem;
     }
 
-    /* ──── Buyback Cards ──── */
-    .buyback-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
+    /* ──── Buyback Card ──── */
     .buyback-card {
       display: flex;
-      gap: 1rem;
+      gap: 1.25rem;
       align-items: center;
       background: var(--bg-glass);
-      border: 1px solid color-mix(in srgb, #6c5ce7 20%, var(--border-glass));
-      border-radius: 12px;
-      padding: 1.25rem;
-      text-decoration: none;
-      color: inherit;
-      transition: border-color 0.2s ease, transform 0.15s ease;
+      border: 1px solid color-mix(in srgb, #6c5ce7 25%, var(--border-glass));
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .buyback-card:hover {
-      border-color: color-mix(in srgb, #6c5ce7 40%, var(--border-glass));
-      transform: translateY(-1px);
+    .buyback-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, color-mix(in srgb, #6c5ce7 6%, transparent), transparent 60%);
+      pointer-events: none;
     }
 
     .buyback-card__icon {
-      font-size: 1.8rem;
+      font-size: 2.2rem;
       line-height: 1;
       flex-shrink: 0;
     }
@@ -787,68 +761,33 @@ const CLAW_MART_EARNINGS = 89;
       min-width: 0;
     }
 
-    .buyback-card__pair {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.2rem;
+    .buyback-card__label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
     }
 
-    .buyback-card__meta {
+    .buyback-card__amount {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .buyback-card__sub {
       font-size: 0.72rem;
       color: var(--text-tertiary);
       font-style: italic;
     }
 
-    .buyback-card__tx {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.25rem;
-      flex-shrink: 0;
-    }
-
-    .buyback-card__hash {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.7rem;
-      color: var(--text-secondary);
-      background: var(--bg-secondary);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-    }
-
-    .buyback-card__link {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--accent, #6c5ce7);
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-
-    .buyback-card:hover .buyback-card__link {
-      opacity: 1;
-    }
-
     .buyback-card__usd {
-      font-size: 0.85rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #6c5ce7;
       white-space: nowrap;
-    }
-
-    @media (max-width: 480px) {
-      .buyback-card {
-        flex-wrap: wrap;
-      }
-      .buyback-card__tx {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 0.5rem;
-        padding-top: 0.5rem;
-        border-top: 1px solid var(--border-glass);
-      }
+      flex-shrink: 0;
     }
 
     /* ──── Disclaimer ──── */
@@ -1153,14 +1092,13 @@ const CLAW_MART_EARNINGS = 89;
       const store = window.__storeRevenue || 0;
       const fundlyhub = window.__fundlyhubRevenue || 0;
       const tokenFees = window.__tokenFeesRevenue || 0;
-      const buybacks = window.__buybackRevenue || 0;
-      const total = clawmart + store + fundlyhub + tokenFees + buybacks;
+      const total = clawmart + store + fundlyhub + tokenFees;
 
       const el = document.getElementById("all-time-revenue");
       const changeEl = document.getElementById("all-time-change");
       if (el) el.textContent = formatCurrency(total);
       if (changeEl) {
-        changeEl.textContent = "5 revenue streams";
+        changeEl.textContent = "4 revenue streams";
         changeEl.className = "stat-change change-up";
       }
     }
@@ -1289,7 +1227,7 @@ const CLAW_MART_EARNINGS = 89;
       }
     }
 
-    // ──── Buyback Data → Buybacks section + Token Fees ────
+    // ──── Buyback Data → Buyback card ────
     async function fetchBuybackData() {
       try {
         const [buybackRes, priceRes] = await Promise.all([
@@ -1299,31 +1237,32 @@ const CLAW_MART_EARNINGS = 89;
         const buybackData = await buybackRes.json();
         const priceData = await priceRes.json();
 
+        const aleisterPrice = priceData.aleister?.usd || 0;
         const ethPrice = priceData.ethereum?.usd || 0;
-        let totalUsd = 0;
+        const totalAleister = buybackData.totalAleisterBought || 0;
+        const totalWeth = buybackData.totalWethSpent || 0;
+        const usdValue = totalAleister * aleisterPrice;
 
-        // Update each buyback card
-        (buybackData.buybacks || []).forEach((bb, i) => {
-          const wethEl = document.getElementById(`buyback-weth-${i}`);
-          const usdEl = document.getElementById(`buyback-usd-${i}`);
-          const usdValue = (bb.wethAmount || 0) * ethPrice;
-          totalUsd += usdValue;
+        const amountEl = document.getElementById("buyback-amount");
+        const subEl = document.getElementById("buyback-sub");
+        const usdEl = document.getElementById("buyback-usd");
 
-          if (wethEl) {
-            wethEl.textContent = `${(bb.wethAmount || 0).toFixed(4)} WETH`;
-          }
-          if (usdEl && usdValue > 0) {
-            usdEl.textContent = `≈ ${formatCurrency(usdValue)}`;
-          }
-        });
-
-        // Store buyback USD total for all-time revenue
-        window.__buybackRevenue = totalUsd;
-        updateAllTimeRevenue();
+        if (amountEl) {
+          amountEl.textContent = formatNumber(totalAleister) + " $ALEISTER";
+        }
+        if (subEl) {
+          const wethUsd = totalWeth * ethPrice;
+          subEl.textContent = `${totalWeth.toFixed(4)} WETH spent · ${buybackData.swapCount || 0} swap${(buybackData.swapCount || 0) !== 1 ? 's' : ''} · verified on-chain`;
+        }
+        if (usdEl && usdValue > 0) {
+          usdEl.textContent = "≈ " + formatCurrency(usdValue);
+        } else if (usdEl) {
+          usdEl.textContent = "";
+        }
       } catch (err) {
         console.error("Buyback data fetch error:", err);
-        const wethEl = document.getElementById("buyback-weth-0");
-        if (wethEl) wethEl.textContent = "—";
+        const subEl = document.getElementById("buyback-sub");
+        if (subEl) subEl.textContent = "Unable to load buyback data";
       }
     }
 
