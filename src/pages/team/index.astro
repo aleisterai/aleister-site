@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import { getCollection } from 'astro:content';
 
+export const prerender = true;
+
 const teamEntries = await getCollection('team');
 
 const desiredOrder = ['Cipher', 'Sage', 'Quill', 'Rally', 'Echo', 'Pixel', 'Forge', 'Prism', 'Lyra'];
