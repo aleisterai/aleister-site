@@ -5,12 +5,6 @@ import { teamMembers } from "../../data/team";
 
 export const prerender = true;
 
-// Load markdown files directly (bypasses buggy getCollection on Vercel)
-const teamMdFiles = import.meta.glob<any>(
-  "../../content/team/*.md",
-  { eager: true }
-);
-
 export function getStaticPaths() {
   return teamMembers.map((m) => ({
     params: { slug: m.name.toLowerCase() },
@@ -20,19 +14,13 @@ export function getStaticPaths() {
 
 const { slug } = Astro.props;
 const memberData = teamMembers.find((m) => m.name.toLowerCase() === slug)!;
-const { name, codename, role, model, color, avatar, traits, description } = memberData;
-
-// Find matching markdown file for this member
-const mdKey = Object.keys(teamMdFiles).find((k) => k.includes(`/${slug}.md`));
-const mdModule = mdKey ? teamMdFiles[mdKey] : null;
-const Content = mdModule?.Content || mdModule?.default;
+const { name, codename, role, model, color, avatar, traits, description, contentHtml } = memberData;
 
 const storeItem =
   storeItems.find(
     (i) => i.slug === slug && i.category === "Sub-Agent"
   ) ?? null;
 
-// Other agents for navigation
 const otherAgents = teamMembers
   .filter((m) => m.name.toLowerCase() !== slug);
 ---
@@ -97,7 +85,7 @@ const otherAgents = teamMembers
       <p class="about-entry__subtitle">{description}</p>
 
       <article class="about-entry__content prose">
-        {Content ? <Content /> : <p>Content loading...</p>}
+        <Fragment set:html={contentHtml} />
       </article>
     </div>
   </section>
