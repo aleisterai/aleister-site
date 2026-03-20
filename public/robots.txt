@@ -45,4 +45,4 @@ User-agent: Twitterbot
 Allow: /
 
 # Sitemap location
-Sitemap: https://thealeister.com/sitemap-index.xml
+Sitemap: https://thealeister.com/sitemap.xml

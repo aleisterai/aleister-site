@@ -77,6 +77,9 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
               aria-expanded="false"
             >
               {group.label}
+              <svg class="header__chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </button>
             <div class="header__dropdown-menu">
               {group.items.map((item) => (
@@ -235,6 +238,18 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
     gap: 0.35rem;
   }
 
+  /* ─── Chevron arrow ─── */
+  .header__chevron {
+    transition: transform 0.25s ease;
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+
+  .header__dropdown.open .header__chevron {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
   .header__dropdown-menu {
     display: none;
     position: absolute;
@@ -242,11 +257,11 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
     left: 50%;
     transform: translateX(-50%);
     min-width: 240px;
-    background: var(--bg-primary);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
     border-radius: 12px;
     padding: 0.5rem;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.04);
     opacity: 0;
     transform: translateX(-50%) translateY(-4px);
     transition: opacity 0.2s ease, transform 0.2s ease;
@@ -259,6 +274,30 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
     transform: translateX(-50%) translateY(0);
   }
 
+  /* ─── Desktop: hover-to-open ─── */
+  @media (min-width: 769px) {
+    .header__dropdown:hover .header__dropdown-menu {
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .header__dropdown:hover .header__chevron {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    /* Invisible bridge so the menu doesn't close when moving cursor from trigger to menu */
+    .header__dropdown-menu::before {
+      content: '';
+      position: absolute;
+      top: -0.5rem;
+      left: 0;
+      right: 0;
+      height: 0.5rem;
+    }
+  }
+
   .header__dropdown-item {
     display: flex;
     flex-direction: column;
@@ -269,11 +308,11 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
   }
 
   .header__dropdown-item:hover {
-    background: var(--bg-glass-hover);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .header__dropdown-item--active {
-    background: var(--bg-glass);
+    background: rgba(255, 255, 255, 0.08);
     box-shadow: 0 0 0 1px var(--border-accent);
   }
 
@@ -285,7 +324,7 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
 
   .header__dropdown-desc {
     font-size: 0.72rem;
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
     line-height: 1.3;
   }
 
@@ -356,10 +395,10 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
       right: 0;
       flex-direction: column;
       padding: 1rem 1.5rem;
-      background: rgba(15, 15, 20, 0.97);
+      background: var(--bg-secondary);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--border-glass);
       align-items: stretch;
     }
 
@@ -378,14 +417,21 @@ const standaloneLinks = [{ label: "Dashboard", href: "/dashboard" }];
       min-width: 0;
       border: none;
       box-shadow: none;
-      padding: 0 0 0 1rem;
+      padding: 0.25rem 0 0.25rem 1rem;
       background: transparent;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      border-left: 2px solid var(--border-glass);
+      margin-left: 1rem;
+      margin-top: 0.25rem;
     }
 
     .header__dropdown.open .header__dropdown-menu {
       transform: none;
+    }
+
+    .header__chevron {
+      margin-left: auto;
     }
 
     .header__menu-btn {
