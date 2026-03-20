@@ -50,6 +50,14 @@ const {
       imageAlt={imageAlt}
       jsonLdExtra={jsonLdExtra}
     />
+    <!-- Google Analytics (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-N2YPQVT90H"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-N2YPQVT90H');
+    </script>
     <ViewTransitions />
     <!-- Preserve theme across View Transitions -->
     <script is:inline>
