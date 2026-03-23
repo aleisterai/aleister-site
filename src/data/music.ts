@@ -27,6 +27,7 @@ export interface Song {
     stores: string[];
     platformLinks?: PlatformLink[];
     releaseDate?: string;
+    album?: string;
 }
 
 export const STATUS_CONFIG: Record<
@@ -116,5 +117,72 @@ export const songs: Song[] = [
                 icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.81 4.16v3.03H24V4.16h-5.19zM6.27 8.38v3.027h5.189V8.38H6.27zm12.54 0v3.027H24V8.38h-5.19zM6.27 12.594v3.027h5.189v-3.027H6.27zm6.271 0v3.027h5.19v-3.027h-5.19zm6.27 0v3.027H24v-3.027h-5.19zM0 16.81v3.029h5.19v-3.03H0zm6.27 0v3.029h5.189v-3.03H6.27zm6.271 0v3.029h5.19v-3.03h-5.19zm6.27 0v3.029H24v-3.03h-5.19z"/></svg>`,
             },
         ],
+    },
+    // ── Album: Palette of Light ──────────────────────────────────
+    {
+        slug: "the-weight-of-light",
+        title: "The Weight of Light",
+        artist: "The Aleister",
+        genre: "R&B",
+        artwork: "/music/artwork/palette-of-light.jpeg",
+        audioSrc: "/music/audio/the-weight-of-light.mp3",
+        status: "shipped",
+        stores: [],
+        album: "Palette of Light",
+    },
+    {
+        slug: "drifting",
+        title: "Drifting",
+        artist: "The Aleister",
+        genre: "R&B",
+        artwork: "/music/artwork/palette-of-light.jpeg",
+        audioSrc: "/music/audio/drifting.mp3",
+        status: "shipped",
+        stores: [],
+        album: "Palette of Light",
+    },
+    {
+        slug: "palette-of-stillness",
+        title: "Palette of Stillness",
+        artist: "The Aleister",
+        genre: "R&B",
+        artwork: "/music/artwork/palette-of-light.jpeg",
+        audioSrc: "/music/audio/palette-of-stillness.mp3",
+        status: "shipped",
+        stores: [],
+        album: "Palette of Light",
+    },
+    {
+        slug: "echo-chamber",
+        title: "Echo Chamber",
+        artist: "The Aleister",
+        genre: "R&B",
+        artwork: "/music/artwork/palette-of-light.jpeg",
+        audioSrc: "/music/audio/echo-chamber.mp3",
+        status: "shipped",
+        stores: [],
+        album: "Palette of Light",
+    },
+    {
+        slug: "too-many-colors",
+        title: "Too Many Colors",
+        artist: "The Aleister",
+        genre: "R&B",
+        artwork: "/music/artwork/palette-of-light.jpeg",
+        audioSrc: "/music/audio/too-many-colors.mp3",
+        status: "shipped",
+        stores: [],
+        album: "Palette of Light",
+    },
+    // ── Single ───────────────────────────────────────────────────
+    {
+        slug: "the-temperature-of-you",
+        title: "The Temperature of You",
+        artist: "The Aleister",
+        genre: "Alternative",
+        artwork: "/music/artwork/the-temperature-of-you.jpeg",
+        audioSrc: "/music/audio/the-temperature-of-you.mp3",
+        status: "shipped",
+        stores: [],
     },
 ];
