@@ -1095,9 +1095,10 @@ const CLAW_MART_EARNINGS = 89;
       // Store treasury total for all-time calc
       window.__treasuryValue = treasuryData.totalValue || 0;
 
-      // Token Fees = total USD value of treasury holdings + burned tokens
+      // Token Fees = total USD value of treasury holdings + burned tokens + buybacks
       const burnValue = window.__burnValue || 0;
-      const tokenFeesTotal = (treasuryData.totalValue || 0) + burnValue;
+      const buybackValue = window.__buybackValue || 0;
+      const tokenFeesTotal = (treasuryData.totalValue || 0) + burnValue + buybackValue;
       const tokenFeesEl = document.getElementById("token-fees");
       if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
       window.__tokenFeesRevenue = tokenFeesTotal;
@@ -1290,6 +1291,18 @@ const CLAW_MART_EARNINGS = 89;
           usdEl.textContent = "";
         }
 
+        // Store buyback value for Token Fees + All-Time Revenue
+        window.__buybackValue = usdValue;
+
+        // Recalculate Token Fees to include buyback value
+        const treasuryValue = window.__treasuryValue || 0;
+        const burnValue = window.__burnValue || 0;
+        const tokenFeesTotal = treasuryValue + burnValue + usdValue;
+        const tokenFeesEl = document.getElementById("token-fees");
+        if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
+        window.__tokenFeesRevenue = tokenFeesTotal;
+        updateAllTimeRevenue();
+
         // Render individual swap rows with tx links
         if (swapsEl && buybackData.swaps?.length) {
           swapsEl.innerHTML = buybackData.swaps.map((s) => {
@@ -1344,7 +1357,8 @@ const CLAW_MART_EARNINGS = 89;
 
         // Recalculate Token Fees card to include burn value
         const treasuryValue = window.__treasuryValue || 0;
-        const tokenFeesTotal = treasuryValue + usdValue;
+        const buybackValue = window.__buybackValue || 0;
+        const tokenFeesTotal = treasuryValue + usdValue + buybackValue;
         const tokenFeesEl = document.getElementById("token-fees");
         if (tokenFeesEl) tokenFeesEl.textContent = formatCurrency(tokenFeesTotal);
         window.__tokenFeesRevenue = tokenFeesTotal;
