@@ -1271,7 +1271,7 @@ const CLAW_MART_EARNINGS = 89;
         const ethPrice = priceData.ethereum?.usd || 0;
         const totalAleister = buybackData.totalAleisterBought || 0;
         const totalWeth = buybackData.totalWethSpent || 0;
-        const usdValue = totalAleister * aleisterPrice;
+        const usdValue = totalWeth * ethPrice;
 
         const amountEl = document.getElementById("buyback-amount");
         const subEl = document.getElementById("buyback-sub");
