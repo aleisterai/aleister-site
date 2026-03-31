@@ -298,7 +298,7 @@ export const songs: Song[] = [
         artwork: "/music/artwork/the-temperature-of-you.jpeg",
         audioSrc: "/music/audio/the-temperature-of-you.mp3",
         releaseId: "SE6HN2634063",
-        $3 "delivered",
+        status: "delivered",
         stores: [],
         platformLinks: [
             {
