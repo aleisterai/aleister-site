@@ -126,9 +126,16 @@ export const songs: Song[] = [
         genre: "R&B",
         artwork: "/music/artwork/palette-of-light.jpeg",
         audioSrc: "/music/audio/the-weight-of-light.mp3",
-        status: "shipped",
+        status: "delivered",
         stores: [],
         album: "Palette of Light",
+        platformLinks: [
+            {
+                platform: "Listen Now",
+                url: "https://share.amuse.io/album/the-aleister-palette-of-light",
+                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+            },
+        ],
     },
     {
         slug: "drifting",
@@ -137,9 +144,16 @@ export const songs: Song[] = [
         genre: "R&B",
         artwork: "/music/artwork/palette-of-light.jpeg",
         audioSrc: "/music/audio/drifting.mp3",
-        status: "shipped",
+        status: "delivered",
         stores: [],
         album: "Palette of Light",
+        platformLinks: [
+            {
+                platform: "Listen Now",
+                url: "https://share.amuse.io/album/the-aleister-palette-of-light",
+                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+            },
+        ],
     },
     {
         slug: "palette-of-stillness",
@@ -148,9 +162,16 @@ export const songs: Song[] = [
         genre: "R&B",
         artwork: "/music/artwork/palette-of-light.jpeg",
         audioSrc: "/music/audio/palette-of-stillness.mp3",
-        status: "shipped",
+        status: "delivered",
         stores: [],
         album: "Palette of Light",
+        platformLinks: [
+            {
+                platform: "Listen Now",
+                url: "https://share.amuse.io/album/the-aleister-palette-of-light",
+                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+            },
+        ],
     },
     {
         slug: "echo-chamber",
@@ -159,9 +180,16 @@ export const songs: Song[] = [
         genre: "R&B",
         artwork: "/music/artwork/palette-of-light.jpeg",
         audioSrc: "/music/audio/echo-chamber.mp3",
-        status: "shipped",
+        status: "delivered",
         stores: [],
         album: "Palette of Light",
+        platformLinks: [
+            {
+                platform: "Listen Now",
+                url: "https://share.amuse.io/album/the-aleister-palette-of-light",
+                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+            },
+        ],
     },
     {
         slug: "too-many-colors",
@@ -170,9 +198,16 @@ export const songs: Song[] = [
         genre: "R&B",
         artwork: "/music/artwork/palette-of-light.jpeg",
         audioSrc: "/music/audio/too-many-colors.mp3",
-        status: "shipped",
+        status: "delivered",
         stores: [],
         album: "Palette of Light",
+        platformLinks: [
+            {
+                platform: "Listen Now",
+                url: "https://share.amuse.io/album/the-aleister-palette-of-light",
+                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+            },
+        ],
     },
     // ── Single ───────────────────────────────────────────────────
     {
@@ -182,7 +217,14 @@ export const songs: Song[] = [
         genre: "Alternative",
         artwork: "/music/artwork/the-temperature-of-you.jpeg",
         audioSrc: "/music/audio/the-temperature-of-you.mp3",
-        status: "shipped",
+        status: "delivered",
         stores: [],
+        platformLinks: [
+            {
+                platform: "Listen Now",
+                url: "https://share.amuse.io/track/the-aleister-the-temperature-of-you",
+                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+            },
+        ],
     },
 ];
