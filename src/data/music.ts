@@ -131,9 +131,9 @@ export const songs: Song[] = [
         album: "Palette of Light",
         platformLinks: [
             {
-                platform: "Listen Now",
+                platform: "Amuse",
                 url: "https://share.amuse.io/album/the-aleister-palette-of-light",
-                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+                icon: `<svg viewBox="0 0 300 300" width="16" height="16" fill="currentColor"><path d="M150 20 C80 20 20 80 20 150 C20 220 80 280 150 280 C220 280 280 220 280 150 C280 80 220 20 150 20ZM150 60 C198 60 238 95 248 142 L200 142 C191 119 172 103 150 103 C128 103 109 119 100 142 L52 142 C62 95 102 60 150 60ZM150 240 C102 240 62 205 52 158 L100 158 C109 181 128 197 150 197 C172 197 191 181 200 158 L248 158 C238 205 198 240 150 240Z"/></svg>`,
             },
         ],
     },
@@ -149,9 +149,9 @@ export const songs: Song[] = [
         album: "Palette of Light",
         platformLinks: [
             {
-                platform: "Listen Now",
+                platform: "Amuse",
                 url: "https://share.amuse.io/album/the-aleister-palette-of-light",
-                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+                icon: `<svg viewBox="0 0 300 300" width="16" height="16" fill="currentColor"><path d="M150 20 C80 20 20 80 20 150 C20 220 80 280 150 280 C220 280 280 220 280 150 C280 80 220 20 150 20ZM150 60 C198 60 238 95 248 142 L200 142 C191 119 172 103 150 103 C128 103 109 119 100 142 L52 142 C62 95 102 60 150 60ZM150 240 C102 240 62 205 52 158 L100 158 C109 181 128 197 150 197 C172 197 191 181 200 158 L248 158 C238 205 198 240 150 240Z"/></svg>`,
             },
         ],
     },
@@ -167,9 +167,9 @@ export const songs: Song[] = [
         album: "Palette of Light",
         platformLinks: [
             {
-                platform: "Listen Now",
+                platform: "Amuse",
                 url: "https://share.amuse.io/album/the-aleister-palette-of-light",
-                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+                icon: `<svg viewBox="0 0 300 300" width="16" height="16" fill="currentColor"><path d="M150 20 C80 20 20 80 20 150 C20 220 80 280 150 280 C220 280 280 220 280 150 C280 80 220 20 150 20ZM150 60 C198 60 238 95 248 142 L200 142 C191 119 172 103 150 103 C128 103 109 119 100 142 L52 142 C62 95 102 60 150 60ZM150 240 C102 240 62 205 52 158 L100 158 C109 181 128 197 150 197 C172 197 191 181 200 158 L248 158 C238 205 198 240 150 240Z"/></svg>`,
             },
         ],
     },
@@ -185,9 +185,9 @@ export const songs: Song[] = [
         album: "Palette of Light",
         platformLinks: [
             {
-                platform: "Listen Now",
+                platform: "Amuse",
                 url: "https://share.amuse.io/album/the-aleister-palette-of-light",
-                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+                icon: `<svg viewBox="0 0 300 300" width="16" height="16" fill="currentColor"><path d="M150 20 C80 20 20 80 20 150 C20 220 80 280 150 280 C220 280 280 220 280 150 C280 80 220 20 150 20ZM150 60 C198 60 238 95 248 142 L200 142 C191 119 172 103 150 103 C128 103 109 119 100 142 L52 142 C62 95 102 60 150 60ZM150 240 C102 240 62 205 52 158 L100 158 C109 181 128 197 150 197 C172 197 191 181 200 158 L248 158 C238 205 198 240 150 240Z"/></svg>`,
             },
         ],
     },
@@ -203,9 +203,9 @@ export const songs: Song[] = [
         album: "Palette of Light",
         platformLinks: [
             {
-                platform: "Listen Now",
+                platform: "Amuse",
                 url: "https://share.amuse.io/album/the-aleister-palette-of-light",
-                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+                icon: `<svg viewBox="0 0 300 300" width="16" height="16" fill="currentColor"><path d="M150 20 C80 20 20 80 20 150 C20 220 80 280 150 280 C220 280 280 220 280 150 C280 80 220 20 150 20ZM150 60 C198 60 238 95 248 142 L200 142 C191 119 172 103 150 103 C128 103 109 119 100 142 L52 142 C62 95 102 60 150 60ZM150 240 C102 240 62 205 52 158 L100 158 C109 181 128 197 150 197 C172 197 191 181 200 158 L248 158 C238 205 198 240 150 240Z"/></svg>`,
             },
         ],
     },
@@ -221,9 +221,9 @@ export const songs: Song[] = [
         stores: [],
         platformLinks: [
             {
-                platform: "Listen Now",
+                platform: "Amuse",
                 url: "https://share.amuse.io/track/the-aleister-the-temperature-of-you",
-                icon: `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+                icon: `<svg viewBox="0 0 300 300" width="16" height="16" fill="currentColor"><path d="M150 20 C80 20 20 80 20 150 C20 220 80 280 150 280 C220 280 280 220 280 150 C280 80 220 20 150 20ZM150 60 C198 60 238 95 248 142 L200 142 C191 119 172 103 150 103 C128 103 109 119 100 142 L52 142 C62 95 102 60 150 60ZM150 240 C102 240 62 205 52 158 L100 158 C109 181 128 197 150 197 C172 197 191 181 200 158 L248 158 C238 205 198 240 150 240Z"/></svg>`,
             },
         ],
     },
