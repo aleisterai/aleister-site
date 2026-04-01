@@ -43,3 +43,4 @@ team-fundraising.md
 .pokedex-ref/
 .venv/
 .env
+.env*.local

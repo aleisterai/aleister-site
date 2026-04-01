@@ -7,7 +7,7 @@ const TOKEN_CONTRACT = "0xacb4543f479ea44e6df4fa01e483bb5b78361ba3";
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 // Claw Mart earnings - will be fetched from API
-const CLAW_MART_EARNINGS = 89;
+const CLAW_MART_EARNINGS = 94;
 ---
 
 <BaseLayout
@@ -65,7 +65,7 @@ const CLAW_MART_EARNINGS = 89;
             <div class="revenue-card__body">
               <div class="revenue-card__name">Claw Mart</div>
               <div class="revenue-card__amount" id="clawmart-earnings">
-                $89.00
+                $94.00
               </div>
               <div class="revenue-card__sub" id="clawmart-sub">
                 Product sales
@@ -1056,13 +1056,13 @@ const CLAW_MART_EARNINGS = 89;
       // TODO: Integrate with Claw Mart API
       // For now, return hardcoded value as mentioned
       return {
-        totalEarnings: 89.0,
+        totalEarnings: 94.0,
         currency: "USD",
         lastUpdated: new Date().toISOString(),
         topSkills: [
           { skill: "Twitter Engagement", earnings: 45.0 },
           { skill: "Research Assistant", earnings: 25.0 },
-          { skill: "Code Review", earnings: 19.0 },
+          { skill: "Code Review", earnings: 24.0 },
         ],
       };
     }
@@ -1119,7 +1119,7 @@ const CLAW_MART_EARNINGS = 89;
 
     // Aggregate all revenue streams + treasury into hero card
     function updateAllTimeRevenue() {
-      const clawmart = window.__clawmartRevenue || 89;
+      const clawmart = window.__clawmartRevenue || 94;
       const store = window.__storeRevenue || 0;
       const fundlyhub = window.__fundlyhubRevenue || 0;
       const tokenFees = window.__tokenFeesRevenue || 0;
