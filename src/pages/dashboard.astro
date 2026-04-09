@@ -1218,11 +1218,13 @@ const CLAW_MART_EARNINGS = 94;
         const amountEl = document.getElementById("store-revenue");
         const subEl = document.getElementById("store-sub");
 
-        // Use Stripe balance (available + pending) as all-time revenue figure
-        const balanceTotal = (data.balance?.total) || 0;
-        window.__storeRevenue = balanceTotal;
+        // Sum all productRevenue categories for true all-time revenue
+        // (balance.total is $0 after payouts clear, productRevenue survives)
+        const pr = data.productRevenue || {};
+        const allTimeRevenue = Object.values(pr).reduce((sum, v) => sum + (v || 0), 0);
+        window.__storeRevenue = allTimeRevenue;
 
-        if (amountEl) amountEl.textContent = formatCurrency(balanceTotal);
+        if (amountEl) amountEl.textContent = formatCurrency(allTimeRevenue);
         if (subEl) {
           subEl.textContent = `All-time · ${data.chargeCount30d || 0} charges last 30d`;
         }
