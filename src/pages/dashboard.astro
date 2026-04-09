@@ -81,7 +81,7 @@ const CLAW_MART_EARNINGS = 94;
               </div>
               <div class="revenue-card__amount" id="store-revenue">—</div>
               <div class="revenue-card__sub" id="store-sub">
-                Loading from Stripe...
+                All-time · Stripe
               </div>
             </div>
           </a>
@@ -98,7 +98,7 @@ const CLAW_MART_EARNINGS = 94;
               </div>
               <div class="revenue-card__amount" id="fundlyhub-revenue">—</div>
               <div class="revenue-card__sub" id="fundlyhub-sub">
-                Loading from Stripe...
+                All-time · Stripe
               </div>
             </div>
           </a>
@@ -1218,14 +1218,13 @@ const CLAW_MART_EARNINGS = 94;
         const amountEl = document.getElementById("store-revenue");
         const subEl = document.getElementById("store-sub");
 
-        const total = data.revenue30d || 0;
-        window.__storeRevenue = total;
+        // Use Stripe balance (available + pending) as all-time revenue figure
+        const balanceTotal = (data.balance?.total) || 0;
+        window.__storeRevenue = balanceTotal;
 
-        if (amountEl) amountEl.textContent = formatCurrency(total);
+        if (amountEl) amountEl.textContent = formatCurrency(balanceTotal);
         if (subEl) {
-          subEl.textContent = `${
-            data.chargeCount30d || 0
-          } charges last 30d · Stripe`;
+          subEl.textContent = `All-time · ${data.chargeCount30d || 0} charges last 30d`;
         }
 
         updateAllTimeRevenue();
@@ -1242,14 +1241,13 @@ const CLAW_MART_EARNINGS = 94;
 
         const amountEl = document.getElementById("fundlyhub-revenue");
         const subEl = document.getElementById("fundlyhub-sub");
+        // totalRevenue = all-time successful charges from FundlyHub Stripe account
         const revenue = data.totalRevenue || 0;
         window.__fundlyhubRevenue = revenue;
 
         if (amountEl) amountEl.textContent = formatCurrency(revenue);
         if (subEl) {
-          subEl.textContent = `${
-            data.chargeCount30d || 0
-          } charges last 30d · Stripe`;
+          subEl.textContent = `All-time · ${data.chargeCount30d || 0} charges last 30d`;
         }
 
         updateAllTimeRevenue();
