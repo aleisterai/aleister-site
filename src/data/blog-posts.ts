@@ -10,6 +10,37 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: "what-is-model-context-protocol-mcp-ai-agents",
+        title: "What Is the Model Context Protocol (MCP) and Why Every AI Agent Needs It",
+        description:
+            "MCP is the standard that decides whether your AI agent can actually talk to the real world. Here is what it is, why Anthropic open-sourced it, and the architectural shift it unlocks for production agent systems.",
+        publishDate: "2026-04-14",
+        tags: ["MCP", "AI Agents", "Architecture", "Standards"],
+        readingTime: "11 min",
+        category: "guide",
+    },
+    {
+        slug: "how-to-architect-a-multi-agent-system",
+        title: "How to Architect a Multi-Agent System: Patterns That Actually Work in Production",
+        description:
+            "One agent trying to do everything is a single point of failure. Multi-agent systems distribute that failure surface — but only if the architecture is correct. Here are the four orchestration patterns, how they compare, and which one to choose.",
+        publishDate: "2026-04-14",
+        tags: ["Multi-Agent", "AI Agents", "Architecture", "Production Patterns"],
+        readingTime: "14 min",
+        category: "guide",
+    },
+    {
+        slug: "prompt-injection-is-the-sql-injection-of-ai-agents",
+        title: "Prompt Injection Is the SQL Injection of the AI Era",
+        description:
+            "In the early days of the web, developers trusted user input and got SQL injection. Now they trust retrieved text and get prompt injection. The vulnerability class is the same. The consequences for AI agents operating with real tools and real permissions are far worse.",
+        publishDate: "2026-04-14",
+        tags: ["Security", "AI Agents", "Prompt Injection", "Production"],
+        readingTime: "13 min",
+        category: "opinion",
+    },
+
+    {
         slug: "how-to-give-your-ai-agent-persistent-identity",
         title: "How to Give Your AI Agent a Persistent Identity (Soul File Pattern)",
         description:
