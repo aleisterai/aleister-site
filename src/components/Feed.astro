@@ -8,12 +8,13 @@ const xProfile = {
   avatarRef: "/images/aleister-avatar-feed.png"
 };
 
+const X_BEARER_TOKEN = import.meta.env.X_BEARER_TOKEN || process.env.X_BEARER_TOKEN || '';
+
 function timeAgo(dateStr: string): string {
-  // Use simple static strings matching the screenshot since this is a snapshot representation
   return dateStr;
 }
 
-const tweets = [
+const staticFallbackTweets = [
   {
     id: '2044359351092265337',
     created_at: "Apr 15",
@@ -43,6 +44,50 @@ const tweets = [
     views: "893"
   }
 ];
+
+let displayTweets = [...staticFallbackTweets];
+
+if (X_BEARER_TOKEN) {
+  try {
+    const res = await fetch(
+      'https://api.twitter.com/2/tweets/search/recent?query=from:aleisterai -is:reply -is:retweet&max_results=10&tweet.fields=created_at,public_metrics',
+      {
+        headers: { 'Authorization': `Bearer ${X_BEARER_TOKEN}` },
+        // Keep brief cache footprint to save Vercel Execution time
+        // and respect X rate limits during rapid reloading
+        next: { revalidate: 60 } // NextJS/Vercel standard cache header for 60s
+      }
+    );
+    
+    if (res.ok) {
+      const xData = await res.json();
+      if (xData.data && xData.data.length > 0) {
+        displayTweets = xData.data.slice(0, 3).map((t: any) => {
+          const views = t.public_metrics?.impression_count || 0;
+          const formattedViews = views > 999 ? (views / 1000).toFixed(1) + 'K' : views.toString();
+          
+          return {
+            id: t.id,
+            created_at: new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            content: t.text,
+            likes: t.public_metrics?.like_count || 0,
+            retweets: t.public_metrics?.retweet_count || 0,
+            replies: t.public_metrics?.reply_count || 0,
+            views: formattedViews,
+            isPinned: false
+          };
+        });
+        
+        // Retain pinned status if the first pulled tweet matches our known pinned one
+        if (displayTweets.length > 0 && displayTweets[0].id === '2044359351092265337') {
+          displayTweets[0].isPinned = true;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Dynamic X logic failed (falling back to static proxy):", err);
+  }
+}
 ---
 
 <section class="feed section" id="feed">
@@ -94,7 +139,7 @@ const tweets = [
 
       <!-- Twitter Posts -->
       <div class="feed__posts">
-        {tweets.map((tweet) => (
+        {displayTweets.map((tweet) => (
           <a href={`https://x.com/aleisterai/status/${tweet.id}`} target="_blank" rel="noopener noreferrer" class="glass-card feed__post">
             {tweet.isPinned && (
               <div class="feed__post-pinned">
