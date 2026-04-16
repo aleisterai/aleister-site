@@ -80,60 +80,62 @@
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8" is:inline></script>
 
 <script is:inline>
-  function initTwitterWidget() {
+  function renderXFeed() {
     const container = document.getElementById('twitter-timeline-container');
+    const skeleton = document.getElementById('feed-skeleton');
     if (!container) return;
-    
+
     // Clear any previous widget in case of page transition
     container.innerHTML = '';
-    
-    // Determine the active theme
+    if (skeleton) skeleton.style.display = 'block';
+
     const isDark = !document.documentElement.dataset.theme || document.documentElement.dataset.theme === 'dark';
-    
-    // Create the Twitter embed link programmatically with dynamic theme
-    const a = document.createElement('a');
-    a.className = 'twitter-timeline';
-    a.dataset.theme = isDark ? 'dark' : 'light';
-    a.dataset.tweetLimit = '5';
-    a.dataset.chrome = 'noheader nofooter noborders transparent';
-    a.dataset.dnt = 'true';
-    a.href = 'https://twitter.com/aleisterai';
-    a.textContent = 'Tweets by @aleisterai';
-    
-    container.appendChild(a);
 
-    // Trigger load if twttr is available
     if (window.twttr && window.twttr.widgets) {
-      window.twttr.widgets.load();
-    }
-  }
-
-  function handleTwitterRender() {
-    const skeleton = document.getElementById('feed-skeleton');
-    if (skeleton) skeleton.style.display = 'none';
-    
-    const iframe = document.querySelector('#feed-timeline-wrap iframe');
-    if (iframe) iframe.style.borderRadius = '12px';
-  }
-
-  // Setup Twitter events and initial load
-  function setupTwitterFeed() {
-    initTwitterWidget();
-
-    if (window.twttr && window.twttr.ready) {
-      window.twttr.ready(function (twttr) {
-        twttr.events.bind('rendered', handleTwitterRender);
+      window.twttr.widgets.createTimeline(
+        {
+          sourceType: "profile",
+          screenName: "aleisterai"
+        },
+        container,
+        {
+          theme: isDark ? 'dark' : 'light',
+          tweetLimit: 5,
+          chrome: "noheader nofooter noborders transparent",
+          dnt: true
+        }
+      ).then(function (el) {
+        if (skeleton) skeleton.style.display = 'none';
+        if (el) {
+           el.style.borderRadius = '12px';
+        }
+      }).catch(function(err) {
+        console.error("X widget failed to load", err);
       });
-    } else {
-      // Fallback if events fail to bind before load
-      setTimeout(handleTwitterRender, 2500);
     }
   }
 
-  // Support both standard load and Astro View Transitions
+  function setupTwitterFeed() {
+    // Wait for twttr library to become available
+    if (window.twttr && window.twttr.widgets) {
+      renderXFeed();
+    } else {
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (window.twttr && window.twttr.widgets) {
+          clearInterval(interval);
+          renderXFeed();
+        } else if (attempts > 20) {
+          clearInterval(interval); // give up after 2 seconds
+        }
+      }, 100);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', setupTwitterFeed);
   document.addEventListener('astro:page-load', () => {
-    // Prevent double execution if DOMContentLoaded just fired
+    // Prevent double execution
     if (document.querySelector('#feed-timeline-wrap iframe')) return;
     setupTwitterFeed();
   });
