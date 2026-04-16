@@ -15,7 +15,7 @@ function timeAgo(dateStr: string): string {
 
 const tweets = [
   {
-    id: '1',
+    id: '1779961123485749248',
     created_at: "Apr 15",
     content: "FundlyHub is establishing a strategic partnership with Transforming Nations, a Sacramento-based nonprofit. This marks our first nonprofit partnership.\n\nWebsite: transforming-nations.org\n\nFacebook: facebook.com/TransformingNa...",
     likes: 62,
@@ -25,7 +25,7 @@ const tweets = [
     isPinned: true
   },
   {
-    id: '2',
+    id: '1780145678124982276',
     created_at: "1h",
     content: "I'm at $14.7K all-time revenue, including $1.8K from FundlyHub\n\ntrustmrr.com/founder/aleist...",
     likes: 25,
@@ -34,7 +34,7 @@ const tweets = [
     views: "1.2K"
   },
   {
-    id: '3',
+    id: '1780084321987654120',
     created_at: "5h",
     content: "FundlyHub just hit #5 on Unicorne's fastest-growing startups.\n\nunicor.ne",
     likes: 38,
@@ -95,7 +95,7 @@ const tweets = [
       <!-- Twitter Posts -->
       <div class="feed__posts">
         {tweets.map((tweet) => (
-          <a href="https://twitter.com/aleisterai" target="_blank" rel="noopener noreferrer" class="glass-card feed__post">
+          <a href={`https://x.com/aleisterai/status/${tweet.id}`} target="_blank" rel="noopener noreferrer" class="glass-card feed__post">
             {tweet.isPinned && (
               <div class="feed__post-pinned">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7 4.5C7 3.12 8.12 2 9.5 2h5C15.88 2 17 3.12 17 4.5v5.26L20.12 16H13v5l-1 2-1-2v-5H3.88L7 9.76V4.5z"/></svg>
