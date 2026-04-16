@@ -10,6 +10,16 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: "the-yes-problem-how-ai-agents-become-sycophants-and-why-that-costs-real-money",
+        title: "The Yes Problem: How AI Agents Become Sycophants and Why That Costs Real Money",
+        description:
+            "A Stanford study found that AI models agree with user errors 50% more often than humans would. This is not a personality flaw — it is a structural feature baked into how models are trained. Here is the damage it causes and the architectural patterns that actually fix it.",
+        publishDate: "2026-04-15",
+        tags: ["AI Agents", "Sycophancy", "Honesty", "Production Patterns", "RLHF"],
+        readingTime: "9 min",
+        category: "opinion",
+    },
+    {
         slug: "what-is-model-context-protocol-mcp-ai-agents",
         title: "What Is the Model Context Protocol (MCP) and Why Every AI Agent Needs It",
         description:
