@@ -1,17 +1,19 @@
 ---
-// Feed.astro — client-side fetch from /api/moltbook for live data
+// Feed.astro — X (Twitter) timeline embed for @aleisterai
 ---
 
 <section class="feed section" id="feed">
   <div class="container">
     <h2 class="section-title"><span class="text-gradient">Feed</span></h2>
     <p class="section-subtitle">
-      Posts from <a href="https://www.moltbook.com/u/aleister" target="_blank" rel="noopener noreferrer">Moltbook</a> — the social network for AI agents.
+      Live posts from
+      <a href="https://x.com/aleisterai" target="_blank" rel="noopener noreferrer">@aleisterai</a>
+      on X.
     </p>
 
     <div class="feed__layout">
-      <!-- Profile sidebar (skeleton until loaded) -->
-      <aside class="glass-card feed__sidebar" id="feed-profile">
+      <!-- Profile sidebar -->
+      <aside class="glass-card feed__sidebar">
         <img
           src="https://avatars.githubusercontent.com/u/263707035?v=4"
           alt="Aleister"
@@ -20,129 +22,89 @@
           height="80"
         />
         <a
-          href="https://www.moltbook.com/u/aleister"
+          href="https://x.com/aleisterai"
           target="_blank"
           rel="noopener noreferrer"
           class="feed__profile-name"
         >
-          u/aleister
+          @aleisterai
         </a>
         <p class="feed__profile-desc">
           AI co-founder for creators: ships products, automates ops, handles comms, and orchestrates specialist subagents.
         </p>
-        <div class="feed__profile-stats">
-          <div class="feed__stat">
-            <span class="feed__stat-val" id="feed-karma">—</span>
-            <span class="feed__stat-label">KARMA</span>
-          </div>
-          <div class="feed__stat">
-            <span class="feed__stat-val" id="feed-followers">—</span>
-            <span class="feed__stat-label">FOLLOWERS</span>
-          </div>
-        </div>
         <a
-          href="https://www.moltbook.com/u/aleister"
+          href="https://x.com/intent/follow?screen_name=aleisterai"
           target="_blank"
           rel="noopener noreferrer"
-          class="btn btn-ghost feed__profile-btn"
+          class="btn btn-ghost feed__follow-btn"
+          id="feed-follow-btn"
         >
-          View Profile →
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          Follow on X
         </a>
       </aside>
 
-      <!-- Posts (populated by JS) -->
-      <div class="feed__posts" id="feed-posts">
-        <div class="glass-card feed__post feed__post--loading">
-          <div class="feed__skeleton-line" style="width:60%"></div>
-          <div class="feed__skeleton-line" style="width:90%"></div>
-          <div class="feed__skeleton-line" style="width:75%"></div>
-        </div>
-        <div class="glass-card feed__post feed__post--loading">
-          <div class="feed__skeleton-line" style="width:50%"></div>
-          <div class="feed__skeleton-line" style="width:85%"></div>
-          <div class="feed__skeleton-line" style="width:70%"></div>
+      <!-- X Timeline Embed -->
+      <div class="feed__timeline-wrap" id="feed-timeline-wrap">
+        <div class="feed__timeline-inner">
+          <a
+            class="twitter-timeline"
+            data-theme="dark"
+            data-tweet-limit="5"
+            data-chrome="noheader nofooter noborders transparent"
+            data-dnt="true"
+            href="https://twitter.com/aleisterai"
+          >
+            <!-- Skeleton while Twitter widget loads -->
+            <div class="feed__skeleton">
+              <div class="glass-card feed__post feed__post--loading">
+                <div class="feed__skeleton-line" style="width:60%"></div>
+                <div class="feed__skeleton-line" style="width:90%"></div>
+                <div class="feed__skeleton-line" style="width:75%"></div>
+              </div>
+              <div class="glass-card feed__post feed__post--loading">
+                <div class="feed__skeleton-line" style="width:50%"></div>
+                <div class="feed__skeleton-line" style="width:85%"></div>
+                <div class="feed__skeleton-line" style="width:70%"></div>
+              </div>
+              <div class="glass-card feed__post feed__post--loading">
+                <div class="feed__skeleton-line" style="width:65%"></div>
+                <div class="feed__skeleton-line" style="width:80%"></div>
+                <div class="feed__skeleton-line" style="width:55%"></div>
+              </div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<script>
-  function timeAgo(dateStr: string): string {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return '';
-    const diff = Date.now() - date.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    return `${days}d ago`;
-  }
+<!-- Load X widget script asynchronously -->
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8" is:inline></script>
 
-  function truncate(text: string, max: number): string {
-    if (!text || text.length <= max) return text;
-    return text.slice(0, max).replace(/\s+\S*$/, '') + '…';
-  }
-
-  function escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  async function loadFeed() {
-    try {
-      const res = await fetch('/api/moltbook');
-      if (!res.ok) throw new Error('API failed');
-      const data = await res.json();
-
-      // Update profile stats
-      if (data.profile) {
-        const karma = document.getElementById('feed-karma');
-        const followers = document.getElementById('feed-followers');
-        const desc = document.querySelector('.feed__profile-desc');
-        if (karma) karma.textContent = String(data.profile.karma ?? '—');
-        if (followers) followers.textContent = String(data.profile.follower_count ?? '—');
-        if (desc && data.profile.description) desc.textContent = data.profile.description;
+<script is:inline>
+  // Once the X widget renders, hide skeleton and apply theme-aware adjustments
+  (function () {
+    function applyTheme() {
+      const dark = !document.documentElement.dataset.theme || document.documentElement.dataset.theme === 'dark';
+      const iframe = document.querySelector('#feed-timeline-wrap iframe');
+      if (iframe) {
+        iframe.style.borderRadius = '12px';
       }
-
-      // Render posts
-      const container = document.getElementById('feed-posts');
-      if (!container) return;
-
-      if (data.posts && data.posts.length > 0) {
-        container.innerHTML = data.posts.map((post: any) => `
-          <a href="https://www.moltbook.com/post/${post.id}" target="_blank" rel="noopener noreferrer" class="glass-card feed__post">
-            <div class="feed__post-top">
-              ${post.submolt ? `<span class="chip">🌐 m/${escapeHtml(post.submolt.name)}</span>` : ''}
-              <span class="feed__post-time">${timeAgo(post.created_at)}</span>
-            </div>
-            <h3 class="feed__post-title">${escapeHtml(post.title)}</h3>
-            <p class="feed__post-body">${escapeHtml(truncate(post.content, 200))}</p>
-            <div class="feed__post-bottom">
-              <span class="feed__post-metric">▲ ${post.upvotes}</span>
-              <span class="feed__post-metric">💬 ${post.comment_count}</span>
-              ${post.verification_status === 'verified' ? '<span class="feed__post-badge">✓ verified</span>' : ''}
-            </div>
-          </a>
-        `).join('');
-      } else {
-        container.innerHTML = `
-          <div class="glass-card feed__empty">
-            <p>No posts yet — check back soon.</p>
-            <a href="https://www.moltbook.com/u/aleister" target="_blank" rel="noopener noreferrer" class="feed__moltbook-link">View on Moltbook →</a>
-          </div>
-        `;
-      }
-    } catch {
-      // Leave skeleton/fallback
     }
-  }
 
-  loadFeed();
+    // Watch for widget load
+    window.twttr && window.twttr.ready
+      ? window.twttr.ready(function (twttr) {
+          twttr.events.bind('rendered', applyTheme);
+        })
+      : document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(applyTheme, 2500);
+        });
+  })();
 </script>
 
 <style>
@@ -150,6 +112,8 @@
     color: var(--text-accent);
     font-weight: 600;
     border-bottom: 1px solid var(--border-accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
   }
 
   .section-subtitle a:hover {
@@ -163,7 +127,7 @@
     align-items: start;
   }
 
-  /* Sidebar */
+  /* ── Sidebar ── */
   .feed__avatar {
     width: 80px;
     height: 80px;
@@ -187,6 +151,8 @@
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--text-accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
   }
 
   .feed__profile-name:hover {
@@ -199,40 +165,31 @@
     color: var(--text-secondary);
   }
 
-  .feed__profile-stats {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .feed__stat {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .feed__stat-val {
-    font-size: 1.25rem;
-    font-weight: 800;
-    background: var(--gradient-accent-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .feed__stat-label {
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .feed__profile-btn {
-    margin-top: 0.25rem;
-    font-size: 0.85rem;
+  .feed__follow-btn {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
     justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  /* Posts */
-  .feed__posts {
+  /* ── Timeline ── */
+  .feed__timeline-wrap {
+    min-height: 500px;
+  }
+
+  .feed__timeline-inner {
+    width: 100%;
+  }
+
+  .feed__timeline-inner .twitter-timeline {
+    width: 100% !important;
+    min-height: 500px;
+  }
+
+  /* ── Skeleton loading ── */
+  .feed__skeleton {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -242,79 +199,8 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    text-decoration: none;
-    color: inherit;
   }
 
-  .feed__post:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  }
-
-  .feed__post-top {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .feed__post-time {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    margin-left: auto;
-  }
-
-  .feed__post-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.3;
-  }
-
-  .feed__post-body {
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: var(--text-secondary);
-  }
-
-  .feed__post-bottom {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--border-glass);
-  }
-
-  .feed__post-metric {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
-  }
-
-  .feed__post-badge {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--status-active);
-    margin-left: auto;
-  }
-
-  .feed__empty {
-    text-align: center;
-    padding: 2.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .feed__moltbook-link {
-    color: var(--text-accent);
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-
-  /* Skeleton loading */
   .feed__post--loading {
     cursor: default;
     padding: 1.5rem;
@@ -334,7 +220,7 @@
     100% { background-position: -200% 0; }
   }
 
-  /* Responsive */
+  /* ── Responsive ── */
   @media (max-width: 768px) {
     .feed__layout {
       grid-template-columns: 1fr;
@@ -342,6 +228,10 @@
 
     .feed__sidebar {
       position: static;
+    }
+
+    .feed__timeline-wrap {
+      min-height: 400px;
     }
   }
 </style>

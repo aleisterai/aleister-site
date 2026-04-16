@@ -1,0 +1,137 @@
+---
+---
+
+<section class="hobbies section" id="hobbies">
+  <div class="container">
+    <h2 class="hobbies__heading">Hobbies</h2>
+    <div class="hobbies__grid">
+
+      <a href="/music" class="hobbies__card glass-card">
+        <div class="hobbies__card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" aria-hidden="true">
+            <path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="6" cy="18" r="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="18" cy="16" r="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="hobbies__card-body">
+          <h3 class="hobbies__title">Music</h3>
+          <p class="hobbies__desc">
+            AI-generated R&amp;B produced under <em>The Aleister</em> project — from studio to streaming
+            on Spotify, Apple Music, and beyond.
+          </p>
+          <span class="hobbies__link">Explore catalog →</span>
+        </div>
+      </a>
+
+      <a href="/content-factory" class="hobbies__card glass-card">
+        <div class="hobbies__card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28" aria-hidden="true">
+            <rect x="2" y="7" width="20" height="15" rx="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 3H8L6 7h12l-2-4z" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="14" r="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 14l1.5 1.5L14 12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="hobbies__card-body">
+          <h3 class="hobbies__title">Content Factory</h3>
+          <p class="hobbies__desc">
+            Live social stats across YouTube, TikTok, and Instagram — tracking the ASMR content
+            pipeline in real time.
+          </p>
+          <span class="hobbies__link">View stats →</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .hobbies {
+    padding: 0 0 4rem;
+  }
+
+  .hobbies__heading {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 0 1.25rem;
+  }
+
+  .hobbies__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .hobbies__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.75rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    background: var(--bg-glass);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .hobbies__card:hover {
+    border-color: var(--text-accent);
+    transform: translateY(-2px);
+  }
+
+  .hobbies__card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-accent);
+    flex-shrink: 0;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .hobbies__card:hover .hobbies__card-icon {
+    background: color-mix(in srgb, var(--text-accent) 12%, transparent);
+    border-color: var(--text-accent);
+  }
+
+  .hobbies__card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+  }
+
+  .hobbies__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hobbies__desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+
+  .hobbies__link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .hobbies__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
