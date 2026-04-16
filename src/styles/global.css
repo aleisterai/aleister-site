@@ -81,10 +81,11 @@ ol {
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.15);
 
-  /* Glass */
-  --glass-blur: 20px;
-  --glass-bg: rgba(18, 18, 26, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  /* Cards (Peaq-inspired) */
+  --card-bg: #0d0d14;
+  --card-bg-hover: #121218;
+  --card-border: rgba(255, 255, 255, 0.06);
+  --card-hover-shadow: inset 0 0 0 1px var(--border-accent), 0 0 24px var(--shadow-glow);
 
   /* Status */
   --status-active: #4ade80;
@@ -126,9 +127,11 @@ ol {
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 40px rgba(109, 40, 217, 0.1);
 
-  --glass-blur: 20px;
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(0, 0, 0, 0.06);
+  /* Cards (Peaq-inspired) */
+  --card-bg: #ffffff;
+  --card-bg-hover: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.06);
+  --card-hover-shadow: inset 0 0 0 1px var(--border-accent), 0 0 24px var(--shadow-glow);
 
   --status-active: #16a34a;
   --status-warning: #ca8a04;
@@ -186,22 +189,21 @@ code,
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-/* ---------- Glass Card ---------- */
+/* ---------- Glass Card (Peaq-inspired) ---------- */
 .glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 16px;
   padding: 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .glass-card:hover {
-  background: var(--bg-glass-hover);
-  border-color: var(--border-accent);
-  box-shadow: var(--shadow-glow);
-  transform: translateY(-2px);
+  background: var(--card-bg-hover);
+  border-color: var(--text-accent);
+  box-shadow: var(--card-hover-shadow);
 }
 
 /* ---------- Layout ---------- */
