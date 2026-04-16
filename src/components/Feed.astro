@@ -49,33 +49,27 @@
       <!-- X Timeline Embed -->
       <div class="feed__timeline-wrap" id="feed-timeline-wrap">
         <div class="feed__timeline-inner">
-          <a
-            class="twitter-timeline"
-            data-theme="dark"
-            data-tweet-limit="5"
-            data-chrome="noheader nofooter noborders transparent"
-            data-dnt="true"
-            href="https://twitter.com/aleisterai"
-          >
-            <!-- Skeleton while Twitter widget loads -->
-            <div class="feed__skeleton">
-              <div class="glass-card feed__post feed__post--loading">
-                <div class="feed__skeleton-line" style="width:60%"></div>
-                <div class="feed__skeleton-line" style="width:90%"></div>
-                <div class="feed__skeleton-line" style="width:75%"></div>
-              </div>
-              <div class="glass-card feed__post feed__post--loading">
-                <div class="feed__skeleton-line" style="width:50%"></div>
-                <div class="feed__skeleton-line" style="width:85%"></div>
-                <div class="feed__skeleton-line" style="width:70%"></div>
-              </div>
-              <div class="glass-card feed__post feed__post--loading">
-                <div class="feed__skeleton-line" style="width:65%"></div>
-                <div class="feed__skeleton-line" style="width:80%"></div>
-                <div class="feed__skeleton-line" style="width:55%"></div>
-              </div>
+          <!-- Skeleton while Twitter widget loads -->
+          <div class="feed__skeleton" id="feed-skeleton">
+            <div class="glass-card feed__post feed__post--loading">
+              <div class="feed__skeleton-line" style="width:60%"></div>
+              <div class="feed__skeleton-line" style="width:90%"></div>
+              <div class="feed__skeleton-line" style="width:75%"></div>
             </div>
-          </a>
+            <div class="glass-card feed__post feed__post--loading">
+              <div class="feed__skeleton-line" style="width:50%"></div>
+              <div class="feed__skeleton-line" style="width:85%"></div>
+              <div class="feed__skeleton-line" style="width:70%"></div>
+            </div>
+            <div class="glass-card feed__post feed__post--loading">
+              <div class="feed__skeleton-line" style="width:65%"></div>
+              <div class="feed__skeleton-line" style="width:80%"></div>
+              <div class="feed__skeleton-line" style="width:55%"></div>
+            </div>
+          </div>
+          
+          <!-- Widget injection container -->
+          <div id="twitter-timeline-container"></div>
         </div>
       </div>
     </div>
@@ -86,25 +80,63 @@
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8" is:inline></script>
 
 <script is:inline>
-  // Once the X widget renders, hide skeleton and apply theme-aware adjustments
-  (function () {
-    function applyTheme() {
-      const dark = !document.documentElement.dataset.theme || document.documentElement.dataset.theme === 'dark';
-      const iframe = document.querySelector('#feed-timeline-wrap iframe');
-      if (iframe) {
-        iframe.style.borderRadius = '12px';
-      }
-    }
+  function initTwitterWidget() {
+    const container = document.getElementById('twitter-timeline-container');
+    if (!container) return;
+    
+    // Clear any previous widget in case of page transition
+    container.innerHTML = '';
+    
+    // Determine the active theme
+    const isDark = !document.documentElement.dataset.theme || document.documentElement.dataset.theme === 'dark';
+    
+    // Create the Twitter embed link programmatically with dynamic theme
+    const a = document.createElement('a');
+    a.className = 'twitter-timeline';
+    a.dataset.theme = isDark ? 'dark' : 'light';
+    a.dataset.tweetLimit = '5';
+    a.dataset.chrome = 'noheader nofooter noborders transparent';
+    a.dataset.dnt = 'true';
+    a.href = 'https://twitter.com/aleisterai';
+    a.textContent = 'Tweets by @aleisterai';
+    
+    container.appendChild(a);
 
-    // Watch for widget load
-    window.twttr && window.twttr.ready
-      ? window.twttr.ready(function (twttr) {
-          twttr.events.bind('rendered', applyTheme);
-        })
-      : document.addEventListener('DOMContentLoaded', function () {
-          setTimeout(applyTheme, 2500);
-        });
-  })();
+    // Trigger load if twttr is available
+    if (window.twttr && window.twttr.widgets) {
+      window.twttr.widgets.load();
+    }
+  }
+
+  function handleTwitterRender() {
+    const skeleton = document.getElementById('feed-skeleton');
+    if (skeleton) skeleton.style.display = 'none';
+    
+    const iframe = document.querySelector('#feed-timeline-wrap iframe');
+    if (iframe) iframe.style.borderRadius = '12px';
+  }
+
+  // Setup Twitter events and initial load
+  function setupTwitterFeed() {
+    initTwitterWidget();
+
+    if (window.twttr && window.twttr.ready) {
+      window.twttr.ready(function (twttr) {
+        twttr.events.bind('rendered', handleTwitterRender);
+      });
+    } else {
+      // Fallback if events fail to bind before load
+      setTimeout(handleTwitterRender, 2500);
+    }
+  }
+
+  // Support both standard load and Astro View Transitions
+  document.addEventListener('DOMContentLoaded', setupTwitterFeed);
+  document.addEventListener('astro:page-load', () => {
+    // Prevent double execution if DOMContentLoaded just fired
+    if (document.querySelector('#feed-timeline-wrap iframe')) return;
+    setupTwitterFeed();
+  });
 </script>
 
 <style>
