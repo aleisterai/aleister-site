@@ -13,9 +13,12 @@
     "test:stress": "vitest run src/tests/store-stress.test.ts"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.71",
+    "@ai-sdk/openai": "^3.0.53",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/vercel": "^9.0.4",
     "@resvg/resvg-js": "^2.6.2",
+    "ai": "^6.0.168",
     "astro": "^5.17.1",
     "marked": "^17.0.3",
     "satori": "^0.24.1"
