@@ -19,8 +19,8 @@
     display: inline-block;
     padding: 0.3rem 0.8rem;
     border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -31,8 +31,8 @@
 }
 
 .upgrades-hero__title {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-family: var(--font-sans);
+    font-size: var(--text-display);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.03em;
@@ -44,8 +44,8 @@
 }
 
 .upgrades-hero__sub {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
     color: var(--text-secondary);
     margin: 0 0 1.5rem;
     max-width: 560px;
@@ -64,15 +64,15 @@
 }
 
 .upgrades-hero__stat-value {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
     font-weight: 700;
     color: var(--accent);
 }
 
 .upgrades-hero__stat-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     color: var(--text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -129,8 +129,8 @@
 }
 
 .building-card__render-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     color: var(--text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -138,7 +138,7 @@
 }
 
 .building-card__arrow {
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
     color: var(--accent);
     align-self: center;
 }
@@ -150,16 +150,16 @@
 }
 
 .building-card__title {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.5rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-2xl);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
 }
 
 .building-card__desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     line-height: 1.5;
     margin: 0;
@@ -178,15 +178,15 @@
 }
 
 .building-card__progress-amount {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.2rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
     font-weight: 700;
     color: var(--accent);
 }
 
 .building-card__progress-goal {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
     color: var(--text-tertiary);
 }
 
@@ -214,8 +214,8 @@
 .building-card__progress-meta {
     display: flex;
     justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     color: var(--text-tertiary);
 }
 
@@ -233,8 +233,8 @@
     border: 1px solid var(--border-subtle);
     background: var(--bg-surface);
     color: var(--text-primary);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
 }
 
 .building-card__input:focus {
@@ -256,16 +256,16 @@
 }
 
 .upgrades-section__title {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.15rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
 }
 
 .upgrades-section__count {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     color: var(--text-tertiary);
 }
 
@@ -307,8 +307,8 @@
 }
 
 .agent-upgrade-card__name {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 0.4rem;
@@ -334,8 +334,8 @@
 }
 
 .agent-upgrade-card__level-type {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     color: var(--text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -362,8 +362,8 @@
 }
 
 .agent-upgrade-card__level-name {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     color: var(--text-secondary);
 }
 
@@ -406,16 +406,16 @@
 }
 
 .furniture-card__name {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 0.3rem;
 }
 
 .furniture-card__desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     margin: 0 0 0.6rem;
     line-height: 1.4;
@@ -448,8 +448,8 @@
 }
 
 .furniture-card__price {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--accent);
     font-weight: 600;
 }
@@ -462,8 +462,8 @@
     padding: 0.5rem 1rem;
     border-radius: 8px;
     border: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -494,7 +494,7 @@
 
 .btn-upgrade--small {
     padding: 0.35rem 0.7rem;
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
 }
 
 .btn-upgrade--maxed {
@@ -520,8 +520,8 @@
     background: var(--bg-card);
     border: 1px solid rgba(0, 206, 201, 0.3);
     color: #00cec9;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     font-weight: 600;
     z-index: 9999;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
@@ -556,19 +556,19 @@
 }
 
 .thankyou-card__icon {
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
     flex-shrink: 0;
 }
 
 .thankyou-card__title {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 800;
     color: #22c55e;
     margin: 0;
 }
 
 .thankyou-card__subtitle {
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     margin: 0;
 }
@@ -595,7 +595,7 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
 }
 
 .thankyou-card__label {
@@ -609,7 +609,7 @@
 }
 
 .thankyou-card__value--amount {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 800;
     color: #22c55e;
 }
@@ -627,7 +627,7 @@
     border-radius: 8px;
     background: #22c55e;
     color: #fff;
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     text-decoration: none;
     transition: opacity 0.15s, transform 0.15s;
@@ -647,7 +647,7 @@
     border: 1px solid var(--border-subtle);
     background: transparent;
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     font-weight: 600;
     text-decoration: none;
     transition: border-color 0.15s;
@@ -722,7 +722,7 @@
     border: none;
     color: var(--text-tertiary);
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: var(--text-xl);
     padding: 0.3rem;
     line-height: 1;
 }
@@ -732,8 +732,8 @@
 }
 
 .upgrade-modal__title {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.2rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xl);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 1rem;
@@ -749,24 +749,24 @@
 }
 
 .upgrade-modal__level-name {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--accent);
     margin: 0 0 0.3rem;
 }
 
 .upgrade-modal__level-desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     margin: 0 0 1rem;
     line-height: 1.4;
 }
 
 .upgrade-modal__price {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.4rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 1rem;
@@ -782,8 +782,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     color: var(--text-tertiary);
     text-decoration: none;
     margin-bottom: 1.5rem;
@@ -822,7 +822,7 @@
     }
 
     .upgrades-hero__title {
-        font-size: 1.8rem;
+        font-size: var(--text-3xl);
     }
 }
 
@@ -867,8 +867,8 @@
     bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     color: var(--text-tertiary);
     background: rgba(0, 0, 0, 0.5);
     padding: 0.3rem 0.8rem;
@@ -905,8 +905,8 @@
     display: inline-block;
     padding: 0.25rem 0.7rem;
     border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -917,8 +917,8 @@
 }
 
 .upgrade-detail__title {
-    font-family: 'Inter', sans-serif;
-    font-size: 2rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-4xl);
     font-weight: 800;
     color: var(--text-primary);
     margin: 0;
@@ -926,8 +926,8 @@
 }
 
 .upgrade-detail__desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
     color: var(--text-secondary);
     line-height: 1.6;
     margin: 0;
@@ -982,8 +982,8 @@
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     font-weight: 700;
     background: rgba(255, 255, 255, 0.06);
     color: var(--text-tertiary);
@@ -998,8 +998,8 @@
 }
 
 .upgrade-detail__level-name {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.92rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
@@ -1007,15 +1007,15 @@
 }
 
 .upgrade-detail__level-price {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--accent);
 }
 
 .upgrade-detail__level-desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     margin: 0.4rem 0 0;
     padding-left: 38px;
@@ -1043,8 +1043,8 @@
     border: none;
     background: var(--accent, #6c5ce7);
     color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1074,14 +1074,14 @@
 
 .btn-upgrade--large {
     padding: 0.8rem 2rem;
-    font-size: 1rem;
+    font-size: var(--text-base);
     border-radius: 10px;
 }
 
 /* ── Contribution Buttons ───────────────────────────────────────── */
 .promote-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--text-secondary);
     margin: 0 0 0.6rem 0;
@@ -1097,8 +1097,8 @@
 }
 
 .promote-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
     font-weight: 700;
     padding: 0.7rem 1.4rem;
     border-radius: 10px;
@@ -1138,7 +1138,7 @@
 }
 
 .promote-btn--bar {
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     padding: 0.55rem 0;
     border-radius: 8px;
 }
@@ -1151,7 +1151,7 @@
     .promote-btn--bar {
         flex: 1 1 calc(33.33% - 0.3rem);
         min-width: 0;
-        font-size: 0.85rem;
+        font-size: var(--text-sm);
         padding: 0.65rem 0;
     }
 
@@ -1179,15 +1179,15 @@
 }
 
 .progress-bar__raised {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--text-accent);
 }
 
 .progress-bar__goal {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-2xs);
     font-weight: 500;
     color: var(--text-tertiary);
 }
@@ -1214,8 +1214,8 @@
 
 .progress-bar__text {
     display: block;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.62rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-2xs);
     color: var(--text-tertiary);
     margin-top: 0.25rem;
 }
@@ -1235,11 +1235,11 @@
 }
 
 .progress-bar--large .progress-bar__raised {
-    font-size: 1rem;
+    font-size: var(--text-base);
 }
 
 .progress-bar--large .progress-bar__goal {
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
 }
 
 .progress-bar--large .progress-bar__track {
@@ -1252,13 +1252,13 @@
 }
 
 .progress-bar--large .progress-bar__text {
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
     margin-top: 0.4rem;
 }
 
 .upgrade-detail__disclaimer {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     color: var(--text-tertiary);
     margin: 0;
     line-height: 1.4;
@@ -1269,8 +1269,8 @@
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.05em;
     padding: 0.2rem 0.5rem;
@@ -1288,7 +1288,7 @@
     }
 
     .upgrade-detail__title {
-        font-size: 1.5rem;
+        font-size: var(--text-2xl);
     }
 
     .upgrade-detail__level-thumb {
@@ -1329,14 +1329,14 @@
 }
 
 .upgrade-bar__name {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
 }
 
 .upgrade-bar__sub {
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
     color: var(--text-tertiary);
     white-space: nowrap;
 }
@@ -1368,8 +1368,8 @@
 }
 
 .upgrade-bar__cta {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -1383,7 +1383,7 @@
     gap: 0.5rem;
     padding: 0.6rem 1.4rem;
     border-radius: 10px;
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     white-space: nowrap;
     flex-shrink: 0;

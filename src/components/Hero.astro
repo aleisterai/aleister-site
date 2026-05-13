@@ -402,14 +402,14 @@ const latestAgo =
   }
 
   .hero__title {
-    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-size: var(--text-display);
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1.1;
   }
 
   .hero__subtitle {
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-size: var(--text-lg);
     max-width: 600px;
     line-height: 1.7;
   }
@@ -434,7 +434,7 @@ const latestAgo =
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--glass-border);
     border-radius: 999px;
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: var(--text-secondary);
     max-width: 100%;
   }
@@ -466,8 +466,8 @@ const latestAgo =
   }
 
   .hero__live-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
     color: var(--text-tertiary);
     font-weight: 600;
@@ -501,7 +501,7 @@ const latestAgo =
     .hero__live {
       gap: 0.6rem 0.9rem;
       padding: 0.6rem 0.9rem;
-      font-size: 0.72rem;
+      font-size: var(--text-xs);
     }
     .hero__live-divider {
       display: none;

@@ -209,7 +209,7 @@ const aleisterChannels = [
   }
 
   .operator-title {
-    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-size: var(--text-xl);
     margin-top: 3rem;
     margin-bottom: 0;
   }
@@ -224,7 +224,7 @@ const aleisterChannels = [
   }
 
   .contact-card__icon {
-    font-size: 1.6rem;
+    font-size: var(--text-2xl);
     flex-shrink: 0;
     width: 44px;
     height: 44px;
@@ -238,7 +238,7 @@ const aleisterChannels = [
 
   .contact-card__label {
     display: block;
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.15rem;
@@ -246,9 +246,9 @@ const aleisterChannels = [
 
   .contact-card__handle {
     display: block;
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     color: var(--text-accent);
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-mono);
   }
 
   /* ─── About Card ─── */
@@ -257,12 +257,12 @@ const aleisterChannels = [
   }
 
   .about-card h2 {
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: var(--text-4xl);
     margin-bottom: 1rem;
   }
 
   .about-card p {
-    font-size: 0.92rem;
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     line-height: 1.75;
     margin-bottom: 0.75rem;
@@ -286,7 +286,7 @@ const aleisterChannels = [
 
   .faq-question {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--text-base);
     padding: 0.25rem 0;
     list-style: none;
     display: flex;
@@ -298,7 +298,7 @@ const aleisterChannels = [
 
   .faq-question::after {
     content: "＋";
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
     color: var(--text-accent);
     flex-shrink: 0;
     transition: transform 0.2s ease;
@@ -310,7 +310,7 @@ const aleisterChannels = [
 
   .faq-answer {
     margin-top: 0.75rem;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--text-secondary);
     line-height: 1.7;
   }

@@ -35,9 +35,8 @@ const { title = "", accent, subtitle } = Astro.props;
     }
 
     .ph__title {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-            sans-serif;
-        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-family: var(--font-sans);
+        font-size: var(--text-display);
         font-weight: 800;
         letter-spacing: -0.03em;
         line-height: 1.1;
@@ -53,9 +52,8 @@ const { title = "", accent, subtitle } = Astro.props;
     }
 
     .ph__subtitle {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-            sans-serif;
-        font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
         color: var(--text-secondary);
         line-height: 1.6;
         max-width: 640px;
@@ -64,7 +62,7 @@ const { title = "", accent, subtitle } = Astro.props;
 
     @media (max-width: 480px) {
         .ph__title {
-            font-size: 2rem;
+            font-size: var(--text-4xl);
         }
     }
 </style>
