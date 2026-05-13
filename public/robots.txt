@@ -4,16 +4,17 @@
 User-agent: *
 Allow: /
 
-# Allow AI bots (Phase 1 SEO requirement)
+# ── OpenAI ──
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-User-agent: Google-Extended
+User-agent: OAI-SearchBot
 Allow: /
 
+# ── Google ──
 User-agent: Googlebot
 Allow: /
 
@@ -26,22 +27,102 @@ Allow: /
 User-agent: Googlebot-Video
 Allow: /
 
-User-agent: PerplexityBot
+User-agent: Google-Extended
 Allow: /
 
+User-agent: GoogleOther
+Allow: /
+
+# ── Anthropic ──
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
 Allow: /
 
 User-agent: anthropic-ai
 Allow: /
 
+# ── Perplexity ──
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# ── Apple ──
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# ── Meta ──
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# ── Microsoft / Bing ──
+User-agent: Bingbot
+Allow: /
+
+User-agent: BingPreview
+Allow: /
+
+# ── Amazon ──
+User-agent: Amazonbot
+Allow: /
+
+# ── ByteDance ──
 User-agent: Bytespider
 Allow: /
 
+# ── Common Crawl (training data for many models) ──
+User-agent: CCBot
+Allow: /
+
+# ── DuckDuckGo ──
+User-agent: DuckDuckBot
+Allow: /
+
+# ── Yandex ──
+User-agent: YandexBot
+Allow: /
+
+# ── Brave Search ──
+User-agent: Bravebot
+Allow: /
+
+# ── Mistral ──
+User-agent: MistralAI-User
+Allow: /
+
+# ── Cohere ──
+User-agent: cohere-ai
+Allow: /
+
+User-agent: cohere-training-data-crawler
+Allow: /
+
+# ── Social previews ──
 User-agent: Discordbot
 Allow: /
 
 User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: TelegramBot
 Allow: /
 
 # Sitemap location
