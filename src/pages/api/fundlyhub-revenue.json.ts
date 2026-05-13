@@ -39,13 +39,11 @@ export const GET: APIRoute = async () => {
             return allCharges;
         }
 
-        // Fetch all charges with full pagination
-        const [allCharges, charges30dCharges] = await Promise.all([
-            fetchAllCharges('', 15000),
-            fetchAllCharges(`created[gte]=${thirtyDaysAgo}`, 8000),
-        ]);
+        // Fetch all charges with full pagination — derive 30d from the same set
+        // (avoids a redundant second pagination round-trip to Stripe, which was
+        // the primary cold-start timeout source)
+        const allCharges = await fetchAllCharges('', 20000);
 
-        // All-time successful charges (already fetched with full pagination)
         const allSuccessful = allCharges.filter(
             (c: any) => c.status === 'succeeded' && !c.refunded
         );
@@ -54,9 +52,8 @@ export const GET: APIRoute = async () => {
             0
         ) / 100;
 
-        // 30d successful charges (already fetched with full pagination)
-        const successful30d = charges30dCharges.filter(
-            (c: any) => c.status === 'succeeded' && !c.refunded
+        const successful30d = allSuccessful.filter(
+            (c: any) => (c.created || 0) >= thirtyDaysAgo
         );
         const revenue30d = successful30d.reduce(
             (sum: number, c: any) => sum + (c.amount || 0),
@@ -102,7 +99,10 @@ export const GET: APIRoute = async () => {
                 status: 200,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cache-Control': 'public, max-age=300',
+                    // Serve the cached response while a background revalidation
+                    // happens — eliminates the "$0 on cold start" UX where the
+                    // first request was slow enough to time out.
+                    'Cache-Control': 'public, max-age=300, stale-while-revalidate=86400',
                 },
             }
         );
