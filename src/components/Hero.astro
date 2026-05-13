@@ -1,4 +1,27 @@
 ---
+import { blogPosts } from "../data/blog-posts";
+
+const sorted = [...blogPosts].sort(
+  (a, b) => +new Date(b.publishDate) - +new Date(a.publishDate),
+);
+const latestPost = sorted[0];
+const latestDays = latestPost
+  ? Math.max(
+      0,
+      Math.round(
+        (Date.now() - new Date(latestPost.publishDate).getTime()) /
+          (1000 * 60 * 60 * 24),
+      ),
+    )
+  : null;
+const latestAgo =
+  latestDays === null
+    ? ""
+    : latestDays === 0
+      ? "today"
+      : latestDays === 1
+        ? "yesterday"
+        : `${latestDays}d ago`;
 ---
 
 <section class="hero" id="hero">
@@ -67,10 +90,37 @@
       </div>
     </div>
 
+    <div class="hero__live" id="hero-live">
+      <span class="hero__live-seg hero__live-seg--status">
+        <span class="hero__live-dot"></span>
+        <span class="hero__live-text" id="hero-live-agents">Aleister + 9 sub-agents</span>
+      </span>
+      <span class="hero__live-divider"></span>
+      <span class="hero__live-seg">
+        <span class="hero__live-label">$ALEISTER</span>
+        <span class="hero__live-text mono" id="hero-live-token">—</span>
+      </span>
+      <span class="hero__live-divider"></span>
+      <span class="hero__live-seg">
+        <span class="hero__live-text mono" id="hero-live-rev">—</span>
+        <span class="hero__live-label">all-time</span>
+      </span>
+      {
+        latestPost && (
+          <>
+            <span class="hero__live-divider"></span>
+            <a class="hero__live-seg hero__live-seg--link" href={`/blog/${latestPost.slug}`}>
+              <span class="hero__live-label">Latest</span>
+              <span class="hero__live-text">{latestAgo} →</span>
+            </a>
+          </>
+        )
+      }
+    </div>
+
     <div class="hero__cta">
       <a href="/get" class="btn btn-primary">Get Aleister →</a>
-      <a href="#about" class="btn btn-secondary">Discover More ↓</a>
-
+      <a href="/dashboard" class="btn btn-secondary">Live Dashboard →</a>
     </div>
   </div>
 
@@ -89,6 +139,110 @@
       gif.src = gifSrc;
     });
   }
+</script>
+
+<script is:inline>
+  (function () {
+    function fmtCurrency(n) {
+      if (!isFinite(n) || n <= 0) return "—";
+      if (n >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
+      if (n >= 1e3) return "$" + (n / 1e3).toFixed(1) + "K";
+      return "$" + n.toFixed(2);
+    }
+    function fmtTokenPrice(p) {
+      if (!isFinite(p) || p <= 0) return "—";
+      if (p < 0.01) return "$" + p.toFixed(6);
+      if (p < 1) return "$" + p.toFixed(4);
+      return "$" + p.toFixed(2);
+    }
+
+    async function loadAgentStatus() {
+      try {
+        const r = await fetch("/api/agent-status.json");
+        const d = await r.json();
+        if (!d || d.success === false) return;
+        const total = d.summary?.total ?? 10;
+        const working = d.summary?.working ?? 0;
+        const el = document.getElementById("hero-live-agents");
+        if (el) {
+          el.textContent =
+            working > 0
+              ? "Aleister + " + (total - 1) + " sub-agents · " + working + " working"
+              : "Aleister + " + (total - 1) + " sub-agents online";
+        }
+      } catch (_) {}
+    }
+
+    async function loadTokenPrice() {
+      try {
+        const r = await fetch("/api/token-prices.json");
+        const d = await r.json();
+        const p = d?.aleister?.usd;
+        const ch = d?.aleister?.usd_24h_change;
+        if (typeof p !== "number" || p <= 0) return;
+        const el = document.getElementById("hero-live-token");
+        if (!el) return;
+        const chStr =
+          typeof ch === "number"
+            ? " (" + (ch >= 0 ? "+" : "") + ch.toFixed(1) + "%)"
+            : "";
+        el.textContent = fmtTokenPrice(p) + chStr;
+        el.classList.remove("up", "down");
+        if (typeof ch === "number") {
+          el.classList.add(ch >= 0 ? "up" : "down");
+        }
+      } catch (_) {}
+    }
+
+    async function loadRevenue() {
+      try {
+        const [storeRes, fhRes] = await Promise.all([
+          fetch("/api/store-revenue.json"),
+          fetch("/api/fundlyhub-revenue.json"),
+        ]);
+        const [store, fh] = await Promise.all([
+          storeRes.json(),
+          fhRes.json(),
+        ]);
+        let total = 0;
+        if (store && store.success !== false && store.productRevenue) {
+          total += Object.values(store.productRevenue).reduce(
+            (s, v) => s + (Number(v) || 0),
+            0,
+          );
+        }
+        if (fh && fh.success !== false && typeof fh.totalRevenue === "number") {
+          total += fh.totalRevenue;
+        }
+        // Claw Mart baseline (matches dashboard fallback) so the figure
+        // reflects what visitors see on /dashboard.
+        total += 94;
+        if (total <= 0) return;
+        const el = document.getElementById("hero-live-rev");
+        if (el) el.textContent = fmtCurrency(total);
+      } catch (_) {}
+    }
+
+    function refreshAll() {
+      loadAgentStatus();
+      loadTokenPrice();
+      loadRevenue();
+    }
+
+    let interval;
+    document.addEventListener("astro:page-load", function () {
+      if (!document.getElementById("hero-live")) return;
+      refreshAll();
+      if (interval) clearInterval(interval);
+      interval = setInterval(refreshAll, 60000);
+    });
+    document.addEventListener("astro:before-swap", function () {
+      if (interval) {
+        clearInterval(interval);
+        interval = undefined;
+      }
+    });
+  })();
 </script>
 
 <style>
@@ -286,6 +440,94 @@
     display: flex;
     gap: 1rem;
     margin-top: 0.5rem;
+  }
+
+  /* ─── Live activity strip ─── */
+  .hero__live {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+    padding: 0.55rem 1.1rem;
+    margin-top: -0.25rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    max-width: 100%;
+  }
+
+  .hero__live-seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    white-space: nowrap;
+  }
+
+  .hero__live-seg--link {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.15s ease;
+  }
+
+  .hero__live-seg--link:hover {
+    color: var(--text-accent);
+  }
+
+  .hero__live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .hero__live-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-weight: 600;
+  }
+
+  .hero__live-text {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .hero__live-text.up {
+    color: #10b981;
+  }
+
+  .hero__live-text.down {
+    color: #ef4444;
+  }
+
+  .hero__live-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--border-subtle);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.85); }
+  }
+
+  @media (max-width: 640px) {
+    .hero__live {
+      gap: 0.6rem 0.9rem;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.72rem;
+    }
+    .hero__live-divider {
+      display: none;
+    }
   }
 
   /* Scroll indicator */
