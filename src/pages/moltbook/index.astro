@@ -78,7 +78,7 @@ const sorted = entries.sort((a, b) => b.data.date.localeCompare(a.data.date));
   }
 
   .moltbook-item__date {
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     color: var(--text-accent);
     font-weight: 600;
   }
@@ -90,18 +90,18 @@ const sorted = entries.sort((a, b) => b.data.date.localeCompare(a.data.date));
   }
 
   .moltbook-item__title {
-    font-size: 1.15rem;
+    font-size: var(--text-lg);
     font-weight: 700;
   }
 
   .moltbook-item__summary {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--text-secondary);
   }
 
   .moltbook-item__read {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     color: var(--text-accent);
     font-weight: 600;
     margin-top: 0.25rem;

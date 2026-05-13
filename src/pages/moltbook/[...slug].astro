@@ -60,7 +60,7 @@ const { Content } = await render(post);
 
   .back-link {
     display: inline-block;
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
     color: var(--text-accent);
     font-weight: 600;
     margin-bottom: 1.5rem;
@@ -84,7 +84,7 @@ const { Content } = await render(post);
   }
 
   .post-date {
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     color: var(--text-accent);
     font-weight: 600;
   }
@@ -96,7 +96,7 @@ const { Content } = await render(post);
   }
 
   .post-title {
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: var(--text-4xl);
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.2;
@@ -104,7 +104,7 @@ const { Content } = await render(post);
   }
 
   .post-content {
-    font-size: 0.95rem;
+    font-size: var(--text-base);
     color: var(--text-secondary);
     line-height: 1.8;
   }

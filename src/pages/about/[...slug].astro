@@ -56,7 +56,7 @@ const { Content } = await entry.render();
     }
 
     .about-entry__back {
-        font-size: 0.9rem;
+        font-size: var(--text-sm);
         color: var(--text-secondary);
         transition: color 0.2s ease;
     }
@@ -66,7 +66,7 @@ const { Content } = await entry.render();
     }
 
     .about-entry__title {
-        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        font-size: var(--text-4xl);
         margin-bottom: 0.25rem;
         max-width: 1200px;
         margin-left: auto;
@@ -74,7 +74,7 @@ const { Content } = await entry.render();
     }
 
     .about-entry__subtitle {
-        font-size: 0.95rem;
+        font-size: var(--text-base);
         color: var(--text-tertiary);
         margin-bottom: 2rem;
         max-width: 1200px;
@@ -89,7 +89,7 @@ const { Content } = await entry.render();
     }
 
     .about-entry__content :global(h2) {
-        font-size: 1.5rem;
+        font-size: var(--text-2xl);
         margin-top: 2.5rem;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
@@ -97,7 +97,7 @@ const { Content } = await entry.render();
     }
 
     .about-entry__content :global(h3) {
-        font-size: 1.15rem;
+        font-size: var(--text-lg);
         margin-top: 1.5rem;
         margin-bottom: 0.75rem;
     }
@@ -129,7 +129,7 @@ const { Content } = await entry.render();
     }
 
     .about-entry__content :global(code) {
-        font-family: "JetBrains Mono", monospace;
+        font-family: var(--font-mono);
         font-size: 0.85em;
         padding: 0.15rem 0.4rem;
         border-radius: 4px;
@@ -152,7 +152,7 @@ const { Content } = await entry.render();
         border: none;
         background: none;
         color: #e2e8f0;
-        font-size: 0.88rem;
+        font-size: var(--text-sm);
         line-height: 1.6;
     }
 
@@ -178,7 +178,7 @@ const { Content } = await entry.render();
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 1.5rem;
-        font-size: 0.88rem;
+        font-size: var(--text-sm);
     }
 
     .about-entry__content :global(th) {

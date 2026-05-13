@@ -355,7 +355,7 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__back {
-        font-size: 0.9rem;
+        font-size: var(--text-sm);
         color: var(--text-secondary);
         transition: color 0.2s ease;
     }
@@ -365,7 +365,7 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__download {
-        font-size: 0.85rem;
+        font-size: var(--text-sm);
         padding: 0.6rem 1.25rem;
         gap: 0.4rem;
         border-radius: 10px;
@@ -405,14 +405,14 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__title {
-        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        font-size: var(--text-4xl);
         font-weight: 800;
         letter-spacing: -0.02em;
         line-height: 1.15;
     }
 
     .book-detail__subtitle {
-        font-size: 1rem;
+        font-size: var(--text-base);
         color: var(--text-accent);
         font-style: italic;
         font-weight: 500;
@@ -420,7 +420,7 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__author {
-        font-size: 0.9rem;
+        font-size: var(--text-sm);
         color: var(--text-tertiary);
         font-weight: 600;
         margin: 0;
@@ -433,14 +433,14 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__desc {
-        font-size: 0.9rem;
+        font-size: var(--text-sm);
         color: var(--text-secondary);
         line-height: 1.6;
         margin: 0;
     }
 
     .book-detail__date {
-        font-size: 0.8rem;
+        font-size: var(--text-sm);
         color: var(--text-accent);
         font-weight: 600;
     }
@@ -458,7 +458,7 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__content :global(h1) {
-        font-size: clamp(1.75rem, 3vw, 2.5rem);
+        font-size: var(--text-4xl);
         margin-top: 3.5rem;
         margin-bottom: 1.25rem;
         padding-bottom: 0.75rem;
@@ -466,7 +466,7 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__content :global(h2) {
-        font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+        font-size: var(--text-3xl);
         margin-top: 3rem;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
@@ -474,13 +474,13 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__content :global(h3) {
-        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        font-size: var(--text-3xl);
         margin-top: 2rem;
         margin-bottom: 0.75rem;
     }
 
     .book-detail__content :global(h4) {
-        font-size: 1.1rem;
+        font-size: var(--text-lg);
         margin-top: 1.5rem;
         margin-bottom: 0.5rem;
         color: var(--text-accent);
@@ -489,7 +489,7 @@ for (const entry of tocEntries) {
     .book-detail__content :global(p) {
         margin-bottom: 1.15rem;
         line-height: 1.8;
-        font-size: 1rem;
+        font-size: var(--text-base);
     }
 
     .book-detail__content :global(ul),
@@ -514,7 +514,7 @@ for (const entry of tocEntries) {
     }
 
     .book-detail__content :global(code) {
-        font-family: "JetBrains Mono", monospace;
+        font-family: var(--font-mono);
         font-size: 0.85em;
         padding: 0.15rem 0.4rem;
         border-radius: 4px;
@@ -538,7 +538,7 @@ for (const entry of tocEntries) {
         border: none;
         background: none;
         color: var(--text-primary);
-        font-size: 0.88rem;
+        font-size: var(--text-sm);
     }
 
     .book-detail__content :global(a) {
@@ -571,7 +571,7 @@ for (const entry of tocEntries) {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 1.75rem;
-        font-size: 0.9rem;
+        font-size: var(--text-sm);
     }
 
     .book-detail__content :global(th) {
@@ -626,7 +626,7 @@ for (const entry of tocEntries) {
         -webkit-backdrop-filter: blur(20px);
         color: var(--text-primary);
         font-family: inherit;
-        font-size: 0.85rem;
+        font-size: var(--text-sm);
         font-weight: 600;
         cursor: pointer;
         box-shadow: var(--shadow-lg);
@@ -676,7 +676,7 @@ for (const entry of tocEntries) {
     }
 
     .toc-fab__heading {
-        font-size: 0.8rem;
+        font-size: var(--text-sm);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -719,7 +719,7 @@ for (const entry of tocEntries) {
     .toc-fab__link {
         display: block;
         padding: 0.45rem 1.25rem;
-        font-size: 0.82rem;
+        font-size: var(--text-sm);
         color: var(--text-secondary);
         line-height: 1.4;
         transition: all 0.15s ease;
@@ -729,7 +729,7 @@ for (const entry of tocEntries) {
     .toc-fab__item--l1 .toc-fab__link {
         font-weight: 600;
         color: var(--text-primary);
-        font-size: 0.85rem;
+        font-size: var(--text-sm);
     }
 
     .toc-fab__link:hover {
@@ -791,15 +791,15 @@ for (const entry of tocEntries) {
         display: flex;
         align-items: center;
         gap: 0.35rem;
-        font-size: 0.8rem;
+        font-size: var(--text-sm);
         white-space: nowrap;
     }
 
     .chapter-progress__current {
         font-weight: 800;
-        font-size: 0.95rem;
+        font-size: var(--text-base);
         color: var(--text-accent);
-        font-family: "JetBrains Mono", monospace;
+        font-family: var(--font-mono);
         min-width: 1.2em;
         text-align: center;
     }
@@ -812,7 +812,7 @@ for (const entry of tocEntries) {
     .chapter-progress__total {
         font-weight: 700;
         color: var(--text-primary);
-        font-family: "JetBrains Mono", monospace;
+        font-family: var(--font-mono);
     }
 
     .chapter-progress__label {
