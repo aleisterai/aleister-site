@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+
 const subagents = [
   { name: 'Cipher', codename: 'Coder' },
   { name: 'Sage', codename: 'Researcher' },
@@ -99,6 +101,9 @@ const subagents = [
             </svg>
           </a>
         </div>
+        <div class="footer__theme">
+          <ThemeToggle />
+        </div>
       </div>
 
       <div class="footer__col">
@@ -198,6 +203,10 @@ const subagents = [
   .footer__socials {
     display: flex;
     gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .footer__theme {
     margin-top: 0.75rem;
   }
 
