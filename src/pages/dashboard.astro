@@ -1236,10 +1236,20 @@ const CLAW_MART_EARNINGS = 94;
     }
 
     // ──── FundlyHub Revenue → FundlyHub card ────
-    async function fetchFundlyHubRevenue() {
+    async function fetchFundlyHubRevenue(attempt = 0) {
       try {
         const res = await fetch("/api/fundlyhub-revenue.json");
         const data = await res.json();
+
+        // API ran out of time paginating Stripe and returned the zero-fallback.
+        // Don't clobber the UI with $0 — retry shortly, and let the next poll
+        // pick up the cached (stale-while-revalidate) value.
+        if (data.success === false) {
+          if (attempt < 3) {
+            setTimeout(() => fetchFundlyHubRevenue(attempt + 1), 2000 * (attempt + 1));
+          }
+          return;
+        }
 
         const amountEl = document.getElementById("fundlyhub-revenue");
         const subEl = document.getElementById("fundlyhub-sub");
@@ -1255,6 +1265,9 @@ const CLAW_MART_EARNINGS = 94;
         updateAllTimeRevenue();
       } catch (err) {
         console.error("FundlyHub revenue fetch error:", err);
+        if (attempt < 3) {
+          setTimeout(() => fetchFundlyHubRevenue(attempt + 1), 2000 * (attempt + 1));
+        }
       }
     }
 
