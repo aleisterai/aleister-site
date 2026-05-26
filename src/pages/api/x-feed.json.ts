@@ -166,12 +166,14 @@ export const GET: APIRoute = async () => {
         return json(cache.data);
     }
 
+    let xError: string | null = null;
     try {
         // Prefer the official API, fall back to Apify
         let payload: FeedPayload | null = null;
         try {
             payload = await fetchViaXApi();
         } catch (e) {
+            xError = e instanceof Error ? e.message : String(e);
             console.error('x-feed: X API failed, trying Apify:', e);
         }
         if (!payload) {
@@ -184,24 +186,12 @@ export const GET: APIRoute = async () => {
         }
 
         // Both sources unavailable
-        return json({
-            success: false,
-            source: 'none',
-            profile: null,
-            tweets: [],
-            timestamp: new Date().toISOString(),
-        });
+        return fail(xError);
     } catch (error) {
         console.error('x-feed error:', error);
         // Serve stale cache if we have any, else signal failure
         if (cache) return json(cache.data);
-        return json({
-            success: false,
-            source: 'none',
-            profile: null,
-            tweets: [],
-            timestamp: new Date().toISOString(),
-        });
+        return fail(xError ?? (error instanceof Error ? error.message : String(error)));
     }
 };
 
@@ -217,4 +207,29 @@ function json(data: FeedPayload): Response {
             'Cache-Control': 'public, max-age=600, s-maxage=21600, stale-while-revalidate=86400',
         },
     });
+}
+
+// Failure response with safe diagnostics (no secret leaked — just whether
+// a token was seen and the upstream HTTP status). Short cache so the feed
+// recovers quickly once the token/config is fixed.
+function fail(detail: string | null): Response {
+    return new Response(
+        JSON.stringify({
+            success: false,
+            source: 'none',
+            profile: null,
+            tweets: [],
+            tokenPresent: Boolean(X_BEARER),
+            detail,
+            timestamp: new Date().toISOString(),
+        }),
+        {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Cache-Control': 'public, max-age=60',
+            },
+        },
+    );
 }
