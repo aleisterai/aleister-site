@@ -4,6 +4,7 @@ import { blogPosts } from '../data/blog-posts';
 import { books } from '../data/books';
 import { storeItems } from '../data/store';
 import { workflows } from '../data/workflows';
+import { projects } from '../data/projects';
 
 export const prerender = false;
 
@@ -106,6 +107,22 @@ export const GET: APIRoute = async () => {
     out.push(`URL: ${SITE}/team/${e.slug}`);
     out.push('');
     out.push(e.body.trim());
+    out.push('');
+    out.push('---');
+    out.push('');
+  }
+
+  // ── Projects ──
+  out.push('## Projects');
+  out.push('');
+  for (const project of projects) {
+    out.push(`### ${project.name}`);
+    out.push(`*${project.role} — ${project.tagline}*`);
+    out.push(`Page: ${SITE}/projects/${project.slug}`);
+    out.push(`Live: ${project.url}`);
+    out.push(`Tags: ${project.tags.join(', ')}`);
+    out.push('');
+    out.push(project.longDescription);
     out.push('');
     out.push('---');
     out.push('');
