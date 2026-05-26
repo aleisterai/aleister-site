@@ -250,7 +250,10 @@ const tweets = [
     gap: 1.25rem;
   }
 
-  .feed__post {
+  /* Posts — :global so the client-injected live tweets (added via
+     innerHTML, which drops Astro's scoped-style attribute) are styled
+     the same as the server-rendered fallback cards. */
+  :global(.feed__post) {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -259,13 +262,13 @@ const tweets = [
     padding: 1.5rem;
   }
 
-  .feed__post-header {
+  :global(.feed__post-header) {
     display: flex;
     align-items: center;
     gap: 0.75rem;
   }
 
-  .feed__post-pinned {
+  :global(.feed__post-pinned) {
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -276,19 +279,20 @@ const tweets = [
     margin-left: 2.75rem; /* align with name */
   }
 
-  .feed__post-media {
+  :global(.feed__post-media) {
     margin-top: 0.5rem;
     width: 100%;
   }
 
-  .feed__post-avatar {
+  :global(.feed__post-avatar) {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+    flex-shrink: 0;
   }
 
-  .feed__post-author {
+  :global(.feed__post-author) {
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -296,32 +300,32 @@ const tweets = [
     font-size: var(--text-base);
   }
 
-  .feed__post-name {
+  :global(.feed__post-name) {
     font-weight: 700;
     color: var(--text-primary);
   }
 
-  .feed__post-handle, .feed__post-time {
+  :global(.feed__post-handle), :global(.feed__post-time) {
     color: var(--text-tertiary);
   }
 
-  .feed__post-dot {
+  :global(.feed__post-dot) {
     color: var(--text-tertiary);
     font-size: var(--text-sm);
   }
 
-  .feed__post-logo {
+  :global(.feed__post-logo) {
     margin-left: auto;
   }
 
-  .feed__post-body {
+  :global(.feed__post-body) {
     font-size: var(--text-lg);
     line-height: 1.5;
     color: var(--text-primary);
     white-space: pre-wrap;
   }
 
-  .feed__post-actions {
+  :global(.feed__post-actions) {
     display: flex;
     align-items: center;
     gap: 2.5rem;
@@ -329,7 +333,7 @@ const tweets = [
     color: var(--text-tertiary);
   }
 
-  .feed__action {
+  :global(.feed__action) {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -338,12 +342,12 @@ const tweets = [
     transition: color 0.2s;
   }
 
-  .feed__post:hover .feed__action {
+  :global(.feed__post:hover .feed__action) {
     color: var(--text-secondary);
   }
 
-  .feed__post:hover .feed__action--like {
-    color: var(--text-accent); 
+  :global(.feed__post:hover .feed__action--like) {
+    color: var(--text-accent);
   }
 
   /* Responsive */
