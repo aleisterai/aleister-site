@@ -13,7 +13,7 @@ const APIFY_TOKEN = import.meta.env.APIFY_TOKEN || process.env.APIFY_TOKEN || ''
 const X_BEARER =
     import.meta.env.X_BEARER_TOKEN || process.env.X_BEARER_TOKEN || '';
 
-const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 let cache: { data: FeedPayload; timestamp: number } | null = null;
 
 interface FeedTweet {
@@ -211,7 +211,10 @@ function json(data: FeedPayload): Response {
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            'Cache-Control': 'public, max-age=300, stale-while-revalidate=86400',
+            // s-maxage gates how often the X API is actually hit: the
+            // Vercel CDN serves this cached for 6h, so X is called ~once
+            // per 6h per region (keeps pay-per-use cost to ~$1-2/mo).
+            'Cache-Control': 'public, max-age=600, s-maxage=21600, stale-while-revalidate=86400',
         },
     });
 }
