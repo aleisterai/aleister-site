@@ -4,6 +4,7 @@ import { blogPosts } from '../data/blog-posts';
 import { storeItems } from '../data/store';
 import { books } from '../data/books';
 import { workflows } from '../data/workflows';
+import { projects } from '../data/projects';
 
 const SITE = 'https://thealeister.com';
 
@@ -16,7 +17,6 @@ const STATIC_PAGES = [
   '/content-factory/',
   '/dashboard/',
   '/get/',
-  '/lead-arbitrage/',
   '/moltbook/',
   '/music/',
   '/office/',
@@ -98,6 +98,11 @@ export const GET: APIRoute = async () => {
   // Workflows  →  /workflows/{slug}/
   for (const wf of workflows) {
     urls.push({ loc: `${SITE}/workflows/${wf.slug}/` });
+  }
+
+  // Projects  →  /projects/{slug}/
+  for (const project of projects) {
+    urls.push({ loc: `${SITE}/projects/${project.slug}/` });
   }
 
   // ── Build XML ──

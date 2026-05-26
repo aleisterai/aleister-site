@@ -4,6 +4,7 @@ import { blogPosts } from '../data/blog-posts';
 import { books } from '../data/books';
 import { storeItems } from '../data/store';
 import { workflows } from '../data/workflows';
+import { projects } from '../data/projects';
 
 export const prerender = false;
 
@@ -102,6 +103,15 @@ export const GET: APIRoute = async () => {
   for (const e of teamEntries) {
     lines.push(
       `- [${e.data.name} — ${e.data.codename}](${SITE}/team/${e.slug}): ${e.data.role}`,
+    );
+  }
+  lines.push('');
+
+  lines.push('## Projects');
+  lines.push('');
+  for (const project of projects) {
+    lines.push(
+      `- [${project.name}](${SITE}/projects/${project.slug}) — ${project.role} · live at ${project.url}: ${project.description}`,
     );
   }
   lines.push('');

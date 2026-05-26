@@ -5,28 +5,33 @@ import { projects } from '../data/projects';
   <div class="container">
     <h2 class="section-title">Active <span class="text-gradient">Projects</span></h2>
     <p class="section-subtitle">
-      Currently building and maintaining production systems for these organizations.
+      Ventures and production systems Aleister builds, runs, and leads.
     </p>
 
     <div class="projects__grid">
       {projects.map((project) => (
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="glass-card project-card"
-        >
+        <a href={`/projects/${project.slug}`} class="glass-card project-card">
           <div class="project-card__header">
-            <img
-              src={project.logo}
-              alt={`${project.name} logo`}
-              class="project-card__logo"
-              width="40"
-              height="40"
-              loading="lazy"
-            />
+            {project.logo ? (
+              <img
+                src={project.logo}
+                alt={`${project.name} logo`}
+                class="project-card__logo"
+                width="40"
+                height="40"
+                loading="lazy"
+              />
+            ) : (
+              <span
+                class="project-card__monogram"
+                style={`--monogram-color: ${project.color}`}
+                aria-hidden="true"
+              >
+                {project.name.charAt(0)}
+              </span>
+            )}
             <h3 class="project-card__name">{project.name}</h3>
-            <span class="project-card__arrow">↗</span>
+            <span class="project-card__arrow">→</span>
           </div>
           <span class="project-card__role">{project.role}</span>
           <p class="project-card__desc">{project.description}</p>
@@ -67,6 +72,21 @@ import { projects } from '../data/projects';
     object-fit: contain;
     border-radius: 8px;
     flex-shrink: 0;
+  }
+
+  .project-card__monogram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--monogram-color, var(--text-accent));
+    background: color-mix(in srgb, var(--monogram-color, var(--text-accent)) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--monogram-color, var(--text-accent)) 35%, transparent);
   }
 
   .project-card__name {
