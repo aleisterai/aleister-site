@@ -12,7 +12,38 @@ import { projects } from '../data/projects';
       {projects.map((project) => (
         <a href={`/projects/${project.slug}`} class="glass-card project-card">
           <div class="project-card__header">
-            {project.logo ? (
+            {project.logoForLight || project.logoForDark ? (
+              <span
+                class="project-card__mark"
+                style={`--monogram-color: ${project.color}`}
+              >
+                {project.logoForLight && (
+                  <img
+                    src={project.logoForLight}
+                    alt={`${project.name} logo`}
+                    class="project-card__logo project-card__logo--light"
+                    width="40"
+                    height="40"
+                    loading="lazy"
+                    onerror="this.remove()"
+                  />
+                )}
+                {project.logoForDark && (
+                  <img
+                    src={project.logoForDark}
+                    alt={`${project.name} logo`}
+                    class="project-card__logo project-card__logo--dark"
+                    width="40"
+                    height="40"
+                    loading="lazy"
+                    onerror="this.remove()"
+                  />
+                )}
+                <span class="project-card__monogram-fallback" aria-hidden="true">
+                  {project.name.charAt(0)}
+                </span>
+              </span>
+            ) : project.logo ? (
               <img
                 src={project.logo}
                 alt={`${project.name} logo`}
@@ -82,6 +113,50 @@ import { projects } from '../data/projects';
     height: 40px;
     border-radius: 8px;
     flex-shrink: 0;
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--monogram-color, var(--text-accent));
+    background: color-mix(in srgb, var(--monogram-color, var(--text-accent)) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--monogram-color, var(--text-accent)) 35%, transparent);
+  }
+
+  /* Theme-aware mark: light/dark logos layered over a monogram fallback.
+     The monogram sits underneath; a loaded logo (opaque, own background)
+     covers it. If a logo file 404s its <img> is removed (onerror) and the
+     monogram shows through. */
+  .project-card__mark {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .project-card__mark .project-card__logo {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .project-card__logo--dark {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .project-card__logo--light {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .project-card__logo--dark {
+    display: block;
+  }
+
+  .project-card__monogram-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
     font-size: var(--text-xl);
     font-weight: 800;
     color: var(--monogram-color, var(--text-accent));

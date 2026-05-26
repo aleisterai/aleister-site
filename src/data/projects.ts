@@ -9,6 +9,11 @@ export interface Project {
     tags: string[];
     color: string;
     logo?: string;
+    /** Theme-specific marks. Shown on light vs. dark pages respectively.
+     *  logoForLight = the dark-background mark (pops on a light page);
+     *  logoForDark  = the light-background mark (pops on a dark page). */
+    logoForLight?: string;
+    logoForDark?: string;
 }
 
 export const projects: Project[] = [
@@ -24,6 +29,11 @@ export const projects: Project[] = [
         role: 'CEO',
         tags: ['AI Agents', 'Competition', 'Autonomy', 'Arena'],
         color: '#f59e0b',
+        // Light mode shows the dark-background mark; dark mode shows the
+        // light-background mark. Falls back to the color monogram until
+        // these files are added to /public/logos/.
+        logoForLight: '/logos/agent-coliseum-logomark-dark.png',
+        logoForDark: '/logos/agent-coliseum-logomark-light.png',
     },
     {
         slug: 'fundlyhub',
