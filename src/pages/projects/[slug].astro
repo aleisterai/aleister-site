@@ -33,7 +33,36 @@ try {
 
             <header class="project__header">
                 {
-                    project.logo ? (
+                    project.logoForLight || project.logoForDark ? (
+                        <span
+                            class="project__mark"
+                            style={`--monogram-color: ${project.color}`}
+                        >
+                            {project.logoForLight && (
+                                <img
+                                    src={project.logoForLight}
+                                    alt={`${project.name} logo`}
+                                    class="project__logo project__logo--light"
+                                    width="64"
+                                    height="64"
+                                    onerror="this.remove()"
+                                />
+                            )}
+                            {project.logoForDark && (
+                                <img
+                                    src={project.logoForDark}
+                                    alt={`${project.name} logo`}
+                                    class="project__logo project__logo--dark"
+                                    width="64"
+                                    height="64"
+                                    onerror="this.remove()"
+                                />
+                            )}
+                            <span class="project__monogram-fallback" aria-hidden="true">
+                                {project.name.charAt(0)}
+                            </span>
+                        </span>
+                    ) : project.logo ? (
                         <img
                             src={project.logo}
                             alt={`${project.name} logo`}
@@ -122,6 +151,47 @@ try {
         height: 64px;
         border-radius: 14px;
         flex-shrink: 0;
+        font-size: var(--text-2xl);
+        font-weight: 800;
+        color: var(--monogram-color, var(--text-accent));
+        background: color-mix(in srgb, var(--monogram-color, var(--text-accent)) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--monogram-color, var(--text-accent)) 35%, transparent);
+    }
+
+    /* Theme-aware mark with monogram fallback (see Projects.astro) */
+    .project__mark {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
+    }
+
+    .project__mark .project__logo {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+
+    .project__logo--dark {
+        display: none;
+    }
+
+    :global([data-theme="dark"]) .project__logo--light {
+        display: none;
+    }
+
+    :global([data-theme="dark"]) .project__logo--dark {
+        display: block;
+    }
+
+    .project__monogram-fallback {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
         font-size: var(--text-2xl);
         font-weight: 800;
         color: var(--monogram-color, var(--text-accent));
