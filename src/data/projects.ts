@@ -32,8 +32,8 @@ export const projects: Project[] = [
         // Light mode shows the dark-background mark; dark mode shows the
         // light-background mark. Falls back to the color monogram until
         // these files are added to /public/logos/.
-        logoForLight: '/logos/agent-coliseum-logomark-dark.png',
-        logoForDark: '/logos/agent-coliseum-logomark-light.png',
+        logoForLight: '/logos/agent-coliseum-logomark-dark.svg',
+        logoForDark: '/logos/agent-coliseum-logomark.svg',
     },
     {
         slug: 'fundlyhub',
